@@ -5,6 +5,9 @@ to TEXTS["ar"], translate the values (keep the {placeholders}), and pass lang="a
 """
 from __future__ import annotations
 
+from src.features import HEAT_DAY_C
+from src.scoring import TOO_CLOSE_POINTS
+
 TEXTS: dict[str, dict] = {
     "fr": {
         "ui": {
@@ -54,12 +57,129 @@ TEXTS: dict[str, dict] = {
                             "de type FAO, NON issues de la NASA, et doivent être validées par un agronome.",
             "explanation": "Explication", "limits": "Limites et incertitudes",
         },
+        "explain": {
+            "climate_h": "#### 🌦️ Ce que disent les données NASA pour ce point",
+            "climate": (
+                "Sur **{n_seasons} saisons** complètes (récoltes {first}–{last}), la saison de culture (octobre–mai) "
+                "a reçu en moyenne **{rain:.0f} mm** de pluie, avec des écarts importants d'une année à "
+                "l'autre : de **{rmin:.0f} mm** (saison la plus sèche) à **{rmax:.0f} mm** "
+                "(variabilité **{cv:.0%}**)."),
+            "heat": ("On compte en moyenne **{hy:.0f} jours par an** au-dessus de {t:.0f} °C, dont "
+                     "**{hs:.1f} jours** pendant la saison oct–mai."),
+            "dry": ("Chaque saison connaît en moyenne une période sèche (pluie < 1 mm/jour) de "
+                    "**{dry:.0f} jours consécutifs**. L'humidité moyenne de la zone racinaire est de "
+                    "**{gw:.2f}** sur une échelle de 0 (sec) à 1 (saturé)."),
+            "trend": ("Les {k} dernières saisons ont été en moyenne **{diff:+.0f}%** par rapport aux "
+                      "saisons précédentes ({recent:.0f} mm contre {older:.0f} mm)."),
+            "result_h": "#### 🏆 Résultat selon vos priorités",
+            "weights": "Vos priorités : eau **{w:.0%}**, sol **{s:.0%}**, climat **{c:.0%}**.",
+            "best": "La rotation **{id} ({name})** obtient le meilleur score : **{total:.1f}/100**.",
+            "close": ("⚠️ **Trop proche pour conclure** : {id1} ({t1:.1f}) et {id2} ({t2:.1f}) ne sont "
+                      "séparées que de {d:.1f} points (seuil : {pts:.0f}). Cet écart est trop faible pour "
+                      "cette méthode simplifiée ; d'autres critères (marché, main-d'œuvre, "
+                      "accès à l'eau, avis d'un agronome) doivent trancher."),
+            "clear": "L'écart avec la deuxième ({id2}, {t2:.1f}) est de **{d:.1f} points**.",
+            "why_h": "#### 🔍 Pourquoi ?",
+            "rot_line": ("- **{id} — {name}** : eau {w:.0f}, sol {s:.0f}, climat {c:.0f}. "
+                         "Point fort : **{strong}**. Point faible : **{weak}**. "
+                         "Besoin d'irrigation estimé ≈ **{irr:.0f} mm/saison** au-delà de la pluie moyenne. {soil_note}"),
+            "soil_legume": "Contient {n} légumineuse(s) qui fixent l'azote.",
+            "soil_none": "Aucune légumineuse : l'azote devra venir des engrais.",
+            "soil_repeat": " {n} succession(s) de la même famille (risque maladies/adventices).",
+            "tradeoff_h": "#### ⚖️ Compromis",
+            "winner_of": "- Meilleure pour **{sub}** : **{id}** ({v:.0f}/100)",
+            "sens_h": "#### 🎚️ Sensibilité aux priorités",
+            "sens_same": ("Quelle que soit la priorité unique choisie (eau seule, sol seul ou climat seul), "
+                          "**{id}** reste en tête : le résultat est robuste."),
+            "sens_diff": ("Le classement dépend de vos priorités : si seule l'eau comptait → **{w}**, "
+                          "seul le sol → **{s}**, seul le climat → **{c}**."),
+            "na": "non disponible",
+            "sub_names": {"water": "eau", "soil": "santé du sol", "climate": "climat"},
+        },
     },
 }
 
 
-def explain(summary: dict, scores: dict, crops: dict, lang: str = "fr") -> str:
-    return "_(explication à venir)_"
+def _fmt_row(r, crops, E):
+    subs = {k: getattr(r, k).value for k in ("water", "soil", "climate")}
+    avail = {k: v for k, v in subs.items() if v is not None}
+    strong = E["sub_names"][max(avail, key=avail.get)] if avail else E["na"]
+    weak = E["sub_names"][min(avail, key=avail.get)] if avail else E["na"]
+    d = r.soil.details
+    soil_note = (E["soil_legume"].format(n=d["n_legumes"]) if d["n_legumes"] else E["soil_none"])
+    if d["n_repeats"]:
+        soil_note += E["soil_repeat"].format(n=d["n_repeats"])
+    irr = r.water.details.get("irrigation_need_mm_per_season", float("nan"))
+    nan = float("nan")
+    return E["rot_line"].format(
+        id=r.id, name=r.name, w=subs["water"] if subs["water"] is not None else nan,
+        s=subs["soil"], c=subs["climate"] if subs["climate"] is not None else nan,
+        strong=strong, weak=weak, irr=irr, soil_note=soil_note)
+
+
+def _winner_for(results, key):
+    """Winner if only one sub-score counted (recomputed from existing sub-scores, no new data)."""
+    cand = [r for r in results if getattr(r, key).value is not None]
+    return max(cand, key=lambda r: getattr(r, key).value) if cand else None
+
+
+def explain(summary: dict, scores: dict, crops: dict, lang: str = "fr",
+            seasons=None) -> str:
+    """Build a markdown explanation. Every number comes from `summary` / `scores`."""
+    E = TEXTS[lang]["explain"]
+    s = summary
+    out = [E["climate_h"]]
+    if s["n_seasons"]:
+        has = seasons is not None and not seasons.empty
+        rmax = float(seasons["rain_mm"].max()) if has else s["season_rain_mm"]
+        first = int(seasons.index.min()) if has else s["first_date"][:4]
+        last = int(seasons.index.max()) if has else s["last_date"][:4]
+        out.append(E["climate"].format(n_seasons=s["n_seasons"], first=first,
+                                       last=last, rain=s["season_rain_mm"],
+                                       rmin=s["season_rain_min_mm"], rmax=rmax, cv=s["season_rain_cv"]))
+    out.append(E["heat"].format(hy=s["heat_days_year"], t=HEAT_DAY_C, hs=s["heat_days_season"]))
+    out.append(E["dry"].format(dry=s["dry_spell_season"], gw=s["gwetroot_season"]))
+    if seasons is not None and len(seasons) >= 6:
+        k = 3
+        recent, older = seasons["rain_mm"].iloc[-k:].mean(), seasons["rain_mm"].iloc[:-k].mean()
+        if older > 0:
+            out.append(E["trend"].format(k=k, diff=100 * (recent / older - 1), recent=recent, older=older))
+
+    ordered = scores["ordered"]
+    if not ordered:
+        return "\n\n".join(out)
+    w = scores["weights"]
+    out += [E["result_h"], E["weights"].format(w=w["water"], s=w["soil"], c=w["climate"])]
+    best = ordered[0]
+    out.append(E["best"].format(id=best.id, name=best.name, total=best.total))
+    if len(ordered) > 1:
+        second = ordered[1]
+        d = best.total - second.total
+        if scores["top_too_close"]:
+            out.append(E["close"].format(id1=best.id, t1=best.total, id2=second.id, t2=second.total,
+                                         d=d, pts=TOO_CLOSE_POINTS))
+        else:
+            out.append(E["clear"].format(id2=second.id, t2=second.total, d=d))
+
+    out.append(E["why_h"])
+    out.append("\n".join(_fmt_row(r, crops, E) for r in ordered))
+
+    out.append(E["tradeoff_h"])
+    lines = []
+    winners = {}
+    for key in ("water", "soil", "climate"):
+        r = _winner_for(scores["results"], key)
+        winners[key] = r.id if r else E["na"]
+        if r:
+            lines.append(E["winner_of"].format(sub=E["sub_names"][key], id=r.id, v=getattr(r, key).value))
+    out.append("\n".join(lines))
+
+    out.append(E["sens_h"])
+    if len(set(winners.values())) == 1:
+        out.append(E["sens_same"].format(id=winners["water"]))
+    else:
+        out.append(E["sens_diff"].format(w=winners["water"], s=winners["soil"], c=winners["climate"]))
+    return "\n\n".join(out)
 
 
 def limitations(summary: dict, pdata, lang: str = "fr") -> str:

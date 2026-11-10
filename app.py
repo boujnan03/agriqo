@@ -209,7 +209,7 @@ with tab_cmp:
 # ---------------- Tab 4: explanation & limits ----------------
 with tab_exp:
     st.subheader(T["explanation"])
-    st.markdown(explain.explain(s, scores, crops, lang=LANG))
+    st.markdown(explain.explain(s, scores, crops, lang=LANG, seasons=feats.seasons))
     st.divider()
     st.subheader(T["limits"])
     st.markdown(explain.limitations(s, pdata, lang=LANG))
