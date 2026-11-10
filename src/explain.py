@@ -96,6 +96,39 @@ TEXTS: dict[str, dict] = {
             "na": "non disponible",
             "sub_names": {"water": "eau", "soil": "santé du sol", "climate": "climat"},
         },
+        "limits": {
+            "items": [
+                "🛰️ **Résolution spatiale** : NASA POWER fournit des estimations régionales issues de "
+                "modèles et satellites (MERRA-2 ≈ 0,5° × 0,625°, soit environ 50 km ; rayonnement CERES ≈ 1°). "
+                "Les valeurs représentent une grande zone autour du point ({lat:.2f}, {lon:.2f}), "
+                "**pas votre parcelle**. Irrigation, relief, sol et microclimat local ne sont pas captés.",
+                "📅 **Période des données** : {first} → {last} ({n_seasons} saisons de culture complètes "
+                "oct–mai utilisées). Source : {source}.",
+                "❓ **Données manquantes** : {missing:.1%} des valeurs journalières (valeur -999 de NASA POWER "
+                "traitée comme absente ; une saison avec moins de 90 % de jours valides est exclue).",
+                "🌾 **Paramètres des cultures NON validés** : besoins en eau, tolérances à la chaleur et à "
+                "la sécheresse, effets sur le sol sont des valeurs approximatives de type FAO "
+                "(`data/crops.json`, `needs_validation: true`). Ils **ne viennent pas de la NASA** et doivent "
+                "être vérifiés par un agronome (ORMVA Tadla, INRA, ONCA).",
+                "🧮 **Méthode simplifiée** : score à base de règles transparentes (voir `docs/scoring.md`). "
+                "Le bilan hydrique compare seulement besoin et pluie moyenne (pas d'évapotranspiration, "
+                "de réserve du sol ni d'efficience d'irrigation). Les rendements, prix, coûts et l'accès "
+                "réel à l'eau du barrage ne sont pas pris en compte.",
+                "📉 **Le passé n'est pas l'avenir** : 10 ans de données ne décrivent pas les tendances "
+                "climatiques futures ; un écart de moins de {pts:.0f} points entre deux rotations est "
+                "considéré comme non significatif.",
+            ],
+            "disclaimer": ("> **Cet outil aide à la réflexion et à la discussion ; il ne remplace pas "
+                           "l'expertise locale ni le conseil agricole.** La décision finale appartient à "
+                           "l'agriculteur, avec l'appui des conseillers techniques."),
+            "sources_h": "**Origine des données**",
+            "sources": ("- **NASA** : NASA POWER Daily API (community AG) — T2M, T2M_MAX, T2M_MIN, PRECTOTCORR, "
+                        "GWETTOP, GWETROOT, RH2M, ALLSKY_SFC_SW_DWN.\n"
+                        "- **Hors NASA** : table des cultures et rotations candidates (hypothèses de l'équipe, "
+                        "à valider), fond de carte OpenStreetMap."),
+            "source_names": {"api": "NASA POWER, appel direct", "cache": "NASA POWER, cache local",
+                             "fallback": "fichier de secours Beni Mellal (hors-ligne)"},
+        },
     },
 }
 
@@ -183,4 +216,10 @@ def explain(summary: dict, scores: dict, crops: dict, lang: str = "fr",
 
 
 def limitations(summary: dict, pdata, lang: str = "fr") -> str:
-    return "_(limites à venir)_"
+    """Markdown list of limits, filled with the actual point, period and missing share."""
+    L = TEXTS[lang]["limits"]
+    vals = dict(lat=pdata.lat, lon=pdata.lon, first=summary["first_date"], last=summary["last_date"],
+                n_seasons=summary["n_seasons"], missing=summary["missing_share"],
+                source=L["source_names"].get(pdata.source, pdata.source), pts=TOO_CLOSE_POINTS)
+    items = "\n".join(f"- {it.format(**vals)}" for it in L["items"])
+    return "\n\n".join([items, L["disclaimer"], L["sources_h"], L["sources"]])

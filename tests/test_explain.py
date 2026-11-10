@@ -31,3 +31,11 @@ def test_every_language_has_same_keys():
     for lang, d in explain.TEXTS.items():
         for section in ref:
             assert set(d[section]) == set(ref[section]), (lang, section)
+
+
+def test_limitations_mentions_required_points():
+    from types import SimpleNamespace
+    pdata = SimpleNamespace(lat=32.34, lon=-6.35, source="fallback")
+    txt = explain.limitations({**FULL, "missing_share": 0.0123}, pdata)
+    assert "0,5°" in txt and "2020-01-01" in txt and "1.2%" in txt
+    assert "agronome" in txt and "ne remplace pas" in txt and "secours" in txt
