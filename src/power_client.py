@@ -16,6 +16,7 @@ Beni Mellal response (data/fallback_beni_mellal.json) is used so the demo works 
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -106,13 +107,17 @@ def _to_powerdata(data: dict, lat: float, lon: float, source: str, note: str = "
 
 def get_power_data(lat: float = DEFAULT_LAT, lon: float = DEFAULT_LON,
                    start: str = DEFAULT_START, end: str = DEFAULT_END,
-                   use_cache: bool = True) -> PowerData:
-    """Cache -> API -> bundled fallback (Beni Mellal). Never raises if fallback exists."""
+                   use_cache: bool = True, offline: bool = False) -> PowerData:
+    """Cache -> API -> bundled fallback (Beni Mellal). Never raises if fallback exists.
+    offline=True (or env FIELDSHIFT_OFFLINE=1) skips the network entirely (demo safety)."""
+    offline = offline or os.environ.get("FIELDSHIFT_OFFLINE") == "1"
     lat, lon = round(lat, 2), round(lon, 2)
     path = _cache_path(lat, lon, start, end)
     if use_cache and path.exists():
         return _to_powerdata(json.loads(path.read_text(encoding="utf-8")), lat, lon, "cache")
     try:
+        if offline:
+            raise ConnectionError("offline mode")
         data = fetch_raw(lat, lon, start, end)
         CACHE_DIR.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(data), encoding="utf-8")

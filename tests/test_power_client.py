@@ -55,3 +55,18 @@ def test_cache_hit(monkeypatch, tmp_path):
     path.write_text(json.dumps(_raw([1.0] * 4, [0.0] * 4)))
     monkeypatch.setattr(pc, "fetch_raw", lambda *a, **k: (_ for _ in ()).throw(AssertionError("no net")))
     assert pc.get_power_data(31.0, -7.0, "20250101", "20250104").source == "cache"
+
+
+def test_offline_flag_skips_network(monkeypatch, tmp_path):
+    fb = tmp_path / "fb.json"
+    fb.write_text(json.dumps(_raw([1.0] * 4, [0.0] * 4)))
+    monkeypatch.setattr(pc, "FALLBACK_FILE", fb)
+    monkeypatch.setattr(pc, "CACHE_DIR", tmp_path / "cache")
+    monkeypatch.setattr(pc, "fetch_raw", lambda *a, **k: (_ for _ in ()).throw(AssertionError("net!")))
+    assert pc.get_power_data(31.0, -7.0, "20250101", "20250104", offline=True).source == "fallback"
+
+
+def test_bundled_fallback_is_valid():
+    data = json.loads(pc.FALLBACK_FILE.read_text(encoding="utf-8"))
+    df = pc.parse_response(data)
+    assert len(df) >= 3650 and set(pc.PARAMETERS) <= set(df.columns)

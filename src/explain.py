@@ -18,6 +18,8 @@ TEXTS: dict[str, dict] = {
             "point": "Point sélectionné (lat, lon)", "reset": "Revenir à Beni Mellal",
             "loading": "Récupération de 10 ans de données NASA POWER…",
             "offline": "Mode hors-ligne.",
+            "offline_toggle": "Mode hors-ligne (démo)",
+            "offline_help": "N'appelle pas l'API : utilise le cache local ou les données de secours de Beni Mellal.",
             "tabs": ["🗺️ Carte", "📊 Indicateurs environnementaux", "⚖️ Comparaison des rotations",
                      "💬 Explication & limites"],
             "selected_point": "Parcelle sélectionnée",

@@ -22,8 +22,8 @@ st.set_page_config(page_title="Field Shift - Tadla", page_icon="🌾", layout="w
 
 
 @st.cache_data(show_spinner=False)
-def load(lat: float, lon: float):
-    pdata = get_power_data(lat, lon, DEFAULT_START, DEFAULT_END)
+def load(lat: float, lon: float, offline: bool = False):
+    pdata = get_power_data(lat, lon, DEFAULT_START, DEFAULT_END, offline=offline)
     return pdata, compute_features(pdata.df)
 
 
@@ -46,6 +46,7 @@ with st.sidebar:
     w_soil = st.slider(T["w_soil"], 0, 10, 5)
     w_climate = st.slider(T["w_climate"], 0, 10, 5)
     st.divider()
+    offline = st.toggle(T["offline_toggle"], value=False, help=T["offline_help"])
     st.caption(T["point"])
     st.write(f"**{st.session_state.lat:.2f}, {st.session_state.lon:.2f}**")
     if st.button(T["reset"]):
@@ -56,7 +57,7 @@ st.title(T["title"])
 st.caption(T["subtitle"])
 
 with st.spinner(T["loading"]):
-    pdata, feats = load(st.session_state.lat, st.session_state.lon)
+    pdata, feats = load(st.session_state.lat, st.session_state.lon, offline)
 s = feats.summary
 scores = score_all(s, w_water, w_soil, w_climate)
 crops = load_crops()
