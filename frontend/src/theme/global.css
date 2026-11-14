@@ -1,0 +1,24 @@
+/* App-wide base styles. Values come from tokens.css only (no raw design values here). */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-body);
+  color: var(--text-900);
+  background: var(--white);
+}
+
+#root {
+  min-height: 100dvh;
+}

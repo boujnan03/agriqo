@@ -1,0 +1,16 @@
+// Shared components (design.md §6). Build pages from these; never copy-and-tweak them (§10).
+export { Badge, type BadgeProps } from "./Badge";
+export { Button, type ButtonProps, type ButtonVariant } from "./Button";
+export { Card, type CardProps, type CardVariant } from "./Card";
+export {
+  type Fact,
+  FactList,
+  type FactListProps,
+  type FactTone,
+} from "./FactList";
+export { Header, type HeaderAction, type HeaderProps } from "./Header";
+export { Icon, type IconProps, type IconSize } from "./Icon";
+export { PhotoFrame, type PhotoFrameProps } from "./PhotoFrame";
+export { ProgressBar, type ProgressBarProps } from "./ProgressBar";
+export { Screen, type ScreenProps } from "./Screen";
+export { TabBar, type TabBarProps, type TabItem } from "./TabBar";

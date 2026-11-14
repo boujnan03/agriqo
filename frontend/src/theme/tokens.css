@@ -1,0 +1,64 @@
+/*
+ * GENERATED from src/theme/tokens.ts by `npm run tokens`. Do not edit by hand.
+ * Source of truth: frontend/design.md.
+ */
+:root {
+  --green-900: #1E5631;
+  --green-700: #4C9A4C;
+  --green-tint: #E3F3DE;
+  --white: #FFFFFF;
+  --text-900: #1A1A1A;
+  --text-600: #6B7280;
+  --border: #E5E7EB;
+  --tab-inactive: #9CA3AF;
+  --icon-water: #3B82F6;
+  --icon-soil: #92653F;
+  --icon-plant: #2E6B47;
+  --font-family-base: 'Inter', system-ui, sans-serif;
+  --font-size-screen-title: 18px;
+  --font-size-hero-title: 26px;
+  --font-size-body: 14px;
+  --font-size-label: 15px;
+  --font-size-caption: 11px;
+  --font-size-badge: 12px;
+  --font-weight-heading: 700;
+  --font-weight-body: 400;
+  --font-weight-label: 600;
+  --font-weight-caption: 500;
+  --font-weight-bold: 700;
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --screen-padding: 20px;
+  --card-gap: 12px;
+  --touch-target: 44px;
+  --radius-button: 16px;
+  --radius-chip: 16px;
+  --radius-card: 20px;
+  --radius-photo: 20px;
+  --radius-pill: 999px;
+  --radius-bar: 4px;
+  --shadow-card: 0 4px 12px rgba(0,0,0,0.06);
+  --gradient-photo-bottom: linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 45%);
+  --button-height: 52px;
+  --tab-bar-height: 64px;
+  --header-height: 56px;
+  --progress-height: 8px;
+  --padding-card: 16px;
+  --padding-card-featured: 20px;
+  --padding-badge-y: 4px;
+  --padding-badge-x: 10px;
+  --border-width-hairline: 1px;
+  --border-width-outline: 1.5px;
+  --icon-size-inline: 18px;
+  --icon-size-data: 22px;
+  --icon-stroke-width: 1.8;
+  --aspect-cover: 9 / 16;
+  --aspect-farm: 4 / 3;
+  --aspect-thumbnail: 1 / 1;
+  --aspect-detail: 16 / 9;
+}

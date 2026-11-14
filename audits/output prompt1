@@ -1,0 +1,24 @@
+I built the Cover page at `/` and the "Page introuvable" page for any unmatched URL. Typecheck, lint, format check and tests all pass (31 tests), including the "no hardcoded values" test, which I didn't modify. The running frontend container is rebuilt: `/`, `/nope` and `/farm` all return 200. I haven't looked at either page in a browser yet. Open http://localhost:8080 and http://localhost:8080/nope to check them.
+
+**What I changed**
+- **The gradient token you approved.** I added `gradient.photoBottom` to [tokens.ts](frontend/src/theme/tokens.ts), using design.md §6's exact value. I also had to add one line to [cssVariables.ts](frontend/src/theme/cssVariables.ts), the script that generates `tokens.css`. These are the only theme edits.
+- **Cover page.** [Cover.tsx](frontend/src/pages/Cover.tsx) and [Cover.module.css](frontend/src/pages/Cover.module.css):
+  - The photo placeholder ("Photo : champ de blé") fills the screen edge to edge, with no rounded corners and the bottom gradient over it.
+  - Above the buttons: a sprout icon as a stand-in logo, "FieldShift AI" and the tagline.
+  - "Commencer" (with an arrow) goes to `/farm`. "Se connecter" links back to `/`.
+- **Error page.** [NotFound.tsx](frontend/src/pages/NotFound.tsx) shows "Page introuvable." and a "Retour à l'accueil" button back to `/`. [routes.tsx](frontend/src/router/routes.tsx) uses it as the catch-all route.
+- **Removed.** I deleted the old `Welcome.tsx` placeholder and its `/` case in [routes.test.tsx](frontend/tests/pages/routes.test.tsx).
+- **New tests.** [Cover.test.tsx](frontend/tests/pages/Cover.test.tsx) and [NotFound.test.tsx](frontend/tests/pages/NotFound.test.tsx). Each also renders through the real router to check there's no header or tab bar.
+
+**Where I differed from the prompt**
+- **The photo fills the whole screen rather than a strict 9:16 frame.** design.md says the Cover photo fills the screen edge to edge, and a 9:16 frame would leave gaps on most phones. It still uses the `cover` photo slot, so a real photo can drop straight in.
+- **The buttons are links.** "Commencer" and "Retour à l'accueil" navigate, so they are real links styled as primary buttons (design.md §9). The tests therefore look for links, not buttons.
+
+**Issues to know about**
+- **The text is hard to read until there's a real photo.** The gradient only darkens the bottom 45% of the screen and fades out going up. Over the light-green placeholder, the white tagline and title don't reach the 4.5:1 contrast minimum; the buttons at the very bottom do. A real, darker field photo should fix this. I didn't change the layout to get around it.
+- **Stale comment.** [PhotoFrame.tsx](frontend/src/components/PhotoFrame.tsx) still says the gradient has "no values in design.md". I didn't touch it because it's inside a shared component.
+- **Badge size drift.** The badge font-size token is 12px but design.md §6 now says 13px. This doesn't affect these pages.
+- **No 480px width cap.** design.md §4 wants content capped at 480px and centered, but there's no token for it and no screen applies it yet.
+- **CLAUDE.md is out of date on UI language.** It still lists UI language as an open decision, but design.md §1 and your prompt both say French.
+
+Nothing is committed.

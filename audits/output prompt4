@@ -1,0 +1,27 @@
+I built the "Recommandations" page at `/recommendations` from the mock fixture. It has a back arrow to `/overview` and no tab bar, as your prompt asked. Typecheck, lint, format check and tests all pass (47 tests), and the rebuilt container serves the page with a 200. I haven't looked at it in a browser, so please check the layout at http://localhost:8080/overview, then "Voir mes recommandations".
+
+**What's on the page** ([Recommendations.tsx](frontend/src/pages/Recommendations.tsx))
+- **Featured card:** "Meilleure culture pour vous", **Blé**, "Haute adéquation pour vos conditions", with a square photo placeholder ("Photo : blé"). The whole card links to `/crop/ble`.
+- **"Autres bonnes options":** two cards side by side (Orge 85%, Légumineuses 82%), each with a photo placeholder and the percentage as a badge, each linking to its crop.
+- **"Plan de rotation des cultures":** a cycle icon, then three numbered steps (Année 1 Blé → Année 2 Légumineuses → Année 3 Orge), each linking to its crop.
+- **"En savoir plus":** goes to `/crop/ble`. For now that destination is still the Crop Detail placeholder.
+
+**Types:** `CropId` is shared in [src/types/crop.ts](frontend/src/types/crop.ts). It's a fixed list (`"ble" | "orge" | "legumineuses"`), so a misspelled crop id fails the typecheck. The next page will need to add any new crops there. The page's own types are in [recommendations.ts](frontend/src/types/recommendations.ts) and the fixture is in [src/mocks/recommendations.ts](frontend/src/mocks/recommendations.ts).
+
+**Tests** ([Recommendations.test.tsx](frontend/tests/pages/Recommendations.test.tsx)):
+- **Content:** the featured crop, both options with their percentages, the three steps in order, the back arrow, no tab bar, and every link's `/crop/:id` target.
+- **Navigation:** clicking an option card and "En savoir plus" really opens the right crop page, and the Overview button really opens this page.
+- **Removed:** I deleted the old `/recommendations` case from `routes.test.tsx`, plus a leftover check in that file that no remaining case used.
+
+**Needs a decision: the Insights tab now leads to a page without a tab bar**
+- design.md §7.4 still says this page has "Header + tab bar".
+- `tabs.ts` still sends the **Insights** tab here. Tapping Insights on Farm or Overview lands on a screen with no tab bar, and its back arrow always goes to Overview.
+- If no tab bar is the final call, update design.md §7.4 and point Insights somewhere else or disable it. I didn't touch either file because they're outside this task.
+
+**Other things to know**
+- **Button style:** design.md §6 gives "Learn More" as its example of an *outline* button. I made "En savoir plus" a primary button as your prompt said, which also matches how every other page ends.
+- **Featured photo is barely visible:** the placeholder is light green on the light-green featured card, so only its icon and "Photo : blé" label show. A real photo fixes this.
+- **No focus ring or hover styles anywhere in the app yet**, even though design.md §9 asks for a 2px ring and a hover overlay. There's no token for either. The tappable cards keep the browser's default focus outline in the meantime.
+- **All rotation steps link, not only the featured crop's.** The Goal mentioned linking just that step, but Step 2 says every step links, so I followed Step 2.
+
+Nothing is committed.

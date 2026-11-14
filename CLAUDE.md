@@ -7,36 +7,42 @@ score and a plain-language (French-first) explanation plus explicit limitations.
 Hackathon: ~48 h, team of 3. **Working end-to-end > extra features.**
 
 ## Stack
-Python 3.11+ · pandas · requests · Streamlit + streamlit-folium + plotly · pytest.
-No database: JSON/CSV files only. No LLM (yet).
+- **Frontend** (`frontend/`): React 19 + TypeScript 6 + Vite 8, React Router 8, lucide-react,
+  Vitest + React Testing Library, ESLint + Prettier. Production: static build served by nginx.
+- **Backend** (`backend/`): FastAPI placeholder, `GET /health` only, no business logic yet.
+- No database. No LLM (yet). See `ARCHITECTURE.md` (start at §8).
 
 ## Layout
-- `app.py` — Streamlit UI, 4 tabs: Carte / Indicateurs / Comparaison / Explication & limites
-- `src/power_client.py` — NASA POWER fetch, -999 → NaN, disk cache, offline fallback
-- `src/features.py` — clean daily DataFrame → per-location features dict
-- `src/scoring.py` — rule-based Water / Soil / Climate sub-scores (0–100) + weighted total
-- `src/explain.py` — template-based explanation; strings in `TEXTS[lang]` (only `"fr"` now)
-- `data/crops.json` — crop knowledge base (approximate, `needs_validation: true`)
-- `data/rotations.json` — candidate rotations (editable)
-- `data/fallback_beni_mellal.json` — raw POWER response for Beni Mellal (offline demo)
-- `data/cache/` — POWER responses cache (gitignored)
-- `docs/scoring.md` — every scoring rule, must stay in sync with `src/scoring.py`
+- `frontend/design.md` — **design system, single source of truth** for every screen/component.
+- `frontend/src/theme/tokens.ts` — the ONLY place design values live; `tokens.css` is generated
+  from it (`npm run tokens`). Tests fail on raw hex/px/rgb() anywhere else in `src/`.
+- `frontend/src/components/` — shared components (design.md §6); `router/` — routes + tab config;
+  `pages/` — one file per screen (currently placeholders); `mocks/` — page fixture data;
+  `services/` — future backend calls (placeholder only).
+- The old Streamlit pipeline (NASA POWER client, features, scoring, explain, crops/rotations
+  data, `docs/scoring.md`, pytest suite) was deleted from the tree; it is intact in commit
+  `639732c` and is meant to be restored into `backend/` later (ARCHITECTURE.md §7).
 
-## Commands (Windows, from repo root)
+## Commands (Windows)
 ```
-python -m venv .venv && .venv\Scripts\activate
-pip install -r requirements.txt
-python -m src.power_client      # smoke test: real API call (or fallback)
-python -m pytest -q             # tests
-streamlit run app.py            # app
+docker compose up --build       # from repo root: UI :8080, backend /health :8000
+
+cd frontend                     # everything below runs from frontend/ (Node >= 24.15)
+npm ci
+npm run dev                     # dev server :5173
+npm test                        # vitest
+npm run typecheck && npm run lint && npm run format:check
+npm run tokens                  # after editing src/theme/tokens.ts
 ```
 
 ## Conventions
+- New screen/component → follow `frontend/design.md` §11 checklist; never hardcode design values.
 - Never invent numbers: explanations only use values computed in `features`/`scoring`.
 - Crop values are approximate (FAO-style); always keep `source` + `needs_validation`.
 - Any change to a scoring rule → update the code comment AND `docs/scoring.md` AND tests.
 - Clearly separate NASA data (POWER) from non-NASA data (crop table, rotations).
 - POWER fill value -999 = missing. Growing season = Oct–May, labelled by the end year.
-- UI text in French; add languages via `src/explain.py` `TEXTS` dict, not inline strings.
-- Small, clear git commits; keep `streamlit run app.py` working after every commit.
-- Tests must not hit the network (use fixtures / synthetic DataFrames).
+- UI language: French-first was the original rule, but design.md uses English labels; this is
+  an OPEN decision (ARCHITECTURE.md §8.4 #13) — ask before writing real page copy.
+- Small, clear git commits; keep `docker compose up --build` working after every commit.
+- Tests must not hit the network (use fixtures / mocks).

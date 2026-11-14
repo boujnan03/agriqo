@@ -1,0 +1,13 @@
+/* Screen frame: §4 edge padding; reserves room for the fixed §6 tab bar. */
+.screen {
+  min-height: 100dvh;
+  background: var(--white);
+}
+
+.content {
+  padding: var(--screen-padding);
+}
+
+.withTabBar {
+  padding-bottom: calc(var(--tab-bar-height) + var(--screen-padding));
+}

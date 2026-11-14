@@ -1,0 +1,68 @@
+/* design.md §7.1 Cover template; §6 photo frame exception (full-bleed, no radius, bottom gradient). */
+.cover {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 100dvh;
+  overflow: hidden;
+}
+
+/* Two-class selector so these overrides beat PhotoFrame.module.css regardless of CSS order. */
+.cover .photo {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  border-radius: 0; /* §6: the Cover photo is full-bleed, so no radius (deliberate). */
+}
+
+/* §6 gradient at the bottom edge only, for text legibility; never a full-image tint. */
+.cover .photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-photo-bottom);
+  pointer-events: none;
+}
+
+.content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-32);
+  padding: var(--screen-padding);
+  color: var(--white);
+  text-align: center;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.logo {
+  display: inline-flex;
+  padding: var(--space-12);
+  border-radius: var(--radius-pill);
+  background: var(--white);
+  color: var(--green-900);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--font-size-hero-title);
+  font-weight: var(--font-weight-heading);
+}
+
+.tagline {
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+}

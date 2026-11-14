@@ -1,0 +1,145 @@
+/* design.md §7.4 Recommendation list: featured card, option cards row, stepped plan, CTA. */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-gap);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  margin: 0;
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-heading);
+  color: var(--text-900);
+}
+
+.cycleIcon {
+  display: inline-flex;
+  color: var(--green-700);
+}
+
+.muted {
+  color: var(--text-600);
+}
+
+/* Whole cards are real links (§9); the browser's default focus outline is kept. */
+.cardLink {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  border-radius: var(--radius-card);
+}
+
+/* Featured card: text left, square photo right. */
+.featured {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+}
+
+.featuredText {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.eyebrow {
+  font-weight: var(--font-weight-label);
+  color: var(--green-900);
+}
+
+.featuredName {
+  font-size: var(--font-size-hero-title);
+  font-weight: var(--font-weight-heading);
+  color: var(--text-900);
+}
+
+.featured .featuredPhoto {
+  width: 40%;
+  flex-shrink: 0;
+}
+
+/* Option cards: a row of equal columns. */
+.options {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: var(--space-12);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-8);
+  height: 100%;
+}
+
+.optionName {
+  font-weight: var(--font-weight-label);
+  color: var(--text-900);
+}
+
+/* Stepped rotation plan. */
+.steps {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.steps li + li {
+  border-top: var(--border-width-hairline) solid var(--border);
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  min-height: var(--touch-target);
+  padding-block: var(--space-8);
+  color: inherit;
+  text-decoration: none;
+}
+
+.stepNumber {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--space-32);
+  height: var(--space-32);
+  border-radius: var(--radius-pill);
+  background: var(--green-tint);
+  color: var(--green-900);
+  font-weight: var(--font-weight-bold);
+}
+
+.stepText {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.stepCrop {
+  font-weight: var(--font-weight-label);
+  color: var(--text-900);
+}
+
+.chevron {
+  display: inline-flex;
+  color: var(--text-600);
+}

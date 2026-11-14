@@ -1,0 +1,23 @@
+I built the "Votre ferme" page at `/farm` using the mock fixture. Typecheck, lint, format check and tests all pass (34 tests), and I rebuilt the frontend container, where `/farm` returns 200. I haven't looked at it in a browser yet, so open http://localhost:8080/farm to check the layout.
+
+**What's on the page** ([Farm.tsx](frontend/src/pages/Farm.tsx), [Farm.module.css](frontend/src/pages/Farm.module.css))
+- A "Votre ferme" header with no back arrow.
+- A rounded 4:3 map placeholder ("Carte : vue satellite de la parcelle"). The pin and the "Béni Mellal" chip sit together in its bottom-left corner. They're separate from the placeholder, so they'll stay on top of the real map later. I put them in the corner rather than the centre so they don't cover the placeholder's own icon and label.
+- A "Détails de la ferme" card with three rows: Type de sol (Argileux), Disponibilité en eau (Limitée), Culture actuelle (Blé). Each has its icon in the matching soil, water or plant colour.
+- "Analyser ma ferme" goes to `/overview`.
+- The tab bar shows **Map** as active, as you chose.
+
+**Supporting changes**
+- The `FarmData` type is in [src/types/farm.ts](frontend/src/types/farm.ts). The fixture is in [src/mocks/farm.ts](frontend/src/mocks/farm.ts) and is marked as illustrative, not NASA data.
+- I replaced `YourFarm.tsx` with `Farm.tsx` and updated [routes.tsx](frontend/src/router/routes.tsx).
+- I removed the old `/farm` case from [routes.test.tsx](frontend/tests/pages/routes.test.tsx). [Farm.test.tsx](frontend/tests/pages/Farm.test.tsx) now covers the fact values, the button, the header and the active tab. It also includes the fixture type check, which `npm run typecheck` really does run on the test files.
+
+**Gaps in design.md I filled myself**
+- **The fact-row look isn't defined anywhere.** design.md only mentions "data-row circles". I used a white circle with a thin grey border around each coloured icon, label on the left and value in bold on the right. The Detail page needs the same rows, so this should probably be written into design.md and turned into a shared component before it's built. I kept it inside the page because the prompt ruled out new shared components.
+- **The pin is in the secondary green.** design.md reserves the dark green for buttons and active states, so the pin uses the lighter green, which design.md allows for icon accents.
+
+**Other things to know**
+- **The location chip is faint on the placeholder.** It uses the standard badge, which has the same light-green background as the map placeholder, so only its dark-green text stands out. It will look fine on a real map image.
+- **The tab labels are still English** ("Home", "Map"…), copied from design.md, while the rest of the page is French. Translating them means editing `tabs.ts`, which is outside this task.
+
+Nothing is committed.s

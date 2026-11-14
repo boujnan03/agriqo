@@ -1,0 +1,53 @@
+/* Icon-labeled fact rows (design.md §5 data-row circles, §2 data-icon colors). */
+.facts {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.fact {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  padding-block: var(--space-12);
+}
+
+.fact + .fact {
+  border-top: var(--border-width-hairline) solid var(--border);
+}
+
+.icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  padding: var(--space-8);
+  border-radius: var(--radius-pill);
+  border: var(--border-width-hairline) solid var(--border);
+  background: var(--white);
+}
+
+.soil {
+  color: var(--icon-soil);
+}
+
+.water {
+  color: var(--icon-water);
+}
+
+.plant {
+  color: var(--icon-plant);
+}
+
+.neutral {
+  color: var(--green-700);
+}
+
+.label {
+  flex: 1;
+  color: var(--text-600);
+}
+
+.value {
+  margin: 0;
+  font-weight: var(--font-weight-label);
+  color: var(--text-900);
+}

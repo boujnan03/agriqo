@@ -1,0 +1,32 @@
+I built the "Aperçu de la ferme" dashboard at `/overview` from the mock fixture. Typecheck, lint, format check and tests all pass (40 tests), and the rebuilt container serves `/overview` with a 200. I haven't looked at it in a browser yet, so the chart layout in particular needs a visual check at http://localhost:8080/overview.
+
+**The mock numbers don't add up**
+- **Average temperature:** the summary card shows 24 °C, but the six monthly values average about 20.7 °C.
+- **Total rainfall:** the card shows 280 mm, but the monthly bars add up to 171 mm.
+- **Wrong months:** the chart covers January to June, while the project's growing season is October to May.
+
+I used the values exactly as your prompt gave them and noted the mismatch in the fixture's comment. Anyone comparing the summary card with the chart right below it will see the totals disagree. Either make the monthly values match the totals, or compute the totals from the monthly values.
+
+**Active tab is Home, not Insights.** I kept the tab mapping you confirmed for `/farm`, where Home is the dashboard tab. The prompt's claim that Recommendations has no tab bar doesn't hold: design.md §7.4 gives it one and Insights already opens it. "Voir mes recommandations" adds a second way in.
+
+**What's on the page** ([Overview.tsx](frontend/src/pages/Overview.tsx))
+- **Résumé climatique:** location, then "Température moyenne 24 °C" and "Précipitations totales 280 mm" side by side, with icons in the secondary green.
+- **Température et précipitations:** the chart.
+- **Two bar cards:** "Humidité du sol 68%" and "Indice de santé Bon · 82%".
+- **"Voir mes recommandations":** goes to `/recommendations`.
+
+**The chart** ([ClimateChart.tsx](frontend/src/pages/overview/ClimateChart.tsx))
+- **No new dependency:** plain CSS bars for rainfall plus a small SVG line for temperature.
+- **Separate scales:** each series uses its own scale.
+- **Values shown:** the exact numbers are printed under each month, and the legend names each series and its unit ("ligne" / "barres"), so colour isn't the only cue. Screen readers get all the values in one label.
+- **Height:** design.md has no chart spec, so I set the height to 5 × the largest spacing step. That's the only value I made up.
+
+**Tests**
+- [Overview.test.tsx](frontend/tests/pages/Overview.test.tsx) checks the summary values, both bars, the button, the Home tab and the fixture type.
+- [ClimateChart.test.tsx](frontend/tests/pages/ClimateChart.test.tsx) checks that there are 6 temperature points and 6 rainfall bars, plus the month labels and the legend.
+
+**Other changes:** I removed the old `FarmOverview.tsx` placeholder and its case in `routes.test.tsx`, and updated `routes.tsx`. The new types are in [src/types/overview.ts](frontend/src/types/overview.ts) and the fixture is in [src/mocks/overview.ts](frontend/src/mocks/overview.ts).
+
+**Worth knowing before a demo:** the "Indice de santé" score and the soil moisture figure have no stated source yet. Before real data replaces them, decide where they come from (NASA POWER provides a root-zone soil wetness value, for example) and show a caveat on screen, as design.md §1 asks.
+
+Nothing is committed.

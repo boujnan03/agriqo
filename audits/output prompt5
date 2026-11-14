@@ -1,0 +1,41 @@
+Crop Detail is built at `/crop/:id`. All five pages now run on mock data, and you can click through Cover → Farm → Overview → Recommendations → Crop Detail and back. Typecheck, lint, format check and tests all pass (52 tests), and the rebuilt container is running. I haven't looked at the page in a browser; http://localhost:8080 → "Commencer" walks the whole flow.
+
+**What's on the page** ([CropDetail.tsx](frontend/src/pages/CropDetail.tsx))
+- **Header:** "Détails", with a back arrow to `/recommendations`. No tab bar.
+- **Banner:** a rounded 16:9 photo placeholder with the bottom gradient, the crop name in white, and "Recommandé" shown only for Blé.
+- **Body:** the description, then three fact rows:
+  - Besoin en eau, in the water colour.
+  - Meilleure saison, a calendar icon in the secondary green, the same colour Overview uses for general data.
+  - Rendement attendu, in the plant colour.
+- **"Pourquoi ce choix ?":** the crop's own text in the light-green box.
+- **"Enregistrer ce plan":** saves nothing. It only shows "Plan enregistré pour cette session (démo : rien n'est sauvegardé)", announced to screen readers. The message resets when you switch crops.
+- **Unknown ids:** an id like `/crop/mais` shows the existing "Page introuvable" page.
+
+**Data:** each of the three crops has its own values, taken from your prompt. The `CropDetail` type is in [src/types/cropDetail.ts](frontend/src/types/cropDetail.ts) and reuses the shared `CropId`. The lookup in [src/mocks/cropDetails.ts](frontend/src/mocks/cropDetails.ts) is typed so the typecheck fails if any crop id is missing. The values are labelled as approximate, needing validation, and not NASA data.
+
+**The shared fact-row component you chose:** [FactList](frontend/src/components/FactList.tsx) holds Farm's code unchanged, plus a new "neutral" colour for facts that aren't about soil, water or crops. Farm now uses it too; its look and tests are unchanged. That's the one edit to a previously built page.
+
+**Tests**
+- **New** ([CropDetail.test.tsx](frontend/tests/pages/CropDetail.test.tsx)):
+  - Each crop's name, description, facts and "why" text, checked against that crop's own data.
+  - The badge appears only for Blé.
+  - The back arrow, and no tab bar.
+  - The save confirmation.
+  - The unknown-id case.
+  - One test that clicks through the entire flow from `/` and back.
+- **Updated:**
+  - Two Recommendations tests now check for the real crop name instead of the old placeholder text.
+  - `routes.test.tsx` now only checks the build-test page at `/__smoke`, since every real screen has its own test.
+
+**Still open**
+- **Insights tab:** it still leads to Recommendations, which has no tab bar, and design.md §7.4 still says it has one. This needs your decision from last time.
+- **design.md is behind the code.** It doesn't yet describe:
+  - the fact-row look or the new FactList component;
+  - the gradient token;
+  - the chart.
+- **Focus ring and hover:** neither exists anywhere yet (§9), and there's no token for them.
+- **Overview's mock numbers** still disagree with each other (24 °C and 280 mm vs. the monthly values).
+- **Unused scaffolding:** `src/pages/placeholder/PlaceholderNotice.tsx` is no longer used by any page and can be deleted. The `/__smoke` test page still uses its stylesheet.
+- **Tab labels** are still English.
+
+Nothing is committed. All the work across these pages is sitting uncommitted on `main`, so commit it whenever you're ready.
