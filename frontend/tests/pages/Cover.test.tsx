@@ -1,0 +1,46 @@
+import { screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
+
+import { Cover } from "../../src/pages/Cover";
+import { TAB_BAR_LABEL } from "../../src/router/tabs";
+import { renderRoute, renderWithRouter } from "../utils";
+
+describe("Cover page (design.md §7.1)", () => {
+  it("renders the app name, tagline and photo placeholder", () => {
+    renderWithRouter(<Cover />);
+    expect(
+      screen.getByRole("heading", { level: 1, name: "FieldShift AI" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Rotation de cultures intelligente pour un avenir durable.",
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("img", { name: "Photo : champ de blé" }),
+    ).toBeInTheDocument();
+  });
+
+  it("'Commencer' leads to the farm screen; 'Se connecter' is present", () => {
+    renderWithRouter(<Cover />);
+    // A navigation action, so a real <a href> (design.md §9), styled as the primary button.
+    expect(screen.getByRole("link", { name: "Commencer" })).toHaveAttribute(
+      "href",
+      "/farm",
+    );
+    expect(
+      screen.getByRole("link", { name: "Se connecter" }),
+    ).toBeInTheDocument();
+  });
+
+  it("is served at / with no header and no tab bar", () => {
+    renderRoute("/");
+    expect(
+      screen.getByRole("heading", { level: 1, name: "FieldShift AI" }),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole("banner")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("navigation", { name: TAB_BAR_LABEL }),
+    ).not.toBeInTheDocument();
+  });
+});

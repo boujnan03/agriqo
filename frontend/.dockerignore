@@ -1,0 +1,10 @@
+# Installed / generated (rebuilt inside the image)
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Not needed to build the site
+*.md
+Dockerfile
+.dockerignore

@@ -1,0 +1,70 @@
+/* design.md §7.5 Detail template: banner, description, fact rows, "why" box, primary CTA. */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-gap);
+}
+
+/* §6: text-bearing in-card photo → keeps its radius, bottom-only gradient for legibility. */
+.banner {
+  position: relative;
+}
+
+.banner .photo {
+  position: relative;
+}
+
+.banner .photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-photo-bottom);
+  pointer-events: none;
+}
+
+.bannerText {
+  position: absolute;
+  left: var(--padding-card);
+  right: var(--padding-card);
+  bottom: var(--padding-card);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-8);
+}
+
+.cropName {
+  margin: 0;
+  font-size: var(--font-size-hero-title);
+  font-weight: var(--font-weight-heading);
+  color: var(--white);
+}
+
+.description {
+  margin: 0;
+  color: var(--text-600);
+}
+
+.why {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.whyTitle {
+  margin: 0;
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-heading);
+  color: var(--green-900);
+}
+
+.whyText {
+  margin: 0;
+  color: var(--text-900);
+}
+
+.status {
+  margin: 0;
+  text-align: center;
+  color: var(--text-600);
+}

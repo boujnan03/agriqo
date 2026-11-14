@@ -1,0 +1,30 @@
+/* design.md §6 Header, §3 screen-title type, §4 touch targets. */
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  height: var(--header-height);
+  padding-inline: var(--screen-padding);
+  background: var(--white);
+}
+
+.title {
+  flex: 1;
+  margin: 0;
+  font-size: var(--font-size-screen-title);
+  font-weight: var(--font-weight-heading);
+  color: var(--text-900);
+}
+
+.iconButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch-target);
+  height: var(--touch-target);
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--text-900);
+  cursor: pointer;
+}

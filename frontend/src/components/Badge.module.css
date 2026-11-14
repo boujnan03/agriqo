@@ -1,0 +1,10 @@
+/* design.md §6 Badge/pill. */
+.badge {
+  display: inline-block;
+  padding: var(--padding-badge-y) var(--padding-badge-x);
+  border-radius: var(--radius-pill);
+  background: var(--green-tint);
+  color: var(--green-900);
+  font-size: var(--font-size-badge);
+  font-weight: var(--font-weight-bold);
+}

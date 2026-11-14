@@ -1,0 +1,50 @@
+/* design.md §6 Bottom tab bar. */
+.bar {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  height: var(--tab-bar-height);
+  background: var(--white);
+  border-top: var(--border-width-hairline) solid var(--border);
+}
+
+.list {
+  display: flex;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  flex: 1;
+  display: flex;
+}
+
+.tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  min-width: var(--touch-target);
+  min-height: var(--touch-target);
+  background: none;
+  border: none;
+  color: var(--tab-inactive);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-label);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.tab:disabled {
+  cursor: default;
+}
+
+.active {
+  color: var(--green-900);
+  font-weight: var(--font-weight-bold);
+}

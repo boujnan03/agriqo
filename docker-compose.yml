@@ -1,0 +1,45 @@
+# Field Shift: frontend (React/Vite static build served by nginx) + backend (FastAPI placeholder).
+# Run: docker compose up --build    -> UI http://localhost:8080, backend http://localhost:8000/health
+# See ARCHITECTURE.md.
+
+# Fixed project name: keeps image/volume names stable whatever the checkout folder is called.
+name: fieldshift
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    networks: [fieldshift]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        # Backend URL as seen from the user's BROWSER (not the Docker network name).
+        # Vite bakes it into the bundle at build time: change it → rebuild.
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000}
+    ports:
+      - "8080:80"
+    networks: [fieldshift]
+    # Start order only. The frontend does not call the backend yet, so it does not
+    # wait for it to be healthy.
+    depends_on:
+      - backend
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+networks:
+  fieldshift:
