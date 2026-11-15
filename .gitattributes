@@ -1,0 +1,4 @@
+# Season-model runtime files are checked against SHA256SUMS before loading.
+# Keep their bytes exactly as committed: no CRLF conversion on Windows checkouts
+# (core.autocrlf=true would otherwise change the .json/.csv hashes).
+backend/app/seasons/model_files/** -text

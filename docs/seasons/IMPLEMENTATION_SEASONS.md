@@ -1,5 +1,7 @@
 # Implémentation : « types de saison » (modèle AGRIQO v5) dans l'application
 
+Runtime files: `backend/app/seasons/model_files/`. Training files: `ml/seasons/`.
+
 > **À qui s'adresse ce document.** À l'instance de Claude Code qui fera l'implémentation. Il est
 > autonome : il contient les décisions de l'équipe, des constats vérifiés sur les fichiers du
 > modèle, l'architecture cible, les tests attendus et l'ordre de travail. Tout ce qui existe déjà
@@ -31,8 +33,8 @@
 
 ## 2. Ce que fait le modèle
 
-**Source :** le notebook `C:\Users\lenovo\Downloads\agriqo-season-model-training-v5.ipynb`. Il est
-hors du dépôt. Les références ci-dessous utilisent ses titres de section.
+**Source :** le notebook `ml/seasons/notebook/agriqo-season-model-training-v5.ipynb` (dans le
+dépôt). Les références ci-dessous utilisent ses titres de section.
 
 | Sujet | Où le lire dans le notebook |
 |---|---|
@@ -122,8 +124,9 @@ hors du dépôt. Les références ci-dessous utilisent ses titres de section.
 
 ## 3. Fichiers du modèle
 
-**Emplacement actuel :** `results (1)/` à la racine du dépôt (une copie identique existe dans
-`C:\Users\lenovo\Downloads\results (1)\`). **Destination :** `backend/app/seasons/model_files/`.
+**Emplacement :** les 4 fichiers d'exécution (les 4 premières lignes du tableau) sont dans
+`backend/app/seasons/model_files/`, avec leurs empreintes dans `model_files/SHA256SUMS`.
+`model_selection.csv` est dans `ml/seasons/reports/v5/`. Empreintes vérifiées à la mise en place.
 
 | Fichier | Octets | SHA-256 |
 |---|---|---|
@@ -145,21 +148,23 @@ hors du dépôt. Les références ci-dessous utilisent ses titres de section.
   lat, lon, region, <8 features>_anom`. **Il n'y a pas de colonne de classe** : le backend la
   calcule au démarrage.
 - **`model_selection.csv` :** les 24 candidats. Ce fichier n'est utilisé que pour la documentation
-  et la transparence, pas à l'exécution.
+  et la transparence, pas à l'exécution (d'où son emplacement dans `ml/seasons/reports/v5/`).
 
-**À ne pas copier**, car ce sont d'autres fichiers présents dans `results (1)/` :
-- `power_cache/` : 342 fichiers JSON NASA POWER bruts, 89 Mo ;
-- `__results___files/` : les graphiques du notebook.
+**Autres fichiers d'entraînement**, hors de `model_files/` :
+- `power_cache/` : 342 fichiers JSON NASA POWER bruts, 89 Mo, dans `ml/seasons/data/power_cache/`,
+  **local uniquement** (ignoré par git) ;
+- les graphiques du notebook, dans `ml/seasons/reports/v5/` :
+  `cells-by-region-and-season-types-2022.png` et `season-types-pca-scatter.png`.
 
 ## 4. Décisions de l'équipe
 
 1. **Fichiers :**
-   - copier les 5 fichiers de `results (1)/` vers `backend/app/seasons/model_files/` ;
-   - ajouter `/results (1)/` au `.gitignore` racine ;
-   - créer un `.dockerignore` **racine** contenant `results (1)/`. Les contextes de build actuels
-     sont `./backend` et `./frontend`, donc cette entrée est préventive : l'écrire dans le
-     commentaire du fichier.
-2. **Aucun appel NASA POWER en direct.** Tout vient des 5 fichiers.
+   - les 4 fichiers d'exécution sont déjà dans `backend/app/seasons/model_files/` (§3) ;
+   - `ml/seasons/data/` et `results__1_.zip` sont déjà dans le `.gitignore` racine ;
+   - créer un `.dockerignore` **racine** contenant `ml/seasons/data/` et `results__1_.zip`. Les
+     contextes de build actuels sont `./backend` et `./frontend`, donc ces entrées sont
+     préventives : l'écrire dans le commentaire du fichier.
+2. **Aucun appel NASA POWER en direct.** Tout vient des 4 fichiers d'exécution.
 3. **Le classement des cultures** (`frontend/src/mocks/recommendations.ts`, `cropDetails.ts`) est
    **conservé, avec la mention « Exemple »** (§10).
 4. **Ajouter « irrigué / pluvial » aux données de la ferme.** Pour une ferme irriguée, les
@@ -209,7 +214,7 @@ backend/
 +   config.py               CORS_ORIGINS (variable d'env, séparée par des virgules)
 +   seasons/
 +     __init__.py
-+     model_files/          les 5 fichiers (§3)
+      model_files/          les 4 fichiers d'exécution (§3) + SHA256SUMS (déjà en place)
 +     constants.py          seuils nommés (§8), MARGIN_LIMIT, NEAR_MAX_DEG, EXPECTED_SHA256
 +     labels.py             nom français → identifiant stable (§9.1)
 +     store.py              chargement + contrôles (§6.3), tables précalculées en mémoire
@@ -270,7 +275,7 @@ threadpoolctl==3.8.0
 Au premier échec, on s'arrête : `status = "error"`, l'erreur est journalisée, l'application
 démarre quand même, et `/seasons/*` répond 503.
 
-1. Les 5 fichiers existent dans `model_files/`, à un chemin fixe calculé depuis `__file__`.
+1. Les 4 fichiers d'exécution existent dans `model_files/`, à un chemin fixe calculé depuis `__file__`.
    **Aucun chemin ne vient d'une requête ni d'une variable d'environnement.**
 2. **SHA-256** de chaque fichier égal à `EXPECTED_SHA256` (valeurs du §3), **avant** tout
    `joblib.load`. joblib, comme pickle, peut exécuter du code.
@@ -938,13 +943,13 @@ Ensuite, `docker compose up --build` depuis la racine.
 ## 13. Étapes (dans l'ordre)
 
 **Étape 0 : préparation (≈ 0,5 h)**
-- Copier les 5 fichiers (§3) et vérifier les SHA-256 après la copie.
-- `.gitignore` et `.dockerignore` racine (décision 1).
+- Fichiers déjà en place (§3) : vérifier `sha256sum -c backend/app/seasons/model_files/SHA256SUMS`.
+- `.dockerignore` racine (décision 1) ; le `.gitignore` est déjà fait.
 - Dépendances (§6.1).
 - `CORS_ORIGINS` dans `.env.example`.
 
 *Terminé quand :*
-- les 5 empreintes correspondent ;
+- les 4 empreintes de `SHA256SUMS` correspondent ;
 - `pip install -r backend/requirements-dev.txt` passe ;
 - `docker compose up --build` construit les deux images et `/health` répond 200.
 
