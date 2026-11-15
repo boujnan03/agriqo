@@ -1,0 +1,84 @@
+{
+  "status": "ok",
+  "source": "Open-Meteo",
+  "location": { "lat": 32.4, "lon": -6.45 },
+  "timezone": "Africa/Casablanca",
+  "today": {
+    "date": "2026-11-15",
+    "observed_at": "2026-11-15T14:15",
+    "temp_c": 21.1,
+    "weather_code": 1,
+    "condition": "sunny",
+    "icon": "sun",
+    "humidity_pct": 62.0,
+    "wind_kmh": 2.8,
+    "temp_max_c": 21.4,
+    "temp_min_c": 10.7,
+    "precip_probability_pct": 0.0
+  },
+  "days": [
+    {
+      "date": "2026-11-15",
+      "weather_code": 45,
+      "condition": "fog",
+      "icon": "cloud-fog",
+      "temp_max_c": 21.4,
+      "temp_min_c": 10.7,
+      "precip_probability_pct": 0.0
+    },
+    {
+      "date": "2026-11-16",
+      "weather_code": 45,
+      "condition": "fog",
+      "icon": "cloud-fog",
+      "temp_max_c": 22.5,
+      "temp_min_c": 10.9,
+      "precip_probability_pct": 0.0
+    },
+    {
+      "date": "2026-11-17",
+      "weather_code": 45,
+      "condition": "fog",
+      "icon": "cloud-fog",
+      "temp_max_c": 23.6,
+      "temp_min_c": 10.6,
+      "precip_probability_pct": 0.0
+    },
+    {
+      "date": "2026-11-18",
+      "weather_code": 45,
+      "condition": "fog",
+      "icon": "cloud-fog",
+      "temp_max_c": 24.2,
+      "temp_min_c": 11.0,
+      "precip_probability_pct": 0.0
+    },
+    {
+      "date": "2026-11-19",
+      "weather_code": 3,
+      "condition": "cloudy",
+      "icon": "cloud",
+      "temp_max_c": 23.9,
+      "temp_min_c": 10.3,
+      "precip_probability_pct": 0.0
+    },
+    {
+      "date": "2026-11-20",
+      "weather_code": 45,
+      "condition": "fog",
+      "icon": "cloud-fog",
+      "temp_max_c": 24.6,
+      "temp_min_c": 9.7,
+      "precip_probability_pct": 0.0
+    },
+    {
+      "date": "2026-11-21",
+      "weather_code": 45,
+      "condition": "fog",
+      "icon": "cloud-fog",
+      "temp_max_c": 26.4,
+      "temp_min_c": 8.7,
+      "precip_probability_pct": 0.0
+    }
+  ]
+}

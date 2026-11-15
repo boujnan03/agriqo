@@ -104,8 +104,8 @@ export function Profile() {
     profileData.notificationsEnabled,
   );
   const [unitsNotice, setUnitsNotice] = useState(false);
-  const { parcelPicked } = useSession();
-  const parcelsDiagnosed = parcelPicked ? 1 : 0;
+  const { parcel } = useSession();
+  const parcelsDiagnosed = parcel ? 1 : 0;
 
   const cycleLanguage = () => {
     const current = LANGUAGES.indexOf(i18n.language as Language);

@@ -25,6 +25,15 @@ export function formatNumber(
   }).format(value);
 }
 
+/**
+ * A latitude/longitude in decimal degrees, 3 decimals (~110 m, the precision the backend works
+ * at), always with a dot and Western digits whatever the UI language: coordinates are a
+ * technical notation, read the same everywhere.
+ */
+export function formatCoordinate(value: number): string {
+  return value.toFixed(3);
+}
+
 /** "2026-11-16" → "lun." (fr) / "Mon" (en) / "الاثنين" (ar). */
 export function formatWeekday(isoDate: string, language: string): string {
   return new Intl.DateTimeFormat(localeOf(language), {

@@ -1,0 +1,52 @@
+/* design.md §6 Request states: loading / our backend unreachable. Standard card content. */
+.loading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  margin: 0;
+  color: var(--text-600);
+}
+
+.spinner {
+  display: inline-flex;
+  color: var(--green-700);
+  animation: spin 1s linear infinite;
+}
+
+/* Motion is decoration here: the text already says it is loading. */
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-12);
+  text-align: center;
+}
+
+.errorIcon {
+  display: inline-flex;
+  color: var(--text-600);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-heading);
+  color: var(--text-900);
+}
+
+.text {
+  margin: 0;
+  color: var(--text-600);
+}

@@ -21,7 +21,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app import config
+from app import background, config
 from app.diagnostic import build_diagnostic
 from app.models import DiagnosticRequest, DiagnosticResponse, WeatherResponse
 from app.weather import build_forecast
@@ -40,6 +40,8 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     ) as client:
         app.state.http = client
         yield
+        # Stop background re-fetches before their HTTP client closes.
+        await background.cancel_all()
 
 
 app = FastAPI(title="Field Shift backend", version="0.1.0", lifespan=lifespan)
@@ -58,7 +60,14 @@ _RANGES = {"lat": (-90, 90), "lon": (-180, 180)}
 
 
 def _error_message(err: dict) -> str:
-    field = str(err["loc"][-1]) if err.get("loc") else "?"
+    loc = [str(part) for part in err.get("loc", ())]
+    # Our own validators' messages are already plain French: drop Pydantic's prefix.
+    msg = str(err.get("msg", "")).removeprefix("Value error, ")
+    if "polygon" in loc:
+        return f"Polygone invalide : {msg}."
+    if err.get("type") == "value_error":
+        return f"Requête invalide : {msg}."
+    field = loc[-1] if loc else "?"
     if field in _RANGES and err.get("type") in {
         "greater_than_equal",
         "less_than_equal",
