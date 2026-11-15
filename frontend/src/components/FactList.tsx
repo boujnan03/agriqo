@@ -13,8 +13,10 @@ export type FactTone = "soil" | "water" | "plant" | "neutral";
 export interface Fact {
   label: string;
   value: string;
-  icon: LucideIcon;
-  tone: FactTone;
+  /** Row icon in its circle. Omit inside a card whose heading already carries the icon. */
+  icon?: LucideIcon;
+  /** Icon color; defaults to "neutral". */
+  tone?: FactTone;
 }
 
 export interface FactListProps {
@@ -23,7 +25,7 @@ export interface FactListProps {
 
 /**
  * Icon-labeled fact rows (design.md §5 data-row circles, §2 data-icon colors), used by the
- * Map/Data-entry (§7.2) and Detail (§7.5) templates: icon circle · label · value.
+ * Home (§7.2), Detail (§7.6) and, without icons, the Data cards (§6): icon circle · label · value.
  * Not interactive: these are facts about the field, not things to tap (§2).
  */
 export function FactList({ facts }: FactListProps) {
@@ -31,9 +33,13 @@ export function FactList({ facts }: FactListProps) {
     <dl className={styles.facts}>
       {facts.map((fact) => (
         <div key={fact.label} className={styles.fact}>
-          <span className={`${styles.icon} ${styles[fact.tone]}`}>
-            <Icon icon={fact.icon} size="data" />
-          </span>
+          {fact.icon ? (
+            <span
+              className={`${styles.icon} ${styles[fact.tone ?? "neutral"]}`}
+            >
+              <Icon icon={fact.icon} size="data" />
+            </span>
+          ) : null}
           <dt className={styles.label}>{fact.label}</dt>
           <dd className={styles.value}>{fact.value}</dd>
         </div>

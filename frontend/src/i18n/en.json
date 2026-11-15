@@ -31,12 +31,21 @@
   },
   "farm": {
     "title": "Your farm",
-    "mapPlaceholder": "Map: satellite view of the plot",
-    "detailsTitle": "Farm details",
-    "soilType": "Soil type",
-    "waterAvailability": "Water availability",
-    "currentCrop": "Current crop",
-    "analyze": "Analyze my farm"
+    "soil": "Soil",
+    "climate": "Climate",
+    "humidity": "Moisture",
+    "relief": "Relief",
+    "texture": "Texture",
+    "ph": "pH",
+    "organicCarbon": "Organic carbon",
+    "tempMean": "Mean temperature",
+    "tempMax": "Average high",
+    "rainYear": "Annual rainfall",
+    "frostDays": "Frost days per year",
+    "surfaceWetness": "Surface soil moisture",
+    "level": "Level",
+    "altitude": "Altitude",
+    "slope": "Slope"
   },
   "overview": {
     "title": "Farm overview",
@@ -110,10 +119,18 @@
   "dataCard": {
     "source": "Data: {{source}}",
     "unavailable": "Data unavailable",
-    "noDataShort": "No data"
+    "noDataShort": "No data",
+    "noData": {
+      "outsideCoverage": "No data for this point: it is outside the area this source covers.",
+      "waterBody": "No data for this point: it lies on a body of water."
+    }
   },
   "units": {
-    "mmPerYear": "{{value}} mm/year"
+    "mmPerYear": "{{value}} mm/year",
+    "celsius": "{{value}} °C",
+    "percent": "{{value}}%",
+    "gPerKg": "{{value}} g/kg",
+    "meters": "{{value}} m"
   },
   "data": {
     "texture": {
@@ -129,6 +146,16 @@
       "silt": "Silt",
       "loamy_sand": "Loamy sand",
       "sand": "Sand"
+    },
+    "humidityLevel": {
+      "sec": "Dry",
+      "moyen": "Medium",
+      "humide": "Wet"
     }
+  },
+  "parcel": {
+    "noneTitle": "No plot picked yet",
+    "noneText": "First pick your plot on the Home map.",
+    "choose": "Pick my plot"
   }
 }

@@ -31,12 +31,21 @@
   },
   "farm": {
     "title": "Votre ferme",
-    "mapPlaceholder": "Carte : vue satellite de la parcelle",
-    "detailsTitle": "Détails de la ferme",
-    "soilType": "Type de sol",
-    "waterAvailability": "Disponibilité en eau",
-    "currentCrop": "Culture actuelle",
-    "analyze": "Analyser ma ferme"
+    "soil": "Sol",
+    "climate": "Climat",
+    "humidity": "Humidité",
+    "relief": "Relief",
+    "texture": "Texture",
+    "ph": "pH",
+    "organicCarbon": "Carbone organique",
+    "tempMean": "Température moyenne",
+    "tempMax": "Température max. moyenne",
+    "rainYear": "Pluie annuelle",
+    "frostDays": "Jours de gel par an",
+    "surfaceWetness": "Humidité du sol en surface",
+    "level": "Niveau",
+    "altitude": "Altitude",
+    "slope": "Pente"
   },
   "overview": {
     "title": "Aperçu de la ferme",
@@ -110,10 +119,18 @@
   "dataCard": {
     "source": "Données : {{source}}",
     "unavailable": "Donnée indisponible",
-    "noDataShort": "Pas de données"
+    "noDataShort": "Pas de données",
+    "noData": {
+      "outsideCoverage": "Pas de données pour ce point : il est hors de la zone couverte par cette source.",
+      "waterBody": "Pas de données pour ce point : il se trouve sur une étendue d'eau."
+    }
   },
   "units": {
-    "mmPerYear": "{{value}}\u00a0mm/an"
+    "mmPerYear": "{{value}}\u00a0mm/an",
+    "celsius": "{{value}}\u00a0°C",
+    "percent": "{{value}}\u00a0%",
+    "gPerKg": "{{value}}\u00a0g/kg",
+    "meters": "{{value}}\u00a0m"
   },
   "data": {
     "texture": {
@@ -129,6 +146,16 @@
       "silt": "Limoneuse",
       "loamy_sand": "Sablo-franche",
       "sand": "Sableuse"
+    },
+    "humidityLevel": {
+      "sec": "Sec",
+      "moyen": "Moyen",
+      "humide": "Humide"
     }
+  },
+  "parcel": {
+    "noneTitle": "Aucune parcelle choisie",
+    "noneText": "Choisissez d'abord votre parcelle sur la carte de l'accueil.",
+    "choose": "Choisir ma parcelle"
   }
 }

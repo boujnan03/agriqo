@@ -2,6 +2,7 @@
 export { Badge, type BadgeProps } from "./Badge";
 export { Button, type ButtonProps, type ButtonVariant } from "./Button";
 export { Card, type CardProps, type CardVariant } from "./Card";
+export { DataCard, type DataCardProps } from "./DataCard";
 export {
   type Fact,
   FactList,
