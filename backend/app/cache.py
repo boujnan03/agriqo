@@ -50,17 +50,22 @@ def round_coord(value: float) -> float:
     return round(value, 3)
 
 
-def cache_key(namespace: str, lat: float, lon: float) -> tuple[str, float, float]:
-    return (namespace, round_coord(lat), round_coord(lon))
+CacheKey = tuple[str, float, float, str]
+
+
+def cache_key(namespace: str, lat: float, lon: float, variant: str = "") -> CacheKey:
+    """`variant` separates answers that depend on more than the point: OpenTopography's
+    answer depends on the drawn polygon's extent, not only on its centroid."""
+    return (namespace, round_coord(lat), round_coord(lon), variant)
 
 
 class TTLCache:
     def __init__(self, max_entries: int = MAX_ENTRIES) -> None:
-        self._data: OrderedDict[tuple[str, float, float], tuple[float, Any]] = OrderedDict()
+        self._data: OrderedDict[CacheKey, tuple[float, Any]] = OrderedDict()
         self._max = max_entries
 
-    def get(self, namespace: str, lat: float, lon: float) -> Any | None:
-        key = cache_key(namespace, lat, lon)
+    def get(self, namespace: str, lat: float, lon: float, variant: str = "") -> Any | None:
+        key = cache_key(namespace, lat, lon, variant)
         hit = self._data.get(key)
         if hit is None:
             return None
@@ -70,8 +75,10 @@ class TTLCache:
             return None
         return value
 
-    def set(self, namespace: str, lat: float, lon: float, value: Any) -> None:
-        key = cache_key(namespace, lat, lon)
+    def set(
+        self, namespace: str, lat: float, lon: float, value: Any, variant: str = ""
+    ) -> None:
+        key = cache_key(namespace, lat, lon, variant)
         self._data[key] = (time.monotonic() + TTL_S[namespace], value)
         self._data.move_to_end(key)
         while len(self._data) > self._max:

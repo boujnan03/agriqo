@@ -1,0 +1,33 @@
+{
+  "location": { "lat": 33.0, "lon": -9.5 },
+  "soil": {
+    "status": "pas_de_donnees",
+    "source": "ISRIC SoilGrids",
+    "message": "Pas de données de sol ici. Vérifiez que le point est sur une terre agricole."
+  },
+  "climate": {
+    "status": "ok",
+    "source": "NASA POWER",
+    "note": "Résolution ~50 km : deux parcelles proches ont le même climat. temp_max_c = moyenne des 12 mois de la température maximale journalière moyenne (T2M_MAX_AVG) sur la période de climatologie : un maximum habituel, pas un record ; frost_days = jours avec T2M_MIN < 0 °C sur les 12 derniers mois (données journalières).",
+    "temp_mean_c": 18.9,
+    "temp_max_c": 22.1,
+    "rain_mm_year": 369,
+    "frost_days": 0,
+    "climatology_period": "2001-2025",
+    "frost_days_period": { "start": "2025-11-15", "end": "2026-11-12" }
+  },
+  "soil_moisture": {
+    "status": "ok",
+    "source": "NASA POWER",
+    "note": "Humidité de surface (GWETTOP, 0-1), résolution ~50 km, quelques jours de retard. Seuils indicatifs du projet, à valider : sec < 0.30 ≤ moyen < 0.60 ≤ humide.",
+    "gwettop": 0.77,
+    "gwetroot": 0.28,
+    "label": "humide",
+    "date": "2026-11-12"
+  },
+  "terrain": {
+    "status": "indisponible",
+    "source": "OpenTopography",
+    "error": "missing_api_key"
+  }
+}

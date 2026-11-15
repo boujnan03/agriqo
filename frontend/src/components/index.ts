@@ -17,6 +17,7 @@ export {
 } from "./LanguageSwitcher";
 export { PhotoFrame, type PhotoFrameProps } from "./PhotoFrame";
 export { ProgressBar, type ProgressBarProps } from "./ProgressBar";
+export { RequestStatus, type RequestStatusProps } from "./RequestStatus";
 export { Screen, type ScreenProps } from "./Screen";
 export {
   SegmentedControl,

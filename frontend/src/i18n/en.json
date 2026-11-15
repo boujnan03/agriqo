@@ -38,27 +38,32 @@
     "tempMean": "Mean temperature",
     "tempMax": "Average high",
     "rainYear": "Annual rainfall",
-    "frostDays": "Frost days per year",
+    "frostDays": "Frost days (last 12 months)",
     "surfaceWetness": "Surface soil moisture",
     "level": "Level",
     "altitude": "Altitude",
-    "slope": "Slope"
+    "slope": "Slope",
+    "soilCaveat": "Estimate (~250 m), not a lab analysis.",
+    "climateCaveat": "Regional averages (~50 km): nearby plots share the same climate.",
+    "moistureCaveat": "Value from {{date}} (data lags a few days)."
   },
   "overview": {
     "title": "Farm overview",
     "climateSummary": "Climate summary",
     "avgTemp": "Average temperature",
-    "totalRainfall": "Total rainfall",
     "tempValue": "{{value}} °C",
-    "rainValue": "{{value}} mm",
     "chartTitle": "Temperature and rainfall",
     "soilMoisture": "Soil moisture",
     "healthIndex": "Health index",
     "seeRecommendations": "See my recommendations",
-    "minTemp": "Average low",
-    "maxTemp": "Average high",
+    "maxTemp": "Typical high",
     "frostDays": "Frost days",
-    "healthSoon": "Coming soon (NDVI)"
+    "healthSoon": "Coming soon (NDVI)",
+    "annualRainfall": "Annual rainfall",
+    "chartUnavailable": "Not available yet: the server doesn't send monthly values yet.",
+    "climatePeriod": "{{period}} averages",
+    "frostPeriod": "From {{start}} to {{end}}",
+    "surfaceWetness": "Surface soil moisture"
   },
   "chart": {
     "ariaLabel": "Temperature and rainfall by month. {{summary}}.",
@@ -107,13 +112,22 @@
   },
   "home": {
     "title": "Home",
-    "intro": "Tap the map to pick your plot.",
-    "pick": "Pick my plot on the map",
-    "mapAlt": "Map: satellite view of the plot",
     "selected": "Selected plot",
     "soilTexture": "Soil texture",
     "annualRain": "Annual rainfall",
-    "seeDiagnostic": "See the full diagnostic"
+    "seeDiagnostic": "See the full diagnostic",
+    "mapLabel": "Map to pick your plot",
+    "draw": {
+      "start": "Tap the map to place the first corner of your plot.",
+      "more": "Corners placed: {{count}}. At least 3 are needed.",
+      "ready": "Corners placed: {{count}}. Close the outline when the plot is complete.",
+      "flat": "These corners don't enclose any area: move one or add another.",
+      "closed": "Outline closed ({{count}} corners). Clear it to draw again.",
+      "addCenter": "Add a corner at the centre of the map",
+      "undo": "Undo the last corner",
+      "close": "Close the outline",
+      "clear": "Clear"
+    }
   },
   "weather": {
     "title": "Weather",
@@ -128,17 +142,35 @@
       "partlyCloudy": "Partly cloudy",
       "cloudy": "Cloudy",
       "showers": "Showers",
-      "rain": "Rain"
+      "rain": "Rain",
+      "fog": "Fog",
+      "drizzle": "Drizzle",
+      "snow": "Snow",
+      "thunderstorm": "Thunderstorm",
+      "unknown": "Unknown conditions"
     }
+  },
+  "request": {
+    "loading": "Loading your plot's data…",
+    "errorTitle": "Can't reach the server",
+    "errorText": "Check your connection, then try again. No data is shown until the server answers.",
+    "retry": "Try again"
   },
   "dataCard": {
     "source": "Data: {{source}}",
     "unavailable": "Data unavailable",
     "noDataShort": "No data",
     "noData": {
-      "outsideCoverage": "No data for this point: it is outside the area this source covers.",
-      "waterBody": "No data for this point: it lies on a body of water."
-    }
+      "soil": "No soil data here. Check that the point is on farmland.",
+      "climate": "No climate data for this point.",
+      "soil_moisture": "No recent soil moisture reading for this point.",
+      "terrain": "No elevation data for this point.",
+      "forecast": "No forecast for this point."
+    },
+    "valueMissing": "Not available",
+    "retrying": "Trying again…",
+    "retryPending": "The server is still trying to get this data. Try again in a moment.",
+    "retryFailed": "The retry couldn't reach the server."
   },
   "units": {
     "mmPerYear": "{{value}} mm/year",
@@ -172,6 +204,10 @@
   "parcel": {
     "noneTitle": "No plot picked yet",
     "noneText": "First pick your plot on the Home map.",
-    "choose": "Pick my plot"
+    "choose": "Pick my plot",
+    "lat": "Lat.",
+    "lon": "Long.",
+    "centre": "Centre:",
+    "shape": "Area ≈ {{area}} ha · {{count}} corners"
   }
 }

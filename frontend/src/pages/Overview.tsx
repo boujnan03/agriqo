@@ -1,26 +1,31 @@
 import type { LucideIcon } from "lucide-react";
 import {
+  CalendarRange,
   CloudRain,
+  Droplets,
   Leaf,
-  MapPin,
   Snowflake,
   Thermometer,
-  ThermometerSnowflake,
   ThermometerSun,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "../components/Button";
 import { Card } from "../components/Card";
+import { DataCard } from "../components/DataCard";
 import { Header } from "../components/Header";
 import { Icon } from "../components/Icon";
 import { ProgressBar } from "../components/ProgressBar";
+import { RequestStatus } from "../components/RequestStatus";
 import { Screen } from "../components/Screen";
-import { overviewData } from "../mocks/overview";
+import { useFormat } from "../i18n/useFormat";
 import { AppTabBar } from "../router/AppTabBar";
 import { PATHS } from "../router/paths";
-import { ClimateChart } from "./overview/ClimateChart";
+import { useSession } from "../state/session";
+import { useParcelData } from "../state/useParcelData";
 import styles from "./Overview.module.css";
+import { NoParcel } from "./parcel/NoParcel";
+import { ParcelCoords } from "./parcel/ParcelCoords";
 
 interface Stat {
   label: string;
@@ -28,38 +33,159 @@ interface Stat {
   icon: LucideIcon;
 }
 
+/** A stack of labeled values (the climate summary row). */
+function Stats({ stats }: { stats: Stat[] }) {
+  return (
+    <dl className={styles.stats}>
+      {stats.map((stat) => (
+        <div key={stat.label} className={styles.stat}>
+          <dt className={styles.statLabel}>
+            <span className={styles.statIcon}>
+              <Icon icon={stat.icon} />
+            </span>
+            {stat.label}
+          </dt>
+          <dd className={styles.statValue}>{stat.value}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
 /**
- * Route "/overview" · design.md §7.4 Insights (the Insights tab): stacked standard cards (climate
- * summary: mean / min / max temperature + rainfall, the monthly chart, frost days, soil
- * moisture), the Health Index as an explicit "not yet available" placeholder (no NDVI source
- * yet, so no score is shown), then one primary CTA into Recommendations. Root header + tab bar.
- * Data comes from the mock fixture for now.
+ * Route "/overview" · design.md §7.4 Insights (the Insights tab), for the parcel picked on Home.
+ * It reuses the SAME diagnostic response as Farm and Home (one request, shared by the session):
+ * climate summary (mean temperature, typical high, annual rainfall), frost days, soil moisture,
+ * each as a Data card with its own source and status.
+ *
+ * Not shown, because the backend does not send them (never filled with made-up values):
+ * - the monthly chart: POWER's monthly climatology is fetched by the backend but not returned
+ *   yet, so the chart card says "not available yet" (ClimateChart is kept for when it is);
+ * - a minimum temperature: the response has no typical low.
+ * The Health Index stays an explicit placeholder (no NDVI source). Then one CTA into
+ * Recommendations. Root header + tab bar.
  */
 export function Overview() {
   const { t } = useTranslation();
-  const data = overviewData;
-  const stats: Stat[] = [
-    {
-      label: t("overview.avgTemp"),
-      value: t("overview.tempValue", { value: data.avgTemp }),
-      icon: Thermometer,
-    },
-    {
-      label: t("overview.minTemp"),
-      value: t("overview.tempValue", { value: data.minTemp }),
-      icon: ThermometerSnowflake,
-    },
-    {
-      label: t("overview.maxTemp"),
-      value: t("overview.tempValue", { value: data.maxTemp }),
-      icon: ThermometerSun,
-    },
-    {
-      label: t("overview.totalRainfall"),
-      value: t("overview.rainValue", { value: data.totalRainfall }),
-      icon: CloudRain,
-    },
-  ];
+  const { maybe } = useFormat();
+  const { parcel } = useSession();
+  const { result, retry } = useParcelData("diagnostic");
+
+  const placeholderCard = (
+    id: string,
+    title: string,
+    icon: LucideIcon,
+    text: string,
+  ) => (
+    <Card>
+      <section className={styles.section} aria-labelledby={id}>
+        <h2 id={id} className={styles.sectionTitle}>
+          <span className={styles.statIcon}>
+            <Icon icon={icon} />
+          </span>
+          {title}
+        </h2>
+        <p className={styles.placeholder}>{text}</p>
+      </section>
+    </Card>
+  );
+
+  const data = () => {
+    if (!parcel || !result) return <NoParcel />;
+    if (result.state !== "success") {
+      return <RequestStatus state={result.state} onRetry={retry} />;
+    }
+    const { climate, soil_moisture } = result.data;
+    return (
+      <>
+        <ParcelCoords parcel={parcel} />
+
+        <DataCard
+          title={t("overview.climateSummary")}
+          icon={Thermometer}
+          tone="neutral"
+          block={climate}
+          noDataText={t("dataCard.noData.climate")}
+          caveat={
+            climate.status === "ok" && climate.climatology_period
+              ? t("overview.climatePeriod", {
+                  period: climate.climatology_period,
+                })
+              : undefined
+          }
+        >
+          {(c) => (
+            <Stats
+              stats={[
+                {
+                  label: t("overview.avgTemp"),
+                  value: maybe(c.temp_mean_c, (v) =>
+                    t("overview.tempValue", { value: v }),
+                  ),
+                  icon: Thermometer,
+                },
+                {
+                  label: t("overview.maxTemp"),
+                  value: maybe(c.temp_max_c, (v) =>
+                    t("overview.tempValue", { value: v }),
+                  ),
+                  icon: ThermometerSun,
+                },
+                {
+                  label: t("overview.annualRainfall"),
+                  value: maybe(c.rain_mm_year, (v) =>
+                    t("units.mmPerYear", { value: v }),
+                  ),
+                  icon: CloudRain,
+                },
+              ]}
+            />
+          )}
+        </DataCard>
+
+        {placeholderCard(
+          "climate-chart",
+          t("overview.chartTitle"),
+          CalendarRange,
+          t("overview.chartUnavailable"),
+        )}
+
+        <DataCard
+          title={t("overview.frostDays")}
+          icon={Snowflake}
+          tone="neutral"
+          block={climate}
+          noDataText={t("dataCard.noData.climate")}
+          caveat={
+            climate.status === "ok" && climate.frost_days_period
+              ? t("overview.frostPeriod", climate.frost_days_period)
+              : undefined
+          }
+        >
+          {(c) => <p className={styles.statValue}>{maybe(c.frost_days)}</p>}
+        </DataCard>
+
+        <DataCard
+          title={t("overview.soilMoisture")}
+          icon={Droplets}
+          tone="water"
+          block={soil_moisture}
+          noDataText={t("dataCard.noData.soil_moisture")}
+        >
+          {(m) =>
+            m.gwettop === null ? (
+              <p className={styles.placeholder}>{t("dataCard.valueMissing")}</p>
+            ) : (
+              <ProgressBar
+                label={t("overview.surfaceWetness")}
+                value={m.gwettop * 100}
+              />
+            )
+          }
+        </DataCard>
+      </>
+    );
+  };
 
   return (
     <Screen
@@ -67,75 +193,15 @@ export function Overview() {
       tabBar={<AppTabBar />}
     >
       <div className={styles.stack}>
-        <Card>
-          <section className={styles.section} aria-labelledby="climate-summary">
-            <div className={styles.sectionHead}>
-              <h2 id="climate-summary" className={styles.sectionTitle}>
-                {t("overview.climateSummary")}
-              </h2>
-              <span className={styles.location}>
-                <Icon icon={MapPin} />
-                {data.location}
-              </span>
-            </div>
-            <dl className={styles.stats}>
-              {stats.map((stat) => (
-                <div key={stat.label} className={styles.stat}>
-                  <dt className={styles.statLabel}>
-                    <span className={styles.statIcon}>
-                      <Icon icon={stat.icon} />
-                    </span>
-                    {stat.label}
-                  </dt>
-                  <dd className={styles.statValue}>{stat.value}</dd>
-                </div>
-              ))}
-            </dl>
-          </section>
-        </Card>
+        {data()}
 
-        <Card>
-          <section className={styles.section} aria-labelledby="climate-chart">
-            <h2 id="climate-chart" className={styles.sectionTitle}>
-              {t("overview.chartTitle")}
-            </h2>
-            <ClimateChart monthly={data.monthly} />
-          </section>
-        </Card>
-
-        <Card>
-          <dl className={styles.single}>
-            <div className={styles.stat}>
-              <dt className={styles.statLabel}>
-                <span className={styles.statIcon}>
-                  <Icon icon={Snowflake} />
-                </span>
-                {t("overview.frostDays")}
-              </dt>
-              <dd className={styles.statValue}>{data.frostDays}</dd>
-            </div>
-          </dl>
-        </Card>
-
-        <Card>
-          <ProgressBar
-            label={t("overview.soilMoisture")}
-            value={data.soilMoisturePercent}
-          />
-        </Card>
-
-        <Card>
-          <section className={styles.section} aria-labelledby="health-index">
-            <h2 id="health-index" className={styles.sectionTitle}>
-              <span className={styles.statIcon}>
-                <Icon icon={Leaf} />
-              </span>
-              {t("overview.healthIndex")}
-            </h2>
-            {/* Placeholder until a real NDVI source exists: no score, not even a fake one. */}
-            <p className={styles.placeholder}>{t("overview.healthSoon")}</p>
-          </section>
-        </Card>
+        {placeholderCard(
+          "health-index",
+          t("overview.healthIndex"),
+          Leaf,
+          // Placeholder until a real NDVI source exists: no score, not even a fake one.
+          t("overview.healthSoon"),
+        )}
 
         <Button to={PATHS.recommendations} withArrow>
           {t("overview.seeRecommendations")}

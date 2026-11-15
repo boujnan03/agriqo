@@ -11,8 +11,8 @@ the method's limits and uncertainty.
 > *Data sources* and *Limitations* below has been **removed from the working tree**. It is intact
 > in git commit `639732c`. The frontend is being rebuilt in React/TypeScript from
 > [`frontend/design.md`](frontend/design.md). The NASA POWER + scoring pipeline will move into
-> `backend/`. **What runs today:** placeholder screens, and the backend's `/health`, parcel
-> diagnostic and weather forecast routes (real data; not wired into the pages yet). See
+> `backend/`. **What runs today:** Home's real map (Leaflet + OpenStreetMap) and Farm, Insights
+> and Weather fed by the backend's real diagnostic and forecast routes. See
 > [ARCHITECTURE.md](ARCHITECTURE.md) §8.
 
 ## How it works (Streamlit MVP, commit `639732c`)
@@ -37,7 +37,7 @@ docker compose up --build        # UI → http://localhost:8080 · backend → h
 ```
 The `frontend` container serves the React build through nginx. The `backend` container runs
 the FastAPI service: `/health`, the parcel diagnostic and the 7-day forecast (see *Backend*
-below; the pages don't call it yet). Details: [ARCHITECTURE.md](ARCHITECTURE.md).
+below; Home, Farm, Insights and Weather call it). Details: [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ### Two modes: production-style (default) and hot-reload dev (opt-in)
 - **Production-style (default):** `docker compose up --build` builds the frontend once and
@@ -89,7 +89,12 @@ Two endpoints serve real data. Spec:
 
 All four diagnostic calls run in parallel, so one slow or failing API never blocks the others.
 No value is ever invented. Recommendations are out of scope (a teammate's ML model, attached
-later); `previous_crop` and `polygon` are accepted but not used yet.
+later); `previous_crop` is accepted but not used yet.
+
+**Drawn parcel.** `polygon` (optional) is a GeoJSON Polygon: one closed ring of `[lon, lat]`
+positions. With it, `lat`/`lon` must be its centroid (checked: inside its extent, else 400).
+Point-based sources (NASA POWER, SoilGrids) use that centroid; OpenTopography's box is the
+polygon's extent and the slope is averaged over the pixels the polygon covers.
 
 **Cache.** In memory, keyed by coordinates rounded to 3 decimals, with a different lifetime
 per source:
@@ -99,6 +104,13 @@ per source:
 
 Failures are never cached. The cache is lost on restart, which is accepted for the MVP
 ([`backend/app/cache.py`](backend/app/cache.py)).
+
+**SoilGrids background re-fetch.** SoilGrids is often slower than the 15 s request limit. When it
+times out, the request still answers `indisponible` (`retry_pending: true`) within 15 s, and a
+background task keeps trying (3 attempts of up to 60 s each, 5 s / 15 s apart; one task per
+point, shared by concurrent requests). A real answer is written to the cache, so the Soil card's
+**Réessayer** (the same diagnostic request) then returns it. If every attempt fails, nothing is
+cached and soil stays `indisponible` ([`backend/app/background.py`](backend/app/background.py)).
 
 **OpenTopography key (relief block).** Free:
 1. Create an account at <https://portal.opentopography.org/newUser>.
@@ -182,10 +194,11 @@ frontend/                       React + TypeScript + Vite (+ Dockerfile, nginx.c
   src/theme/                    design tokens (tokens.ts → generated tokens.css)
   src/components/               shared components (Button, Card, Badge, TabBar, Header, …)
   src/router/  src/pages/       routes + tab config; one page per design.md §7 template
-  src/services/                 api.ts: placeholder backend client (GET /health), not used yet
-  src/mocks/                    page fixture data (farmDiagnostic, home, weather, overview,
-                                profile, recommendations, cropDetails); illustrative, not NASA
-  src/state/                    in-memory session (the parcel picked on Home)
+  src/services/                 api.ts: backend client (diagnostic, forecast, health)
+  src/mocks/                    fixture data for the pages not on the backend yet (profile,
+                                recommendations, cropDetails); illustrative, not NASA
+  src/state/                    in-memory session: the parcel picked on Home + one shared
+                                request cache (Home, Farm, Insights reuse one diagnostic)
   tests/                        Vitest + React Testing Library
 ```
 
@@ -297,6 +310,8 @@ agriqo
 │  │  │  ├─ PhotoFrame.tsx
 │  │  │  ├─ ProgressBar.module.css
 │  │  │  ├─ ProgressBar.tsx
+│  │  │  ├─ RequestStatus.module.css
+│  │  │  ├─ RequestStatus.tsx
 │  │  │  ├─ Screen.module.css
 │  │  │  ├─ Screen.tsx
 │  │  │  ├─ SegmentedControl.module.css
@@ -309,16 +324,13 @@ agriqo
 │  │  │  ├─ format.ts
 │  │  │  ├─ fr.json
 │  │  │  ├─ index.ts
-│  │  │  └─ useDirection.ts
+│  │  │  ├─ useDirection.ts
+│  │  │  └─ useFormat.ts
 │  │  ├─ main.tsx
 │  │  ├─ mocks
 │  │  │  ├─ cropDetails.ts
-│  │  │  ├─ farmDiagnostic.ts
-│  │  │  ├─ home.ts
-│  │  │  ├─ overview.ts
 │  │  │  ├─ profile.ts
-│  │  │  ├─ recommendations.ts
-│  │  │  └─ weather.ts
+│  │  │  └─ recommendations.ts
 │  │  ├─ pages
 │  │  │  ├─ BuildSmoke.tsx
 │  │  │  ├─ Cover.module.css
@@ -327,6 +339,9 @@ agriqo
 │  │  │  ├─ CropDetail.tsx
 │  │  │  ├─ Farm.module.css
 │  │  │  ├─ Farm.tsx
+│  │  │  ├─ home
+│  │  │  │  ├─ ParcelMap.module.css
+│  │  │  │  └─ ParcelMap.tsx
 │  │  │  ├─ Home.module.css
 │  │  │  ├─ Home.tsx
 │  │  │  ├─ NotFound.module.css
@@ -338,7 +353,9 @@ agriqo
 │  │  │  ├─ Overview.tsx
 │  │  │  ├─ parcel
 │  │  │  │  ├─ NoParcel.module.css
-│  │  │  │  └─ NoParcel.tsx
+│  │  │  │  ├─ NoParcel.tsx
+│  │  │  │  ├─ ParcelCoords.module.css
+│  │  │  │  └─ ParcelCoords.tsx
 │  │  │  ├─ placeholder
 │  │  │  │  └─ placeholder.module.css
 │  │  │  ├─ Profile.module.css
@@ -358,7 +375,8 @@ agriqo
 │  │  │  └─ api.ts
 │  │  ├─ state
 │  │  │  ├─ session.ts
-│  │  │  └─ SessionProvider.tsx
+│  │  │  ├─ SessionProvider.tsx
+│  │  │  └─ useParcelData.ts
 │  │  ├─ theme
 │  │  │  ├─ cssVariables.ts
 │  │  │  ├─ global.css
@@ -376,6 +394,8 @@ agriqo
 │  ├─ tests
 │  │  ├─ assets
 │  │  │  └─ assets.test.tsx
+│  │  ├─ fakeBackend.ts           (stands in for the API; real captured responses)
+│  │  ├─ fixtures                 (diagnostic_tadla/ocean, forecast_tadla: real, 2026-11-15)
 │  │  ├─ components
 │  │  │  ├─ Badge.test.tsx
 │  │  │  ├─ Button.test.tsx
@@ -400,8 +420,7 @@ agriqo
 │  │  │  ├─ Profile.test.tsx
 │  │  │  ├─ Recommendations.test.tsx
 │  │  │  ├─ routes.test.tsx
-│  │  │  ├─ Weather.test.tsx
-│  │  │  └─ WeatherUnavailable.test.tsx
+│  │  │  └─ Weather.test.tsx
 │  │  ├─ setup.ts
 │  │  ├─ theme
 │  │  │  ├─ rtl.test.ts
