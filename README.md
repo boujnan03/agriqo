@@ -109,8 +109,11 @@ frontend/                       React + TypeScript + Vite (+ Dockerfile, nginx.c
 
 ```
 agriqo
+├─ .env.example
+├─ .gitignore
 ├─ ARCHITECTURE.md
 ├─ audits
+│  ├─ frontend_pages_audit_2026-11-15.md
 │  ├─ mvp_audit_2026-11-14.md
 │  ├─ output prompt1
 │  ├─ output prompt2
@@ -120,11 +123,12 @@ agriqo
 ├─ backend
 │  ├─ .dockerignore
 │  ├─ app
-│  │  ├─ main.py
-│  │  └─ __init__.py
+│  │  ├─ __init__.py
+│  │  └─ main.py
 │  ├─ Dockerfile
 │  └─ requirements.txt
 ├─ CLAUDE.md
+├─ docker-compose.override.example.yml
 ├─ docker-compose.yml
 ├─ frontend
 │  ├─ .dockerignore
@@ -132,16 +136,40 @@ agriqo
 │  ├─ .prettierrc
 │  ├─ design.md
 │  ├─ Dockerfile
+│  ├─ Dockerfile.dev
 │  ├─ eslint.config.js
 │  ├─ index.html
 │  ├─ nginx.conf
 │  ├─ package-lock.json
 │  ├─ package.json
+│  ├─ public
+│  │  ├─ apple-touch-icon.png
+│  │  ├─ favicon-16x16.png
+│  │  ├─ favicon-32x32.png
+│  │  ├─ favicon.ico
+│  │  ├─ icons
+│  │  │  ├─ icon-192.png
+│  │  │  ├─ icon-512-maskable.png
+│  │  │  └─ icon-512.png
+│  │  └─ manifest.webmanifest
 │  ├─ scripts
 │  │  └─ generate-tokens-css.ts
 │  ├─ src
 │  │  ├─ App.tsx
 │  │  ├─ assets
+│  │  │  ├─ illustrations
+│  │  │  │  ├─ cover-field.jpg
+│  │  │  │  ├─ crop-legumineuses.svg
+│  │  │  │  ├─ crop-orge.svg
+│  │  │  │  ├─ crop-wheat.svg
+│  │  │  │  ├─ farm-map.svg
+│  │  │  │  ├─ map-layer-rainfall.svg
+│  │  │  │  ├─ map-layer-soil-moisture.svg
+│  │  │  │  └─ map-layer-vegetation.svg
+│  │  │  ├─ images.ts
+│  │  │  └─ logo
+│  │  │     ├─ logo-full.png
+│  │  │     └─ logo-mark.png
 │  │  ├─ components
 │  │  │  ├─ Badge.module.css
 │  │  │  ├─ Badge.tsx
@@ -155,20 +183,31 @@ agriqo
 │  │  │  ├─ Header.tsx
 │  │  │  ├─ Icon.tsx
 │  │  │  ├─ index.ts
+│  │  │  ├─ LanguageSwitcher.module.css
+│  │  │  ├─ LanguageSwitcher.tsx
 │  │  │  ├─ PhotoFrame.module.css
 │  │  │  ├─ PhotoFrame.tsx
 │  │  │  ├─ ProgressBar.module.css
 │  │  │  ├─ ProgressBar.tsx
 │  │  │  ├─ Screen.module.css
 │  │  │  ├─ Screen.tsx
+│  │  │  ├─ SegmentedControl.module.css
+│  │  │  ├─ SegmentedControl.tsx
 │  │  │  ├─ TabBar.module.css
 │  │  │  └─ TabBar.tsx
-│  │  ├─ hooks
+│  │  ├─ i18n
+│  │  │  ├─ ar.json
+│  │  │  ├─ en.json
+│  │  │  ├─ fr.json
+│  │  │  ├─ index.ts
+│  │  │  └─ useDirection.ts
 │  │  ├─ main.tsx
 │  │  ├─ mocks
 │  │  │  ├─ cropDetails.ts
 │  │  │  ├─ farm.ts
+│  │  │  ├─ map.ts
 │  │  │  ├─ overview.ts
+│  │  │  ├─ profile.ts
 │  │  │  └─ recommendations.ts
 │  │  ├─ pages
 │  │  │  ├─ BuildSmoke.tsx
@@ -178,6 +217,8 @@ agriqo
 │  │  │  ├─ CropDetail.tsx
 │  │  │  ├─ Farm.module.css
 │  │  │  ├─ Farm.tsx
+│  │  │  ├─ Map.module.css
+│  │  │  ├─ Map.tsx
 │  │  │  ├─ NotFound.module.css
 │  │  │  ├─ NotFound.tsx
 │  │  │  ├─ overview
@@ -188,6 +229,8 @@ agriqo
 │  │  │  ├─ placeholder
 │  │  │  │  ├─ placeholder.module.css
 │  │  │  │  └─ PlaceholderNotice.tsx
+│  │  │  ├─ Profile.module.css
+│  │  │  ├─ Profile.tsx
 │  │  │  ├─ Recommendations.module.css
 │  │  │  └─ Recommendations.tsx
 │  │  ├─ router
@@ -207,10 +250,14 @@ agriqo
 │  │  │  ├─ crop.ts
 │  │  │  ├─ cropDetail.ts
 │  │  │  ├─ farm.ts
+│  │  │  ├─ map.ts
 │  │  │  ├─ overview.ts
+│  │  │  ├─ profile.ts
 │  │  │  └─ recommendations.ts
 │  │  └─ vite-env.d.ts
 │  ├─ tests
+│  │  ├─ assets
+│  │  │  └─ assets.test.tsx
 │  │  ├─ components
 │  │  │  ├─ Badge.test.tsx
 │  │  │  ├─ Button.test.tsx
@@ -220,17 +267,22 @@ agriqo
 │  │  │  ├─ PhotoFrame.test.tsx
 │  │  │  ├─ ProgressBar.test.tsx
 │  │  │  └─ TabBar.test.tsx
+│  │  ├─ i18n
+│  │  │  └─ i18n.test.tsx
 │  │  ├─ pages
 │  │  │  ├─ ClimateChart.test.tsx
 │  │  │  ├─ Cover.test.tsx
 │  │  │  ├─ CropDetail.test.tsx
 │  │  │  ├─ Farm.test.tsx
+│  │  │  ├─ Map.test.tsx
 │  │  │  ├─ NotFound.test.tsx
 │  │  │  ├─ Overview.test.tsx
+│  │  │  ├─ Profile.test.tsx
 │  │  │  ├─ Recommendations.test.tsx
 │  │  │  └─ routes.test.tsx
 │  │  ├─ setup.ts
 │  │  ├─ theme
+│  │  │  ├─ rtl.test.ts
 │  │  │  └─ tokens.test.ts
 │  │  └─ utils.tsx
 │  ├─ tsconfig.app.json
