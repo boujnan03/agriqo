@@ -1,0 +1,22 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Carte stylisée de l'humidité du sol, du sec au saturé">
+  <rect width="400" height="300" fill="#F3EADA"/>
+  <g opacity="0.9">
+    <rect x="10" y="10" width="80" height="80" fill="#E3C79A"/>
+    <rect x="90" y="10" width="80" height="80" fill="#BFD4DE"/>
+    <rect x="170" y="10" width="80" height="80" fill="#8FB9D1"/>
+    <rect x="250" y="10" width="80" height="80" fill="#5E9BBE"/>
+    <rect x="330" y="10" width="70" height="80" fill="#3B82C6"/>
+
+    <rect x="10" y="90" width="80" height="80" fill="#BFD4DE"/>
+    <rect x="90" y="90" width="80" height="80" fill="#8FB9D1"/>
+    <rect x="170" y="90" width="80" height="80" fill="#3B82C6"/>
+    <rect x="250" y="90" width="80" height="80" fill="#2D6AA3"/>
+    <rect x="330" y="90" width="70" height="80" fill="#5E9BBE"/>
+
+    <rect x="10" y="170" width="80" height="130" fill="#8FB9D1"/>
+    <rect x="90" y="170" width="80" height="130" fill="#5E9BBE"/>
+    <rect x="170" y="170" width="80" height="130" fill="#2D6AA3"/>
+    <rect x="250" y="170" width="80" height="130" fill="#3B82C6"/>
+    <rect x="330" y="170" width="70" height="130" fill="#8FB9D1"/>
+  </g>
+</svg>

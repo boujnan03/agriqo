@@ -2,6 +2,7 @@ import { ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
+import { cropIllustrations, photo } from "../assets/images";
 import { Badge } from "../components/Badge";
 import { Button } from "../components/Button";
 import { Card } from "../components/Card";
@@ -58,7 +59,10 @@ export function Recommendations() {
             </div>
             <PhotoFrame
               slot="thumbnail"
-              placeholderLabel={photoLabel(featured.name)}
+              {...photo(
+                cropIllustrations[featured.id],
+                photoLabel(featured.name),
+              )}
               className={styles.featuredPhoto}
             />
           </Card>
@@ -79,7 +83,10 @@ export function Recommendations() {
                   <Card className={styles.option}>
                     <PhotoFrame
                       slot="thumbnail"
-                      placeholderLabel={photoLabel(option.name)}
+                      {...photo(
+                        cropIllustrations[option.id],
+                        photoLabel(option.name),
+                      )}
                     />
                     <span
                       id={`option-${option.id}-name`}

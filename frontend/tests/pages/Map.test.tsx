@@ -3,6 +3,9 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
 import i18n, { LANGUAGES } from "../../src/i18n";
+import mapLayerRainfall from "../../src/assets/illustrations/map-layer-rainfall.svg";
+import mapLayerSoilMoisture from "../../src/assets/illustrations/map-layer-soil-moisture.svg";
+import mapLayerVegetation from "../../src/assets/illustrations/map-layer-vegetation.svg";
 import { mapData } from "../../src/mocks/map";
 import type { MapData } from "../../src/types/map";
 import { inLanguage, renderRoute, tabBarLabel } from "../utils";
@@ -38,7 +41,7 @@ describe("Map page (design.md §7 template 7)", () => {
 
     expect(
       screen.getByRole("img", { name: "Carte : couche végétation" }),
-    ).toBeInTheDocument();
+    ).toHaveAttribute("src", mapLayerVegetation);
     expect(
       screen.getByRole("heading", { level: 2, name: "Végétation" }),
     ).toBeInTheDocument();
@@ -83,13 +86,16 @@ describe("Map page (design.md §7 template 7)", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole("img", { name: "Carte : couche humidité du sol" }),
-    ).toBeInTheDocument();
+    ).toHaveAttribute("src", mapLayerSoilMoisture);
 
     await user.click(screen.getByRole("radio", { name: "Précipitations" }));
     expect(
       screen.getByText("Cumul des précipitations récentes sur la zone."),
     ).toBeInTheDocument();
     expect(screen.getByText("mm")).toBeInTheDocument();
+    expect(
+      screen.getByRole("img", { name: "Carte : couche précipitations" }),
+    ).toHaveAttribute("src", mapLayerRainfall);
     expect(
       screen.getByText("Dernière mise à jour : 14 novembre 2026"),
     ).toBeInTheDocument();

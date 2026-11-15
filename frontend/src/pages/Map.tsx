@@ -2,6 +2,7 @@ import { MapPin } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { mapLayerIllustrations, photo } from "../assets/images";
 import { Badge } from "../components/Badge";
 import { Card } from "../components/Card";
 import { Header } from "../components/Header";
@@ -57,9 +58,12 @@ export function MapPage() {
         <div className={styles.map}>
           <PhotoFrame
             slot="farm"
-            placeholderLabel={t("map.placeholder", {
-              layer: layerName.toLocaleLowerCase(i18n.language),
-            })}
+            {...photo(
+              mapLayerIllustrations[layer.id],
+              t("map.placeholder", {
+                layer: layerName.toLocaleLowerCase(i18n.language),
+              }),
+            )}
           />
           <div className={styles.location}>
             <span className={styles.pin}>

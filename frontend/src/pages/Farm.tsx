@@ -1,6 +1,7 @@
 import { Droplets, Layers, MapPin, Wheat } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
+import { illustrations, photo } from "../assets/images";
 import { Badge } from "../components/Badge";
 import { Button } from "../components/Button";
 import { Card } from "../components/Card";
@@ -46,7 +47,10 @@ export function Farm() {
       <div className={styles.stack}>
         {/* Pin + chip are real UI: they stay on top of the real map image later (§8). */}
         <div className={styles.map}>
-          <PhotoFrame slot="farm" placeholderLabel={t("farm.mapPlaceholder")} />
+          <PhotoFrame
+            slot="farm"
+            {...photo(illustrations.farm, t("farm.mapPlaceholder"))}
+          />
           <div className={styles.location}>
             <span className={styles.pin}>
               <Icon icon={MapPin} />

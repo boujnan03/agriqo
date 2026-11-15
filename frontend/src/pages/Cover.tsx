@@ -1,8 +1,7 @@
-import { Sprout } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
+import { illustrations, logo, photo } from "../assets/images";
 import { Button } from "../components/Button";
-import { Icon } from "../components/Icon";
 import { LanguageSwitcher } from "../components/LanguageSwitcher";
 import { PhotoFrame } from "../components/PhotoFrame";
 import { PATHS } from "../router/paths";
@@ -20,14 +19,15 @@ export function Cover() {
     <main className={styles.cover}>
       <PhotoFrame
         slot="cover"
-        placeholderLabel={t("cover.photo")}
+        {...photo(illustrations.cover, t("cover.photo"))}
         className={styles.photo}
       />
       <div className={styles.content}>
         <div className={styles.brand}>
-          {/* Placeholder logo mark (§1: sprout over field rows) until the real logo exists. */}
+          {/* AGRIQO lockup (§1) on its white backing, readable over the photo. Decorative
+              (alt=""): the heading below carries the name. */}
           <span className={styles.logo}>
-            <Icon icon={Sprout} size="data" />
+            <img className={styles.logoImage} src={logo.full} alt="" />
           </span>
           <h1 className={styles.title}>{t("app.name")}</h1>
           <p className={styles.tagline}>{t("cover.tagline")}</p>

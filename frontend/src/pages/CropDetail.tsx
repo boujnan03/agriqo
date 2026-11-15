@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 
+import { cropIllustrations, photo } from "../assets/images";
 import { Badge } from "../components/Badge";
 import { Button } from "../components/Button";
 import { Card } from "../components/Card";
@@ -10,7 +11,7 @@ import { type Fact, FactList } from "../components/FactList";
 import { Header } from "../components/Header";
 import { PhotoFrame } from "../components/PhotoFrame";
 import { Screen } from "../components/Screen";
-import { findCropDetail } from "../mocks/cropDetails";
+import { findCropDetail, isCropId } from "../mocks/cropDetails";
 import { PATHS } from "../router/paths";
 import type { CropDetail as CropDetailData } from "../types/cropDetail";
 import styles from "./CropDetail.module.css";
@@ -26,10 +27,23 @@ export function CropDetail() {
   const crop = findCropDetail(id);
   if (!crop) return <NotFound />;
   // Keyed by id so the "saved" confirmation resets when moving to another crop.
-  return <CropDetailScreen key={id} crop={crop} />;
+  return (
+    <CropDetailScreen
+      key={id}
+      crop={crop}
+      illustration={isCropId(id) ? cropIllustrations[id] : undefined}
+    />
+  );
 }
 
-function CropDetailScreen({ crop }: { crop: CropDetailData }) {
+function CropDetailScreen({
+  crop,
+  illustration,
+}: {
+  crop: CropDetailData;
+  /** Banner image; undefined falls back to the §8 placeholder. */
+  illustration: string | undefined;
+}) {
   const { t } = useTranslation();
   const [saved, setSaved] = useState(false);
 
@@ -69,10 +83,13 @@ function CropDetailScreen({ crop }: { crop: CropDetailData }) {
         <div className={styles.banner}>
           <PhotoFrame
             slot="detail"
-            placeholderLabel={t("common.photo", {
-              // Crop names are French fixture data, hence the "fr" lower-casing.
-              name: crop.name.toLocaleLowerCase("fr"),
-            })}
+            {...photo(
+              illustration,
+              t("common.photo", {
+                // Crop names are French fixture data, hence the "fr" lower-casing.
+                name: crop.name.toLocaleLowerCase("fr"),
+              }),
+            )}
             className={styles.photo}
           />
           <div className={styles.bannerText}>
