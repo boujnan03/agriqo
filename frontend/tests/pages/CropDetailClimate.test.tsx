@@ -1,7 +1,7 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { cropDetails } from "../../src/mocks/cropDetails";
+import i18n from "../../src/i18n";
 import { fakeBackend, fixtures, json } from "../fakeBackend";
 import { inLanguage, picked, renderRoute, TADLA } from "../utils";
 
@@ -47,7 +47,7 @@ describe("Crop detail: 'Climat de votre zone' from the real C057 advice (spec §
       await waitFor(() => expect(climate(box)).toEqual(expected));
       // The mock text is still there, marked "Exemple".
       expect(
-        within(box).getByText(cropDetails[id as "orge"].whyThisChoice),
+        within(box).getByText(i18n.t(`crops.${id as "orge"}.why`)),
       ).toBeInTheDocument();
       expect(norm(box.textContent)).toContain(
         "Source : NASA POWER, normale 1996–2025 de votre zone. À valider par un agronome",

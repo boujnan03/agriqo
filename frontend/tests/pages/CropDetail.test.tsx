@@ -5,6 +5,7 @@ import { describe, expect, expectTypeOf, it } from "vitest";
 import cropLegumineuses from "../../src/assets/illustrations/crop-legumineuses.svg";
 import cropOrge from "../../src/assets/illustrations/crop-orge.svg";
 import cropWheat from "../../src/assets/illustrations/crop-wheat.svg";
+import i18n from "../../src/i18n";
 import { cropDetails } from "../../src/mocks/cropDetails";
 import type { CropId } from "../../src/types/crop";
 import type { CropDetailsById } from "../../src/types/cropDetail";
@@ -20,6 +21,13 @@ const BANNER: Record<CropId, string> = {
   ble: cropWheat,
   orge: cropOrge,
   legumineuses: cropLegumineuses,
+};
+
+/** Each crop's best season in French: month names formatted by the browser's Intl (fr-FR). */
+const SEASON_FR: Record<CropId, string> = {
+  ble: "nov. – mars",
+  orge: "oct. – févr.",
+  legumineuses: "déc. – avr.",
 };
 
 /** The value (<dd>) of the fact row whose label (<dt>) is `label`. */
@@ -38,28 +46,34 @@ describe("Crop detail page (design.md §7.5)", () => {
     );
   });
 
-  it.each(CROPS)("/crop/$id shows $name's own data", (crop) => {
+  it.each(CROPS)("/crop/$id shows its own data, all translated", (crop) => {
     renderRoute(`/crop/${crop.id}`);
+    // Every word comes from the translation files (fr here), keyed by the crop id.
+    const name = i18n.t(`crops.${crop.id}.name`);
 
     expect(
       screen.getByRole("heading", { level: 1, name: "Détails" }),
     ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 2, name })).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { level: 2, name: crop.name }),
+      screen.getByText(i18n.t(`crops.${crop.id}.description`)),
     ).toBeInTheDocument();
-    expect(screen.getByText(crop.description)).toBeInTheDocument();
     expect(
       screen.getByRole("img", {
-        name: `Photo : ${crop.name.toLocaleLowerCase("fr")}`,
+        name: `Photo : ${name.toLocaleLowerCase("fr")}`,
       }),
     ).toHaveAttribute("src", BANNER[crop.id]);
     // Each value checked against its own row (values can repeat, e.g. "Moyen" twice).
-    expect(factValue("Besoin en eau")).toHaveTextContent(crop.waterNeed);
-    expect(factValue("Meilleure saison")).toHaveTextContent(crop.bestSeason);
-    expect(factValue("Rendement attendu")).toHaveTextContent(
-      crop.expectedYield,
+    expect(factValue("Besoin en eau")).toHaveTextContent(
+      i18n.t(`crops.level.${crop.waterNeed}`),
     );
-    expect(screen.getByText(crop.whyThisChoice)).toBeInTheDocument();
+    expect(factValue("Meilleure saison")).toHaveTextContent(SEASON_FR[crop.id]);
+    expect(factValue("Rendement attendu")).toHaveTextContent(
+      i18n.t(`crops.level.${crop.expectedYield}`),
+    );
+    expect(
+      screen.getByText(i18n.t(`crops.${crop.id}.why`)),
+    ).toBeInTheDocument();
 
     // "Recommandé" badge only for the recommended crop (ble in the fixture).
     expect(screen.queryByText("Recommandé") !== null).toBe(crop.recommended);

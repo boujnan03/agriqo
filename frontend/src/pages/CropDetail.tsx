@@ -12,12 +12,14 @@ import { Header } from "../components/Header";
 import { PhotoFrame } from "../components/PhotoFrame";
 import { Screen } from "../components/Screen";
 import { useSeasonZone } from "../hooks/useSeasonZone";
+import { formatMonth } from "../i18n/format";
 import { findCropDetail, isCropId } from "../mocks/cropDetails";
 import { PATHS } from "../router/paths";
 import type { CropDetail as CropDetailData } from "../types/cropDetail";
 import { isShownAdvice, useAdviceText } from "./advice/useAdviceText";
 import styles from "./CropDetail.module.css";
 import { NotFound } from "./NotFound";
+import type { CropId } from "../types/crop";
 
 /**
  * Route "/crop/:id" · design.md §7.5 Detail: photo banner (gradient, crop name + badge), icon-
@@ -37,7 +39,7 @@ export function CropDetail() {
   return (
     <CropDetailScreen
       key={id}
-      cropId={id}
+      cropId={id as CropId}
       crop={crop}
       illustration={isCropId(id) ? cropIllustrations[id] : undefined}
     />
@@ -49,13 +51,19 @@ function CropDetailScreen({
   crop,
   illustration,
 }: {
-  cropId: string;
+  cropId: CropId;
   crop: CropDetailData;
   /** Banner image; undefined falls back to the §8 placeholder. */
   illustration: string | undefined;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [saved, setSaved] = useState(false);
+  // Every word is translated (crops.<id>.*); the fixture holds only ids and levels.
+  const name = t(`crops.${cropId}.name`);
+  const months = t("crops.monthRange", {
+    from: formatMonth(crop.bestSeason.from, i18n.language),
+    to: formatMonth(crop.bestSeason.to, i18n.language),
+  });
   const { result } = useSeasonZone();
   const { text, why } = useAdviceText();
   // Real advice concerning this crop, if the season answer for the parcel has arrived.
@@ -70,19 +78,19 @@ function CropDetailScreen({
   const facts: Fact[] = [
     {
       label: t("cropDetail.waterNeed"),
-      value: crop.waterNeed,
+      value: t(`crops.level.${crop.waterNeed}`),
       icon: Droplets,
       tone: "water",
     },
     {
       label: t("cropDetail.bestSeason"),
-      value: crop.bestSeason,
+      value: months,
       icon: CalendarDays,
       tone: "neutral",
     },
     {
       label: t("cropDetail.expectedYield"),
-      value: crop.expectedYield,
+      value: t(`crops.level.${crop.expectedYield}`),
       icon: Wheat,
       tone: "plant",
     },
@@ -106,21 +114,21 @@ function CropDetailScreen({
             {...photo(
               illustration,
               t("common.photo", {
-                // Crop names are French fixture data, hence the "fr" lower-casing.
-                name: crop.name.toLocaleLowerCase("fr"),
+                // The translated name, lower-cased by the active language's rules.
+                name: name.toLocaleLowerCase(i18n.language),
               }),
             )}
             className={styles.photo}
           />
           <div className={styles.bannerText}>
-            <h2 className={styles.cropName}>{crop.name}</h2>
+            <h2 className={styles.cropName}>{name}</h2>
             {crop.recommended ? (
               <Badge>{t("cropDetail.recommended")}</Badge>
             ) : null}
           </div>
         </div>
 
-        <p className={styles.description}>{crop.description}</p>
+        <p className={styles.description}>{t(`crops.${cropId}.description`)}</p>
 
         <Card>
           <FactList facts={facts} />
@@ -132,7 +140,7 @@ function CropDetailScreen({
               {t("cropDetail.why")} <Badge>{t("common.example")}</Badge>
             </h3>
             <p className={styles.whyText} data-example="why">
-              {crop.whyThisChoice}
+              {t(`crops.${cropId}.why`)}
             </p>
             {zone && climate.length > 0 ? (
               <>

@@ -198,6 +198,34 @@
     "save": "Enregistrer ce plan",
     "saved": "Plan enregistré pour cette session (démo : rien n'est sauvegardé)."
   },
+  "crops": {
+    "ble": {
+      "name": "Blé",
+      "description": "Idéal pour le climat et le type de sol de Béni Mellal.",
+      "why": "Un temps frais et des pluies modérées font du blé une excellente option."
+    },
+    "orge": {
+      "name": "Orge",
+      "description": "Bonne tolérance à la sécheresse, adaptée en rotation après le blé.",
+      "why": "Sa faible demande en eau en fait un bon choix pour préserver le sol entre deux cultures plus exigeantes."
+    },
+    "legumineuses": {
+      "name": "Légumineuses",
+      "description": "Enrichissent naturellement le sol en azote, utiles entre deux céréales.",
+      "why": "Elles améliorent la santé du sol pour la culture suivante plutôt que de viser le rendement maximal."
+    },
+    "level": {
+      "low": "Faible",
+      "low_medium": "Faible à moyen",
+      "medium": "Moyen",
+      "medium_high": "Moyen à élevé",
+      "high": "Élevé"
+    },
+    "suitability": {
+      "high": "Haute adéquation pour vos conditions"
+    },
+    "monthRange": "{{from}} – {{to}}"
+  },
   "profile": {
     "title": "Profil",
     "memberSince": "Membre depuis {{year}}",
@@ -315,5 +343,8 @@
     "lon": "Long.",
     "centre": "Centre :",
     "shape": "Surface ≈ {{area}} ha · {{count}} coins"
+  },
+  "places": {
+    "beniMellal": "Béni Mellal"
   }
 }
