@@ -14,7 +14,8 @@
     "weather": "Weather"
   },
   "common": {
-    "photo": "Photo: {{name}}"
+    "photo": "Photo: {{name}}",
+    "example": "Example"
   },
   "cover": {
     "photo": "Photo: wheat field",
@@ -128,6 +129,52 @@
     "outsideText": "Your parcel is outside the covered area (Morocco, north of 29.5° N). Nearest cell ~{{km}} km away.",
     "outsideAction": "Choose another parcel"
   },
+  "advice": {
+    "forWater": {
+      "pluvial": "Advice for a rain-fed parcel.",
+      "irrigue": "Advice for an irrigated parcel."
+    },
+    "changeWater": "Change it in Farm",
+    "why": "Why: {{reason}}",
+    "source": "Source: NASA POWER, {{from}}–{{to}} normal for your area.",
+    "validate": "To be validated by an agronomist",
+    "none": "No marked climate signal in your area from {{from}} to {{to}}.",
+    "cropClimate": "Your area's climate:",
+    "text": {
+      "drought_tolerant": {
+        "pluvial": "Favour drought-tolerant crops (barley, chickpea, lentil) and short-cycle varieties.",
+        "irrigue": "With irrigation, drought matters less, but plan for irrigation-water restrictions in dry years."
+      },
+      "dry_autumn": {
+        "pluvial": "Don't sow into dry soil: wait for the first useful rain.",
+        "irrigue": "Plan an establishment irrigation after sowing."
+      },
+      "hot_spring": {
+        "pluvial": "Sow early and choose early varieties, so grain filling ends before the heat.",
+        "irrigue": "Sow early and choose early varieties, so grain filling ends before the heat."
+      },
+      "dry_spring": {
+        "pluvial": "Choose early varieties that finish their cycle sooner.",
+        "irrigue": "Keep water back for an irrigation during grain filling."
+      },
+      "last_season_dry": {
+        "pluvial": "Soil water reserves are probably low: be careful with costly inputs.",
+        "irrigue": "Check your irrigation-water allocations before choosing your crops."
+      },
+      "wet_frequent": {
+        "pluvial": "Wheat is an option; watch for fungal diseases (rusts).",
+        "irrigue": "Wheat is an option; watch for fungal diseases (rusts)."
+      }
+    },
+    "reason": {
+      "drought_tolerant": "dry and hot seasons: {{n}} of {{total}} ({{from}} to {{to}}).",
+      "dry_autumn": "October–December rain below normal {{below}} times out of {{total}}; {{meanMm}} mm vs {{normalMm}} mm ({{pct}} %).",
+      "hot_spring": "days > 30 °C (Mar–May) above normal {{above}} times out of {{total}}; mean {{meanDays}}, normal {{normalDays}}.",
+      "dry_spring": "March–May rain below normal {{below}} times out of {{total}}; {{pct}} % of normal.",
+      "last_season_dry": "season {{season}}: {{rainMm}} mm, {{pct}} % of normal ({{normalMm}} mm).",
+      "wet_frequent": "very wet seasons: {{n}} of {{total}}."
+    }
+  },
   "recommendations": {
     "title": "Recommendations",
     "back": "Back to farm overview",
@@ -135,7 +182,10 @@
     "otherOptions": "Other good options",
     "rotationPlan": "Crop rotation plan",
     "year": "Year {{year}}",
-    "learnMore": "Learn more"
+    "learnMore": "Learn more",
+    "climateTitle": "What your area's climate says",
+    "crops": "Crops",
+    "exampleNotice": "Example ranking: not yet computed from your data."
   },
   "cropDetail": {
     "title": "Details",

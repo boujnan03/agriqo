@@ -6,6 +6,7 @@ import diagnosticTadla from "./fixtures/diagnostic_tadla.json";
 import forecastTadla from "./fixtures/forecast_tadla.json";
 import zoneC046 from "./fixtures/seasons/zone-c046-no-heat.json";
 import zoneC057 from "./fixtures/seasons/zone-c057.json";
+import zoneC057Irrigue from "./fixtures/seasons/zone-c057-irrigue.json";
 import zoneC113 from "./fixtures/seasons/zone-c113-proche.json";
 import zoneOcean from "./fixtures/seasons/zone-ocean-hors-zone.json";
 
@@ -27,6 +28,8 @@ export const fixtures = {
   diagnosticOcean: diagnosticOcean as unknown as DiagnosticResponse,
   forecastTadla: forecastTadla as unknown as ForecastResponse,
   zoneC057: zoneC057 as unknown as ZoneResponse,
+  /** The same point asked with water=irrigue (real answer: 4 rules switch variant). */
+  zoneC057Irrigue: zoneC057Irrigue as unknown as ZoneResponse,
   zoneC113Proche: zoneC113 as unknown as ZoneResponse,
   zoneOcean: zoneOcean as unknown as ZoneResponse,
   zoneC046NoHeat: zoneC046 as unknown as ZoneResponse,
@@ -84,6 +87,16 @@ export function deferred(): {
       ),
   };
 }
+
+/**
+ * The season endpoint as the real backend behaves for the Tadla parcel: the answer for the
+ * water regime asked (both captured from the backend), so switching Farm to "Irriguée" really
+ * changes the advice variants.
+ */
+export const seasonsByWater: Responder = (request) =>
+  json(
+    request.water === "irrigue" ? fixtures.zoneC057Irrigue : fixtures.zoneC057,
+  )(request);
 
 /** A request that never answers: the page stays in its loading state. */
 export const pending: Responder = () => new Promise<Response>(() => {});

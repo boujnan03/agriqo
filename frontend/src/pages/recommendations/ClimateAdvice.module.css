@@ -1,0 +1,62 @@
+/* Recommendations' climate-advice section (design.md §7 template 5). */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.muted {
+  margin: 0;
+  color: var(--text-600);
+}
+
+.note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-8);
+  margin: 0;
+  color: var(--text-600);
+  font-size: var(--font-size-caption-factual);
+}
+
+.icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--green-700);
+}
+
+/* "Advice for a rain-fed parcel. Change it in Farm" — the farmer's own setting. */
+.water {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4) var(--space-8);
+  margin: 0;
+  color: var(--text-600);
+}
+
+/* A real text link with a touch-sized hit area (§4, §9). */
+.link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch-target);
+  color: var(--green-900);
+  font-weight: var(--font-weight-label);
+}
+
+.outside {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-12);
+  text-align: center;
+}

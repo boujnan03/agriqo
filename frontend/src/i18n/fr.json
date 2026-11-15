@@ -14,7 +14,8 @@
     "weather": "Météo"
   },
   "common": {
-    "photo": "Photo : {{name}}"
+    "photo": "Photo : {{name}}",
+    "example": "Exemple"
   },
   "cover": {
     "photo": "Photo : champ de blé",
@@ -128,6 +129,52 @@
     "outsideText": "Votre parcelle est hors de la zone couverte (Maroc, au nord de 29,5° N). Cellule la plus proche à ~{{km}} km.",
     "outsideAction": "Choisir une autre parcelle"
   },
+  "advice": {
+    "forWater": {
+      "pluvial": "Conseils pour une parcelle pluviale.",
+      "irrigue": "Conseils pour une parcelle irriguée."
+    },
+    "changeWater": "Changer dans Ferme",
+    "why": "Pourquoi : {{reason}}",
+    "source": "Source : NASA POWER, normale {{from}}–{{to}} de votre zone.",
+    "validate": "À valider par un agronome",
+    "none": "Aucun signal climatique marqué dans votre zone de {{from}} à {{to}}.",
+    "cropClimate": "Climat de votre zone :",
+    "text": {
+      "drought_tolerant": {
+        "pluvial": "Privilégiez des cultures tolérantes à la sécheresse (orge, pois chiche, lentille) et des variétés à cycle court.",
+        "irrigue": "Avec l'irrigation, la sécheresse pèse moins, mais prévoyez des restrictions d'eau d'irrigation les années sèches."
+      },
+      "dry_autumn": {
+        "pluvial": "Ne semez pas sur sol sec : attendez la première pluie utile.",
+        "irrigue": "Prévoyez une irrigation d'installation après le semis."
+      },
+      "hot_spring": {
+        "pluvial": "Semez tôt et choisissez des variétés précoces, pour finir le remplissage du grain avant la chaleur.",
+        "irrigue": "Semez tôt et choisissez des variétés précoces, pour finir le remplissage du grain avant la chaleur."
+      },
+      "dry_spring": {
+        "pluvial": "Choisissez des variétés précoces, qui finissent leur cycle plus tôt.",
+        "irrigue": "Gardez de l'eau pour une irrigation au remplissage du grain."
+      },
+      "last_season_dry": {
+        "pluvial": "Les réserves d'eau du sol sont probablement basses : prudence avec les intrants coûteux.",
+        "irrigue": "Vérifiez vos dotations d'eau d'irrigation avant de choisir vos cultures."
+      },
+      "wet_frequent": {
+        "pluvial": "Le blé est envisageable ; surveillez les maladies fongiques (rouilles).",
+        "irrigue": "Le blé est envisageable ; surveillez les maladies fongiques (rouilles)."
+      }
+    },
+    "reason": {
+      "drought_tolerant": "saisons sèches et chaudes : {{n}} sur {{total}} (de {{from}} à {{to}}).",
+      "dry_autumn": "pluie d'octobre à décembre sous la normale {{below}} fois sur {{total}} ; {{meanMm}} mm contre {{normalMm}} mm ({{pct}} %).",
+      "hot_spring": "jours > 30 °C (mars–mai) au-dessus de la normale {{above}} fois sur {{total}} ; moyenne {{meanDays}}, normale {{normalDays}}.",
+      "dry_spring": "pluie de mars à mai sous la normale {{below}} fois sur {{total}} ; {{pct}} % de la normale.",
+      "last_season_dry": "saison {{season}} : {{rainMm}} mm, soit {{pct}} % de la normale ({{normalMm}} mm).",
+      "wet_frequent": "saisons très humides : {{n}} sur {{total}}."
+    }
+  },
   "recommendations": {
     "title": "Recommandations",
     "back": "Retour à l'aperçu de la ferme",
@@ -135,7 +182,10 @@
     "otherOptions": "Autres bonnes options",
     "rotationPlan": "Plan de rotation des cultures",
     "year": "Année {{year}}",
-    "learnMore": "En savoir plus"
+    "learnMore": "En savoir plus",
+    "climateTitle": "Ce que dit le climat de votre zone",
+    "crops": "Cultures",
+    "exampleNotice": "Classement d'exemple : pas encore calculé à partir de vos données."
   },
   "cropDetail": {
     "title": "Détails",
