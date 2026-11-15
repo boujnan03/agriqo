@@ -4,7 +4,7 @@ import type {
   DiagnosticBlockKey,
   DiagnosticResponse,
 } from "../types/diagnostic";
-import type { WaterRegime } from "../types/seasons";
+import type { WaterRegime, ZoneResponse } from "../types/seasons";
 import type { ForecastResponse } from "../types/weather";
 import type { LatLon, Parcel } from "./parcelGeometry";
 
@@ -72,6 +72,18 @@ export interface Session extends SessionState {
   retryDiagnosticBlock: (block: DiagnosticBlockKey) => void;
   /** State of each block retry, for the current parcel (absent: none running or failed). */
   blockRetry: Partial<Record<DiagnosticBlockKey, BlockRetryState>>;
+  /**
+   * Season types for the current parcel's centroid AND water regime (`GET /api/seasons/zone`),
+   * shared by Farm, Insights, Recommendations and Crop detail: one request per (centroid,
+   * water), never one per page. Undefined: not asked yet for the current inputs.
+   */
+  seasonZone?: Remote<ZoneResponse>;
+  /**
+   * Ask for the season zone of the current inputs. No-op if that answer is loading or loaded;
+   * a request for older inputs still in flight is aborted (its late answer is dropped).
+   * `retry` re-asks after an error.
+   */
+  loadSeasonZone: (options?: { retry?: boolean }) => void;
 }
 
 export const SessionContext = createContext<Session | null>(null);
