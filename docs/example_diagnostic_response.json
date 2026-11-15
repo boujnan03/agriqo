@@ -1,0 +1,48 @@
+{
+  "location": {
+    "lat": 32.4,
+    "lon": -6.45
+  },
+  "soil": {
+    "status": "ok",
+    "source": "ISRIC SoilGrids",
+    "note": "Estimation (~250 m), pas une analyse de laboratoire",
+    "texture_class": "clay_loam",
+    "clay_pct": 33.8,
+    "sand_pct": 34.1,
+    "silt_pct": 32.0,
+    "ph": 7.4,
+    "organic_carbon_g_kg": 14.2,
+    "depth": "0-30cm"
+  },
+  "climate": {
+    "status": "ok",
+    "source": "NASA POWER",
+    "note": "Résolution ~50 km : deux parcelles proches ont le même climat. temp_max_c = température horaire la plus élevée sur la période de climatologie ; frost_days = jours avec T2M_MIN < 0 °C sur les 12 derniers mois (données journalières).",
+    "temp_mean_c": 17.9,
+    "temp_max_c": 44.1,
+    "rain_mm_year": 526,
+    "frost_days": 4,
+    "climatology_period": "2001-2025",
+    "frost_days_period": {
+      "start": "2025-11-15",
+      "end": "2026-11-12"
+    }
+  },
+  "soil_moisture": {
+    "status": "ok",
+    "source": "NASA POWER",
+    "note": "Humidité de surface (GWETTOP, 0-1), résolution ~50 km, quelques jours de retard. Seuils indicatifs du projet, à valider : sec < 0.30 ≤ moyen < 0.60 ≤ humide.",
+    "gwettop": 0.49,
+    "gwetroot": 0.45,
+    "label": "moyen",
+    "date": "2026-11-12"
+  },
+  "terrain": {
+    "status": "ok",
+    "source": "OpenTopography",
+    "note": "SRTM GL1 (~30 m). Pente moyenne sur ~500 m autour du point.",
+    "altitude": 459,
+    "slope_pct": 3.3
+  }
+}

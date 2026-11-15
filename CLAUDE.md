@@ -9,7 +9,10 @@ Hackathon: ~48 h, team of 3. **Working end-to-end > extra features.**
 ## Stack
 - **Frontend** (`frontend/`): React 19 + TypeScript 6 + Vite 8, React Router 8, lucide-react,
   Vitest + React Testing Library, ESLint + Prettier. Production: static build served by nginx.
-- **Backend** (`backend/`): FastAPI placeholder, `GET /health` only, no business logic yet.
+- **Backend** (`backend/`): FastAPI + httpx. `POST /api/parcel/diagnostic` (SoilGrids, NASA POWER,
+  OpenTopography) and `GET /api/weather/forecast` (Open-Meteo); spec in `docs/SPEC_Diagnostic_Parcelle.md`.
+  Every block has `status` (`ok`/`indisponible`/`pas_de_donnees`) + `source`; never invent values.
+  Tests: `cd backend && pytest` (respx mocks, network blocked). No recommendations (teammate's ML, later).
 - No database. No LLM (yet). See `ARCHITECTURE.md` (start at §8).
 
 ## Layout
