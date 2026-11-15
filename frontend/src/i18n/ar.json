@@ -104,5 +104,21 @@
     "legend": "مفتاح الألوان",
     "unit": "الوحدة",
     "lastUpdated": "آخر تحديث: {{date}}"
+  },
+  "profile": {
+    "title": "الملف الشخصي",
+    "memberSince": "عضو منذ {{year}}",
+    "settings": "الإعدادات",
+    "language": "اللغة",
+    "currentLanguage": "العربية",
+    "notifications": "الإشعارات",
+    "notificationsOn": "مفعّلة",
+    "notificationsOff": "معطّلة",
+    "units": "وحدات القياس",
+    "unitValues": {
+      "metric": "النظام المتري"
+    },
+    "unitsSoon": "ستتوفر وحدات أخرى قريبًا.",
+    "signOut": "تسجيل الخروج"
   }
 }

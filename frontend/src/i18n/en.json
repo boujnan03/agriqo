@@ -104,5 +104,21 @@
     "legend": "Legend",
     "unit": "Unit",
     "lastUpdated": "Last updated: {{date}}"
+  },
+  "profile": {
+    "title": "Profile",
+    "memberSince": "Member since {{year}}",
+    "settings": "Settings",
+    "language": "Language",
+    "currentLanguage": "English",
+    "notifications": "Notifications",
+    "notificationsOn": "On",
+    "notificationsOff": "Off",
+    "units": "Units",
+    "unitValues": {
+      "metric": "Metric"
+    },
+    "unitsSoon": "Other units are coming soon.",
+    "signOut": "Sign out"
   }
 }
