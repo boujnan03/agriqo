@@ -198,6 +198,34 @@
     "save": "Save this plan",
     "saved": "Plan saved for this session (demo: nothing is actually stored)."
   },
+  "crops": {
+    "ble": {
+      "name": "Wheat",
+      "description": "Ideal for the climate and soil type of Beni Mellal.",
+      "why": "Cool weather and moderate rain make wheat an excellent option."
+    },
+    "orge": {
+      "name": "Barley",
+      "description": "Good drought tolerance, suited to follow wheat in a rotation.",
+      "why": "Its low water demand makes it a good choice to spare the soil between two more demanding crops."
+    },
+    "legumineuses": {
+      "name": "Legumes",
+      "description": "Naturally enrich the soil with nitrogen, useful between two cereals.",
+      "why": "They improve soil health for the next crop rather than aiming for maximum yield."
+    },
+    "level": {
+      "low": "Low",
+      "low_medium": "Low to medium",
+      "medium": "Medium",
+      "medium_high": "Medium to high",
+      "high": "High"
+    },
+    "suitability": {
+      "high": "Highly suited to your conditions"
+    },
+    "monthRange": "{{from}} – {{to}}"
+  },
   "profile": {
     "title": "Profile",
     "memberSince": "Member since {{year}}",
@@ -315,5 +343,8 @@
     "lon": "Long.",
     "centre": "Centre:",
     "shape": "Area ≈ {{area}} ha · {{count}} corners"
+  },
+  "places": {
+    "beniMellal": "Beni Mellal"
   }
 }

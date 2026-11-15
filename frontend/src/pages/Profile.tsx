@@ -126,7 +126,7 @@ export function Profile() {
             <h2 className={styles.name}>{profileData.name}</h2>
             <span className={styles.muted}>
               <Icon icon={MapPin} />
-              {profileData.location}
+              {t(`places.${profileData.location}`)}
             </span>
             {/* Email and phone are LTR even inside Arabic text: isolate them so the "+" and
                 the "@" never get reordered (§9a). */}
