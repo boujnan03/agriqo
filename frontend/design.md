@@ -12,7 +12,7 @@ Reference: based on the "FieldShift AI" concept image (deep green + white + ligh
 - **Tagline**: "Smart Crop Rotation for a Sustainable Tomorrow"
 - **Logo mark**: a stylized sprout/leaf over curved field rows, in the two greens below
 - **Voice**: plain, reassuring, never overstates confidence (see §9 and the project's honesty requirements — scores and recommendations always carry their caveats, never presented as certainties)
-- **UI language**: French, matching the rest of the product. Every example label elsewhere in this document (e.g. "Recommended", "Best Crop for You") is illustrative and left in English for brevity — real copy is always French. Translate the *intent*, not the string: "Recommended" → "Recommandé", "Best Crop for You" → "Meilleure culture pour vous", and so on.
+- **UI languages**: Arabic (default), French, English — switchable, with every screen built for all three from the start, not patched in later. Arabic reads right-to-left; French and English read left-to-right (see §9a for what that changes). Every example label elsewhere in this document (e.g. "Recommended", "Best Crop for You") is illustrative and left in English for brevity — real copy exists in all three languages. Translate the *intent*, not the string: "Recommended" → "Recommandé" / "موصى به", "Best Crop for You" → "Meilleure culture pour vous" / "أفضل محصول لك", and so on.
 
 ## 2. Color Tokens
 
@@ -37,8 +37,8 @@ Rule: `--green-900` is the only color used for primary actions (buttons, active 
 - **Headings**: Inter or Poppins, weight 700–800. Screen titles 18–22px, hero titles (crop name, app name) 26–32px.
 - **Body**: Inter, weight 400–500, 14–16px.
 - **Buttons/labels**: Inter, weight 600, 15–16px.
-- **Captions/muted**: Inter, weight 500, 11–13px, `--text-600`.
-- Never go below 13px for anything the farmer must read to use the app (data values, button labels). Captions below that size are decorative only.
+- **Captions/muted**: Inter, weight 500, `--text-600`. Two explicit sizes, not a vague range — **11px** for purely decorative/non-essential chrome, **13px** for anything factual the farmer might rely on (a data-recency note, a unit label) that isn't full body text. When genuinely unsure which applies, default to 13px or body size rather than guessing small.
+- Never go below 13px for anything the farmer must read to use the app (data values, button labels, recency notes).
 
 ## 4. Spacing, Radius, Shadow
 
@@ -69,9 +69,13 @@ Rule: `--green-900` is the only color used for primary actions (buttons, active 
 
 **Badge/pill** — radius 999px, 4–6px / 10–12px padding, `--green-tint` bg + `--green-900` text, bold, 13px (bumped from the original 12px so farmer-facing values like "85%" always clear the §3 readability minimum). Used for short status words ("Recommandé", "85%") — never for anything longer than ~2 words.
 
+**Segmented control** — a row of mutually-exclusive options (e.g. the Map page's layer switcher), built from real `<button>`s (`role="radiogroup"`/`role="radio"` or a native radio group under the hood), `--green-tint` bg for the group, the selected option in `--green-900` with white text, others transparent with `--text-900`. Same radius/padding rhythm as a `Badge` row, not a new shape.
+
 **Progress / data bar** — track `--border`, 8px height, radius 4px, fill `--green-900` or `--green-700`. Always paired with the numeric value as text — the bar illustrates, it never replaces the number.
 
 **Bottom tab bar** — fixed, ~64–72px tall, white bg, 1px top border (`--border`). Exactly these 4 destinations for the MVP: **Home · Insights · Map · Profile**. Icon + label stacked; active = `--green-900` + bold label; inactive = `--tab-inactive`. Present on every top-level ("section root") screen; absent on drill-in/detail screens (those use the header back-arrow instead — see §7).
+
+**Tab-to-route mapping (explicit, not inferred)**: **Home → `/farm`** ("Your Farm" is the farmer's home base). **Insights → `/overview`** (climate/health data is the "insights"). **Map → `/map`** (§7 template 7 — satellite data layers, distinct from Farm's small location pin). **Profile → `/profile`** (§7 template 8). A page's purpose resembling "map" or "home" in casual conversation is not grounds to reassign it to a different tab than this table states.
 
 **Header** — 56–60px tall. Section-root screens: title left-aligned, optional right-side icon (bell/profile). Drill-in screens: back chevron + title, no tab bar.
 
@@ -84,9 +88,11 @@ Every new screen must match one of these five. If a genuinely new need doesn't f
 1. **Cover** (Welcome/onboarding) — full-bleed photo, centered logo + title + tagline, primary button + secondary link near the bottom. No header, no tab bar.
 2. **Map/Data-entry** (e.g. "Your Farm") — photo/map banner card, then a list of icon-labeled fact rows, then one primary CTA. Header + tab bar.
 3. **Dashboard** (e.g. "Farm Overview") — stacked standard cards: a summary-stat row, a chart card, one or more progress-bar cards. Header + tab bar.
-4. **Recommendation list** (e.g. "Recommendations") — one featured card, a row of smaller option cards (photo + name + %), then a stepped plan list. Header + tab bar.
+4. **Recommendation list** (e.g. "Recommendations") — one featured card, a row of smaller option cards (photo + name + %), then a stepped plan list. Header with back-arrow, **no** tab bar — reached by drilling in from the Dashboard, not from the tab bar directly.
 5. **Detail** (e.g. a single crop's page) — photo banner, title + badge, icon-labeled fact rows, one explanation/"why" box, one primary CTA. Header with back-arrow, **no** tab bar.
 6. **Error/Not found** — centered one-line plain-language message ("Page introuvable"), one primary button back to the Cover screen. No header, no tab bar.
+7. **Map / Data layers** (the Map tab) — a large map/satellite `PhotoFrame`, a segmented layer switcher (e.g. Végétation · Humidité du sol · Précipitations — mutually exclusive, single select), and a legend/description card for whichever layer is active, including a data-recency note showing the actual date, not a relative time ("Dernière mise à jour : 13 novembre 2026") — more honest about exactly how fresh the data is. Header + tab bar (Map active).
+8. **Profile / Settings** (the Profile tab) — a profile summary card (name, location), a short list of tappable setting rows (reusing the icon-labeled fact-row pattern from §2's data rows, with a trailing chevron to show they're actionable), then a secondary "sign out" action with no real auth behind it yet. Header + tab bar (Profile active).
 
 ## 8. Image / Photo Guidelines
 
@@ -106,6 +112,17 @@ Real photography is intended throughout (field shots, crop close-ups) but not ye
 - **Hover** (pointer devices only, never required for usability since touch has no hover): a subtle 4% darken overlay on buttons and tappable cards.
 - **Disabled**: 50% opacity + `cursor: not-allowed`, nothing else changes. This must stay visually distinct from an inactive-but-reachable tab (e.g. an unselected tab bar icon is not disabled — only a destination that genuinely doesn't exist yet, like Profile before it's built, gets disabled styling).
 
+## 9a. Internationalization & RTL
+
+- **Languages**: Arabic (default), French, English. A language switcher must be reachable from every screen.
+- **Arabic is RTL**: when Arabic is active, the whole layout mirrors horizontally — reading direction, directional icons, and spacing.
+- **Logical properties, not left/right**: every component uses CSS logical properties (`margin-inline-start`, `padding-inline-end`, `text-align: start`, etc.) instead of physical `left`/`right`/`margin-left`, so flipping `dir="rtl"` on the root mirrors the whole app automatically — no per-component RTL overrides.
+- **Directional icons flip; non-directional ones don't**: the `Header` back-arrow points toward the start of reading direction — left in French/English, right in Arabic. The tab bar's icon-above-label layout is vertical and doesn't need mirroring, but the 4 destinations' left-to-right *order* mirrors with `dir`.
+- **The `PhotoFrame` gradient (§6) always stays bottom-to-top** regardless of `dir` — it's a vertical effect, not a reading-direction one.
+- **Typography**: Arabic needs its own type stack — Inter/Nunito don't cover Arabic script. Add a proper Arabic web font (e.g. Noto Sans Arabic, Cairo, or Tajawal — pick one with a weight range matching §3) applied automatically when Arabic is active. Never force a Latin font onto Arabic text or vice versa.
+- **Numerals**: keep Western Arabic numerals (0–9) across all three languages for this MVP, not Eastern Arabic-Indic numerals — standard everyday practice in Morocco, and simpler to implement.
+- **Copy source of truth**: every piece of UI text lives in translation files (one per language), never hardcoded in a component in any single language.
+
 ## 10. File & Naming Conventions (for whoever builds the real frontend)
 
 - One file per screen, PascalCase, matching the screen's route/purpose (e.g. `FarmOverview`, `CropDetail`).
@@ -119,3 +136,4 @@ Real photography is intended throughout (field shots, crop close-ups) but not ye
 3. Tab bar or back-arrow header — which, per §7?
 4. Any photo slots — placeholder per §8, correct aspect ratio reserved?
 5. Touch targets, contrast, real interactive elements — per §9?
+6. Every string in translation files (not hardcoded), and correct in RTL with Arabic as default — per §9a?
