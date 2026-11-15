@@ -117,7 +117,20 @@
     "seeDiagnostic": "Voir le diagnostic complet"
   },
   "weather": {
-    "title": "Météo"
+    "title": "Météo",
+    "today": "Aujourd'hui",
+    "next7": "7 prochains jours",
+    "precipitation": "Risque de pluie",
+    "humidity": "Humidité de l'air",
+    "wind": "Vent",
+    "degrees": "{{value}}°",
+    "conditions": {
+      "sunny": "Ensoleillé",
+      "partlyCloudy": "Partiellement nuageux",
+      "cloudy": "Nuageux",
+      "showers": "Averses",
+      "rain": "Pluie"
+    }
   },
   "dataCard": {
     "source": "Données : {{source}}",
@@ -133,7 +146,8 @@
     "celsius": "{{value}}\u00a0°C",
     "percent": "{{value}}\u00a0%",
     "gPerKg": "{{value}}\u00a0g/kg",
-    "meters": "{{value}}\u00a0m"
+    "meters": "{{value}}\u00a0m",
+    "kmh": "{{value}}\u00a0km/h"
   },
   "data": {
     "texture": {
