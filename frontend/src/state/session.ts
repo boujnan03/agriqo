@@ -1,13 +1,15 @@
 import { createContext, useContext } from "react";
 
-import type { DiagnosticResponse } from "../types/diagnostic";
+import type {
+  DiagnosticBlockKey,
+  DiagnosticResponse,
+} from "../types/diagnostic";
 import type { ForecastResponse } from "../types/weather";
+import type { LatLon, Parcel } from "./parcelGeometry";
 
-/** A real point picked on Home's map (WGS 84 degrees). */
-export interface ParcelLocation {
-  lat: number;
-  lon: number;
-}
+/** A real point (WGS 84 degrees): a parcel's centroid, a map position. */
+export type ParcelLocation = LatLon;
+export type { Parcel };
 
 /**
  * In-memory app session: plain React state, never persisted (a page reload starts over) and
@@ -16,10 +18,11 @@ export interface ParcelLocation {
  */
 export interface SessionState {
   /**
-   * The parcel picked on Home's map (design.md §7.2), or null before any pick. Farm, Insights
-   * and Weather show data for it, or an empty state pointing back to Home while it is null.
+   * The parcel drawn on Home's map (design.md §7.2): its corners + centroid, or null before
+   * one is drawn. Farm, Insights and Weather show data for it, or an empty state pointing
+   * back to Home while it is null.
    */
-  parcel: ParcelLocation | null;
+  parcel: Parcel | null;
 }
 
 /** What each backend request returns. */
@@ -37,8 +40,12 @@ export type RemoteKind = keyof RemoteData;
 export type Remote<T> =
   { state: "loading" } | { state: "success"; data: T } | { state: "error" };
 
+/** A one-block retry (e.g. Soil's "Retry"): in flight, or its request to our backend failed. */
+export type BlockRetryState = "retrying" | "failed";
+
 export interface Session extends SessionState {
-  pickParcel: (location: ParcelLocation) => void;
+  /** Set (or, with null, clear) the drawn parcel. */
+  pickParcel: (parcel: Parcel | null) => void;
   /** Latest result per request kind, for the current parcel only (undefined: not asked yet). */
   remote: { [K in RemoteKind]?: Remote<RemoteData[K]> };
   /**
@@ -47,6 +54,15 @@ export interface Session extends SessionState {
    * read the diagnostic) never fetch it twice. `retry` re-asks after an error.
    */
   load: (kind: RemoteKind, options?: { retry?: boolean }) => void;
+  /**
+   * Re-send the SAME diagnostic request (same parcel, same body) and replace only `block` in
+   * the shared answer with the new one: the other cards keep exactly what they showed. Used by
+   * a Data card's "Retry" when its source was `indisponible` (e.g. SoilGrids timed out while
+   * the backend keeps fetching it in the background).
+   */
+  retryDiagnosticBlock: (block: DiagnosticBlockKey) => void;
+  /** State of each block retry, for the current parcel (absent: none running or failed). */
+  blockRetry: Partial<Record<DiagnosticBlockKey, BlockRetryState>>;
 }
 
 export const SessionContext = createContext<Session | null>(null);

@@ -23,6 +23,11 @@ export interface BlockMeta {
   message?: string;
   /** The backend's French caveat (resolution, definitions); the UI uses its own i18n text. */
   note?: string;
+  /**
+   * indisponible only (Soil): the backend is still fetching this source in the background;
+   * asking again shortly may return real values.
+   */
+  retry_pending?: boolean;
 }
 
 /**

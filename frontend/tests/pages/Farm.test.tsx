@@ -10,7 +10,13 @@ import {
   pending,
   unreachable,
 } from "../fakeBackend";
-import { inLanguage, picked, renderRoute, TADLA, tabBarLabel } from "../utils";
+import {
+  inLanguage,
+  picked,
+  renderRoute,
+  TADLA_REQUEST,
+  tabBarLabel,
+} from "../utils";
 
 /** The Data card <section> under the h2 named `name`, once the diagnostic has arrived. */
 const card = async (name: string) =>
@@ -36,15 +42,15 @@ describe("Farm page (design.md §7.3) with the real backend response", () => {
   it("asks the backend once, for the picked coordinates, and shows the 4 Data cards in order", async () => {
     const { container } = renderRoute("/farm", picked);
     await card("Sol");
-    expect(fakeBackend.calls).toEqual([
-      { route: "diagnostic", lat: TADLA.lat, lon: TADLA.lon },
-    ]);
+    // The centroid for the point-based sources + the real polygon (GeoJSON) for terrain.
+    expect(fakeBackend.calls).toEqual([TADLA_REQUEST]);
     expect(
       screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent),
     ).toEqual(["Sol", "Climat", "Humidité", "Relief"]);
-    expect(container.querySelector("main")).toHaveTextContent(
-      "Lat. 32.400·Long. -6.450",
-    );
+    // The drawn parcel: its centroid and size (4 corners of a ~110 m square ≈ 1 ha).
+    const main = container.querySelector("main") as HTMLElement;
+    expect(main).toHaveTextContent("Centre :Lat. 32.400·Long. -6.450");
+    expect(main).toHaveTextContent(/Surface ≈ 1,0\d ha · 4 coins/);
     // Data only: the Header's logo mark is the only image (§7.3, §8).
     expect(container.querySelectorAll("main img")).toHaveLength(0);
   });

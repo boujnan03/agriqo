@@ -26,7 +26,7 @@ import { ParcelCoords } from "./parcel/ParcelCoords";
 export function Farm() {
   const { t } = useTranslation();
   const { maybe } = useFormat();
-  const { parcel } = useSession();
+  const { parcel, retryDiagnosticBlock, blockRetry } = useSession();
   const { result, retry } = useParcelData("diagnostic");
 
   const body = () => {
@@ -46,6 +46,10 @@ export function Farm() {
           block={soil}
           noDataText={t("dataCard.noData.soil")}
           caveat={t("farm.soilCaveat")}
+          // SoilGrids is often slow: the backend keeps fetching it after a timeout, so a
+          // retry (the same diagnostic request) can return the real values.
+          onRetry={() => retryDiagnosticBlock("soil")}
+          retryState={blockRetry.soil}
         >
           {(s) => (
             <FactList

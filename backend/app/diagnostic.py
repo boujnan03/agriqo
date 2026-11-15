@@ -9,6 +9,7 @@ import asyncio
 
 import httpx
 
+from app import background, config
 from app.cache import round_coord
 from app.models import (
     ClimateBlock,
@@ -48,6 +49,7 @@ MSG_NO_MOISTURE = (
     f"Pas de mesure d'humidité du sol sur les {power.MOISTURE_MAX_AGE_DAYS} derniers jours ici."
 )
 NOTE_TERRAIN = "SRTM GL1 (~30 m). Pente moyenne sur ~500 m autour du point."
+NOTE_TERRAIN_POLYGON = "SRTM GL1 (~30 m). Pente moyenne sur la parcelle dessinée."
 MSG_NO_TERRAIN = "Pas de données d'altitude pour ce point."
 
 
@@ -55,9 +57,15 @@ def _r1(v: float | None) -> float | None:
     return None if v is None else round(v, 1)
 
 
-def soil_block(o: Outcome) -> SoilBlock:
+def soil_block(o: Outcome, retry_pending: bool = False) -> SoilBlock:
     if o.status == "indisponible":
-        return SoilBlock(status="indisponible", source=SRC_SOIL, error=o.error)
+        return SoilBlock(
+            status="indisponible",
+            source=SRC_SOIL,
+            error=o.error,
+            # A background re-fetch is still trying: asking again later may get real data.
+            retry_pending=True if retry_pending else None,
+        )
     if o.status == "pas_de_donnees":
         return SoilBlock(status="pas_de_donnees", source=SRC_SOIL, message=MSG_NO_SOIL)
     s: soilgrids.Soil = o.data
@@ -124,38 +132,92 @@ def soil_moisture_block(daily: Outcome) -> SoilMoistureBlock:
     )
 
 
-def terrain_block(o: Outcome) -> TerrainBlock:
+def polygon_key(ring: list[tuple[float, float]] | None) -> str:
+    """Cache-key part for terrain: the polygon's corners at ~1 m precision ('' = no polygon)."""
+    if ring is None:
+        return ""
+    return ";".join(f"{lon:.5f},{lat:.5f}" for lon, lat in ring)
+
+
+def terrain_block(o: Outcome, polygon: bool = False) -> TerrainBlock:
     if o.status == "indisponible":
         return TerrainBlock(status="indisponible", source=SRC_TERRAIN, error=o.error)
     t: opentopography.Terrain | None = o.data
     if o.status == "pas_de_donnees" or t is None or (t.altitude is None and t.slope_pct is None):
         return TerrainBlock(status="pas_de_donnees", source=SRC_TERRAIN, message=MSG_NO_TERRAIN)
     return TerrainBlock(
-        status="ok", source=SRC_TERRAIN, altitude=t.altitude, slope_pct=t.slope_pct, note=NOTE_TERRAIN
+        status="ok",
+        source=SRC_TERRAIN,
+        altitude=t.altitude,
+        slope_pct=t.slope_pct,
+        note=NOTE_TERRAIN_POLYGON if polygon else NOTE_TERRAIN,
     )
 
 
+async def soil_outcome(
+    client: httpx.AsyncClient, lat: float, lon: float
+) -> tuple[Outcome, bool]:
+    """SoilGrids for the request path, with a background re-fetch after a timeout.
+
+    Returns (outcome, retry_pending). Never waits longer than the usual per-call limit:
+    - a background re-fetch already running for this point → wait for IT (no second
+      SoilGrids call), at most EXTERNAL_TIMEOUT_S, then answer with whatever it has;
+    - otherwise one normal call; if it times out, start the background re-fetch and answer
+      `indisponible` now. Its result lands in the cache for the next request.
+    """
+    running = background.pending("soilgrids", lat, lon)
+    if running is not None:
+        try:
+            async with asyncio.timeout(config.EXTERNAL_TIMEOUT_S):
+                outcome = await asyncio.shield(running)
+        except TimeoutError:
+            return Outcome("indisponible", error="timeout"), True
+        return outcome, False
+
+    outcome = await run_source(
+        "soilgrids", lat, lon, lambda: soilgrids.fetch(client, lat, lon)
+    )
+    if outcome.status == "indisponible" and outcome.error == "timeout":
+        background.ensure_refetch(
+            "soilgrids",
+            lat,
+            lon,
+            lambda timeout_s: soilgrids.fetch(client, lat, lon, timeout_s),
+        )
+        return outcome, True
+    return outcome, False
+
+
 async def build_diagnostic(client: httpx.AsyncClient, req: DiagnosticRequest) -> DiagnosticResponse:
-    # Query every API with the same rounded point the cache is keyed on.
+    # Point-based sources (POWER, SoilGrids) get the point only: the polygon's centroid when
+    # a parcel was drawn. Query with the same rounded point the cache is keyed on.
     lat, lon = round_coord(req.lat), round_coord(req.lon)
+    # OpenTopography gets the real shape: its box is the polygon's extent.
+    ring = req.polygon.ring if req.polygon else None
 
     # run_source never raises: each call turns its own failure into an `indisponible`
     # outcome, so gather always returns four outcomes and no call can abort the others.
     clim, daily, soil, terrain = await asyncio.gather(
         run_source("power_climatology", lat, lon, lambda: power.fetch_climatology(client, lat, lon)),
         run_source("power_daily", lat, lon, lambda: power.fetch_daily(client, lat, lon)),
-        run_source("soilgrids", lat, lon, lambda: soilgrids.fetch(client, lat, lon)),
-        run_source("opentopography", lat, lon, lambda: opentopography.fetch(client, lat, lon)),
+        soil_outcome(client, lat, lon),
+        run_source(
+            "opentopography",
+            lat,
+            lon,
+            lambda: opentopography.fetch(client, lat, lon, ring),
+            variant=polygon_key(ring),
+        ),
     )
 
     # RECOMMENDATIONS ATTACH HERE (later, not in this service): a teammate's ML model will
     # produce them from these blocks + `req.previous_crop`, and they will be added to the
-    # response as a `recommendations` field. `req.previous_crop` and `req.polygon` are
+    # response as a `recommendations` field. `req.previous_crop` is
     # accepted on the request for that forward compatibility but deliberately unused now.
     return DiagnosticResponse(
         location=Location(lat=req.lat, lon=req.lon),
-        soil=soil_block(soil),
+        soil=soil_block(*soil),
         climate=climate_block(clim, daily),
         soil_moisture=soil_moisture_block(daily),
-        terrain=terrain_block(terrain),
+        terrain=terrain_block(terrain, polygon=ring is not None),
     )

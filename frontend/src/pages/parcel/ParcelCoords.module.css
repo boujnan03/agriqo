@@ -1,5 +1,11 @@
-/* The picked parcel's coordinates: muted secondary text with a pin, like a place name. */
-.coords {
+/* The drawn parcel: centroid line + size line, muted secondary text with icons. */
+.parcel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.line {
   display: flex;
   flex-wrap: wrap;
   align-items: center;

@@ -12,16 +12,17 @@ Serialization rule (see `SourcedBlock`):
 """
 from __future__ import annotations
 
+import math
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, model_serializer
+from pydantic import BaseModel, ConfigDict, Field, model_serializer, model_validator
 
 # ok: real values. indisponible: the source failed / timed out / is not configured.
 # pas_de_donnees: the source answered, but has nothing for this location (water, city...).
 Status = Literal["ok", "indisponible", "pas_de_donnees"]
 
 # Fields that are dropped whenever they are null, whatever the status.
-_META_FIELDS = frozenset({"error", "message", "note"})
+_META_FIELDS = frozenset({"error", "message", "note", "retry_pending"})
 
 
 class SourcedBlock(BaseModel):
@@ -48,16 +49,69 @@ class SourcedBlock(BaseModel):
 # ---------------------------------------------------------------------------- diagnostic
 
 
+class PolygonGeometry(BaseModel):
+    """The parcel drawn on Home's map, as a GeoJSON Polygon geometry (RFC 7946 §3.1.6).
+
+    One closed outer ring of [lon, lat] positions (GeoJSON order: longitude first), first
+    position repeated last, at least 3 distinct corners. Holes are not supported (one ring only).
+    """
+
+    model_config = ConfigDict(extra="ignore")
+
+    type: Literal["Polygon"]
+    coordinates: list[list[tuple[float, float]]]
+
+    @model_validator(mode="after")
+    def _check_ring(self) -> PolygonGeometry:
+        if len(self.coordinates) != 1:
+            raise ValueError("un seul contour attendu (pas de trous)")
+        ring = self.coordinates[0]
+        if len(ring) < 4:
+            raise ValueError("au moins 3 coins (4 positions, la première répétée à la fin)")
+        if ring[0] != ring[-1]:
+            raise ValueError("le contour doit être fermé (dernière position = première)")
+        for lon, lat in ring:
+            if not (math.isfinite(lon) and math.isfinite(lat)):
+                raise ValueError("coordonnées non finies")
+            if not (-180 <= lon <= 180 and -90 <= lat <= 90):
+                raise ValueError("coordonnées hors limites ([lon, lat] attendu)")
+        if len(set(ring[:-1])) < 3:
+            raise ValueError("au moins 3 coins distincts")
+        return self
+
+    @property
+    def ring(self) -> list[tuple[float, float]]:
+        """The outer ring, [(lon, lat), ...], closed."""
+        return self.coordinates[0]
+
+
 class DiagnosticRequest(BaseModel):
     model_config = ConfigDict(extra="ignore")
 
+    # The point queried by the point-based sources (NASA POWER, SoilGrids). With a polygon,
+    # it is the polygon's centroid (computed by the frontend, checked to lie in its extent).
     lat: float = Field(ge=-90, le=90, allow_inf_nan=False, examples=[32.40])
     lon: float = Field(ge=-180, le=180, allow_inf_nan=False, examples=[-6.45])
-    # Accepted for forward compatibility (drawn parcel, GeoJSON). Not used yet: every
-    # source is queried at the point (lat, lon).
-    polygon: dict[str, Any] | list[Any] | None = None
+    # The drawn parcel. Used by OpenTopography only (bounding box = the polygon's extent, slope
+    # averaged inside it); optional: without it, terrain uses a ~500 m box around the point.
+    polygon: PolygonGeometry | None = None
     # Accepted for the teammate's future recommendation model. NOT used by this service.
     previous_crop: str | None = Field(default=None, max_length=100, examples=["blé"])
+
+    @model_validator(mode="after")
+    def _point_inside_polygon_extent(self) -> DiagnosticRequest:
+        # A polygon's centroid always lies inside its bounding box: anything else means the
+        # client sent a point and a shape that don't belong together.
+        if self.polygon is not None:
+            lons = [p[0] for p in self.polygon.ring]
+            lats = [p[1] for p in self.polygon.ring]
+            eps = 1e-9
+            if not (
+                min(lats) - eps <= self.lat <= max(lats) + eps
+                and min(lons) - eps <= self.lon <= max(lons) + eps
+            ):
+                raise ValueError("lat/lon doit être le centre du polygone (hors de son emprise)")
+        return self
 
 
 class Location(BaseModel):
@@ -91,6 +145,9 @@ class SoilBlock(SourcedBlock):
     organic_carbon_g_kg: float | None = None
     # Soil layer the values describe (depth-weighted mean of SoilGrids' 0-5/5-15/15-30 cm).
     depth: str | None = None
+    # indisponible only: true while a background re-fetch is still trying (app/background.py),
+    # so asking again shortly may return real data. Absent otherwise.
+    retry_pending: bool | None = None
 
 
 class DateRange(BaseModel):
