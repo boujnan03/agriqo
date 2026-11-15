@@ -34,6 +34,22 @@ export function formatCoordinate(value: number): string {
   return value.toFixed(3);
 }
 
+/**
+ * A season is labelled by its END year (2025 = October 2024 → May 2025) but always shown as
+ * both years: 2025 → "2024–2025", never "2025" alone. Western digits in every language.
+ */
+export function formatSeason(endYear: number): string {
+  return `${endYear - 1}–${endYear}`;
+}
+
+/**
+ * Display-only distance for a NASA POWER cell: degrees × 111, rounded to 5 km, at least 5.
+ * Always shown with "~": an approximation of the cell's offset, not a measured value.
+ */
+export function approxKm(distanceDeg: number): number {
+  return Math.max(5, Math.round((distanceDeg * 111) / 5) * 5);
+}
+
 /** "2026-11-16" → "lun." (fr) / "Mon" (en) / "الاثنين" (ar). */
 export function formatWeekday(isoDate: string, language: string): string {
   return new Intl.DateTimeFormat(localeOf(language), {

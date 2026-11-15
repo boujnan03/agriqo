@@ -1,0 +1,30 @@
+{
+  "status": "hors_zone",
+  "query": {
+    "lat": 33.0,
+    "lon": -9.5,
+    "water": "pluvial"
+  },
+  "nearestCell": {
+    "id": "C066",
+    "lat": 33.0,
+    "lon": -8.75,
+    "distanceDeg": 0.75
+  },
+  "maxDistanceDeg": 0.5,
+  "cell": null,
+  "reference": null,
+  "normals": null,
+  "lastSeason": null,
+  "history": [],
+  "counts": null,
+  "advice": [],
+  "model": {
+    "name": "StandardScaler + KMeans",
+    "k": 4,
+    "version": "v5",
+    "trainedAt": "2026-11-15T10:29:22+00:00",
+    "sklearnVersion": "1.6.1"
+  },
+  "source": "NASA POWER daily API (community AG), modÃ¨le AGRIQO v5"
+}
