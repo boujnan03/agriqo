@@ -82,6 +82,7 @@
   font-family: var(--font-family-base);
   font-size: var(--font-size-body);
   text-align: start;
+  text-decoration: none; /* the same row also renders as a link (parcels) */
   cursor: pointer;
 }
 

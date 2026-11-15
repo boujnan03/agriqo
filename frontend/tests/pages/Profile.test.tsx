@@ -10,7 +10,7 @@ import { inLanguage, renderRoute, tabBarLabel } from "../utils";
 
 const languageRow = () => screen.getByRole("button", { name: /^Lang|^اللغة/ });
 
-describe("Profile page (design.md §7 template 8)", () => {
+describe("Profile page (design.md §7.9)", () => {
   // French copy asserted below: render in French (the app default is Arabic).
   inLanguage("fr");
 
@@ -29,6 +29,37 @@ describe("Profile page (design.md §7 template 8)", () => {
     ).toBeInTheDocument();
     expect(screen.getByText(profileData.location)).toBeInTheDocument();
     expect(screen.getByText("Membre depuis 2026")).toBeInTheDocument();
+  });
+
+  it("shows email and phone, isolated as left-to-right text", () => {
+    renderRoute("/profile");
+    const email = screen.getByText(profileData.email);
+    const phone = screen.getByText(profileData.phone);
+    expect(email.tagName).toBe("BDI");
+    expect(email).toHaveAttribute("dir", "ltr");
+    expect(phone).toHaveAttribute("dir", "ltr");
+    expect(profileData.email).toMatch(/@example\.com$/); // placeholder, never a real inbox
+  });
+
+  it("parcels summary: a link to Farm with the number of parcels diagnosed", () => {
+    renderRoute("/profile");
+    expect(
+      screen.getByRole("heading", { level: 2, name: "Mes parcelles" }),
+    ).toBeInTheDocument();
+    const row = screen.getByRole("link", { name: /Parcelles diagnostiquées/ });
+    expect(row).toHaveAttribute("href", "/farm");
+    expect(row).toHaveAccessibleName("Parcelles diagnostiquées 0");
+  });
+
+  it("the count follows the parcel picked on Home, and the row opens its diagnostic", async () => {
+    const user = userEvent.setup();
+    renderRoute("/profile", { parcelPicked: true });
+    const row = screen.getByRole("link", { name: /Parcelles diagnostiquées/ });
+    expect(row).toHaveAccessibleName("Parcelles diagnostiquées 1");
+    await user.click(row);
+    expect(
+      await screen.findByRole("heading", { level: 2, name: "Sol" }),
+    ).toBeInTheDocument();
   });
 
   it("lists the 3 settings with their initial values", () => {
@@ -170,11 +201,11 @@ describe("Profile setting rows in RTL (design.md §9a)", () => {
     return paths;
   };
 
-  it("row chevrons point forward: left in Arabic, right in French/English", async () => {
+  it("row chevrons (3 settings + parcels) point forward: left in Arabic, right in FR/EN", async () => {
     const left = reference(ChevronLeft);
     const right = reference(ChevronRight);
-    expect(await rowChevrons("ar")).toEqual([left, left, left]);
-    expect(await rowChevrons("fr")).toEqual([right, right, right]);
-    expect(await rowChevrons("en")).toEqual([right, right, right]);
+    expect(await rowChevrons("ar")).toEqual([left, left, left, left]);
+    expect(await rowChevrons("fr")).toEqual([right, right, right, right]);
+    expect(await rowChevrons("en")).toEqual([right, right, right, right]);
   });
 });
