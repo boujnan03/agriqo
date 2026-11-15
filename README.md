@@ -269,7 +269,6 @@ agriqo
 │     ├─ test_core.py
 │     ├─ test_diagnostic.py
 │     └─ test_weather.py
-├─ CLAUDE.md
 ├─ docker-compose.override.example.yml
 ├─ docker-compose.yml
 ├─ docs

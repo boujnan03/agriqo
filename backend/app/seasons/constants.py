@@ -1,7 +1,7 @@
 """Named constants of the season-type model (docs/seasons/IMPLEMENTATION_SEASONS.md).
 
-Any change to an advice threshold must also update docs/seasons_rules.md and the tests
-(same rule as for scoring in CLAUDE.md).
+Any change to an advice threshold must also update advice.py, docs/seasons_rules.md and
+backend/tests/test_seasons_advice.py, in the same commit.
 """
 from __future__ import annotations
 

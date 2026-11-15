@@ -39,7 +39,7 @@ repo-root/
 ├── docker-compose.yml        # 2 services, network "fieldshift", volume "power-cache"
 ├── .env.example              # FIELDSHIFT_OFFLINE
 ├── ARCHITECTURE.md
-├── README.md / CLAUDE.md     # paths updated (see §3)
+├── README.md                 # paths updated (see §3)
 ├── audits/                   # untouched (still references pre-move paths)
 ├── backend/
 │   ├── app/__init__.py
@@ -68,7 +68,7 @@ Moves were done with `git mv`, so history follows the files. I checked that all 
 | `data/cache/*.json` (local, untracked) | `frontend/data/cache/` | moved on disk only (not in git) |
 | `.gitignore` | same | **edited:** `data/cache/*` → `frontend/data/cache/*` (and its `.gitkeep` exception), because the old pattern only matched at the root. Added `.env`. |
 | `README.md` | same | **edited:** new "Run with Docker" section; local-run block now starts with `cd frontend`; scoring link, "Editing the data" heading and project tree updated |
-| `CLAUDE.md` | same | **edited:** Layout and Commands sections reflect `frontend/` + `backend/` + compose |
+| `CLAUDE.md` | same | **edited:** Layout and Commands sections reflect `frontend/` + `backend/` + compose. (Since then removed from the repo: it is a local, git-ignored file.) |
 | — | `backend/**`, `frontend/Dockerfile`, `frontend/.dockerignore`, `docker-compose.yml`, `.env.example`, `ARCHITECTURE.md` | new |
 
 **No import path or working-directory adjustment was needed.** `src/`, `data/*.json` and `tests/` are unchanged.
@@ -252,7 +252,7 @@ Still open. Nothing was invented for these:
 10. **Cover is "full-bleed"** (§7.1), but photo frames have a radius (§4/§6). Is the radius 0 on the cover?
 11. **Badge text is 12px (§6)**, but §3 forbids < 13px for anything the farmer must read, and badges carry values like "85%".
 12. **Unspecified, so browser defaults are used:** line-height, focus ring, hover/pressed/disabled states, desktop max-width and breakpoints. There is also **no 404 page**: React Router's default error screen shows instead.
-13. **UI language:** design.md uses English names (Home, Insights, …), but `CLAUDE.md` says "UI text in French". Labels are English, verbatim from design.md, and there is no i18n layer yet. Decide before the real pages are built.
+13. **UI language:** design.md uses English names (Home, Insights, …), but the project notes said "UI text in French". Labels are English, verbatim from design.md, and there is no i18n layer yet. Decide before the real pages are built.
 
 ### 8.5 Technical decisions to review
 
