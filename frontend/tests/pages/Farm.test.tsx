@@ -2,11 +2,13 @@ import { screen } from "@testing-library/react";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { farmData } from "../../src/mocks/farm";
-import { TAB_BAR_LABEL } from "../../src/router/tabs";
 import type { FarmData } from "../../src/types/farm";
-import { renderRoute } from "../utils";
+import { inLanguage, renderRoute, tabBarLabel } from "../utils";
 
 describe("Farm page (design.md §7.2)", () => {
+  // French copy asserted below: render in French (the app default is Arabic).
+  inLanguage("fr");
+
   it("the mock fixture matches the FarmData type", () => {
     // Type-level check: enforced by `npm run typecheck`.
     expectTypeOf(farmData).toEqualTypeOf<FarmData>();
@@ -39,10 +41,10 @@ describe("Farm page (design.md §7.2)", () => {
     expect(
       screen.queryByRole("link", { name: /retour|back/i }),
     ).not.toBeInTheDocument();
-    const tabBar = screen.getByRole("navigation", { name: TAB_BAR_LABEL });
+    const tabBar = screen.getByRole("navigation", { name: tabBarLabel() });
     expect(tabBar).toBeInTheDocument();
-    // Tab mapping (design.md §6): /farm is the "Home" tab.
-    expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute(
+    // Tab mapping (design.md §6): /farm is the "Home" tab ("Accueil" in French).
+    expect(screen.getByRole("link", { name: "Accueil" })).toHaveAttribute(
       "aria-current",
       "page",
     );

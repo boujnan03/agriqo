@@ -1,17 +1,16 @@
 import { screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { TabBar } from "../../src/components/TabBar";
-import { TAB_BAR_LABEL, TAB_ITEMS } from "../../src/router/tabs";
-import { renderWithRouter } from "../utils";
+import { AppTabBar } from "../../src/router/AppTabBar";
+import { inLanguage, renderWithRouter, tabBarLabel } from "../utils";
 
-describe("TabBar", () => {
+describe("TabBar (as filled by AppTabBar)", () => {
+  // design.md names the tabs in English: assert them in English.
+  inLanguage("en");
+
   it("shows the 4 design.md destinations, in order", () => {
-    renderWithRouter(
-      <TabBar items={TAB_ITEMS} ariaLabel={TAB_BAR_LABEL} />,
-      "/overview",
-    );
-    const nav = screen.getByRole("navigation", { name: TAB_BAR_LABEL });
+    renderWithRouter(<AppTabBar />, "/overview");
+    const nav = screen.getByRole("navigation", { name: tabBarLabel() });
     const labels = within(nav)
       .getAllByRole("listitem")
       .map((li) => li.textContent);
@@ -19,10 +18,7 @@ describe("TabBar", () => {
   });
 
   it("marks the tab of the current route as active", () => {
-    renderWithRouter(
-      <TabBar items={TAB_ITEMS} ariaLabel={TAB_BAR_LABEL} />,
-      "/farm",
-    );
+    renderWithRouter(<AppTabBar />, "/farm");
     expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute(
       "aria-current",
       "page",
@@ -33,10 +29,7 @@ describe("TabBar", () => {
   });
 
   it("renders a destination without a route as a disabled button", () => {
-    renderWithRouter(
-      <TabBar items={TAB_ITEMS} ariaLabel={TAB_BAR_LABEL} />,
-      "/overview",
-    );
+    renderWithRouter(<AppTabBar />, "/overview");
     expect(screen.getByRole("button", { name: "Map" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "Profile" })).toBeDisabled();
   });

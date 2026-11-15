@@ -1,5 +1,6 @@
 import { CalendarDays, Droplets, Wheat } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 
 import { Badge } from "../components/Badge";
@@ -29,23 +30,24 @@ export function CropDetail() {
 }
 
 function CropDetailScreen({ crop }: { crop: CropDetailData }) {
+  const { t } = useTranslation();
   const [saved, setSaved] = useState(false);
 
   const facts: Fact[] = [
     {
-      label: "Besoin en eau",
+      label: t("cropDetail.waterNeed"),
       value: crop.waterNeed,
       icon: Droplets,
       tone: "water",
     },
     {
-      label: "Meilleure saison",
+      label: t("cropDetail.bestSeason"),
       value: crop.bestSeason,
       icon: CalendarDays,
       tone: "neutral",
     },
     {
-      label: "Rendement attendu",
+      label: t("cropDetail.expectedYield"),
       value: crop.expectedYield,
       icon: Wheat,
       tone: "plant",
@@ -57,9 +59,9 @@ function CropDetailScreen({ crop }: { crop: CropDetailData }) {
       header={
         <Header
           variant="drill-in"
-          title="Détails"
+          title={t("cropDetail.title")}
           backTo={PATHS.recommendations}
-          backLabel="Retour aux recommandations"
+          backLabel={t("cropDetail.back")}
         />
       }
     >
@@ -67,12 +69,17 @@ function CropDetailScreen({ crop }: { crop: CropDetailData }) {
         <div className={styles.banner}>
           <PhotoFrame
             slot="detail"
-            placeholderLabel={`Photo : ${crop.name.toLocaleLowerCase("fr")}`}
+            placeholderLabel={t("common.photo", {
+              // Crop names are French fixture data, hence the "fr" lower-casing.
+              name: crop.name.toLocaleLowerCase("fr"),
+            })}
             className={styles.photo}
           />
           <div className={styles.bannerText}>
             <h2 className={styles.cropName}>{crop.name}</h2>
-            {crop.recommended ? <Badge>Recommandé</Badge> : null}
+            {crop.recommended ? (
+              <Badge>{t("cropDetail.recommended")}</Badge>
+            ) : null}
           </div>
         </div>
 
@@ -85,7 +92,7 @@ function CropDetailScreen({ crop }: { crop: CropDetailData }) {
         <Card variant="featured">
           <section className={styles.why} aria-labelledby="why-this-choice">
             <h3 id="why-this-choice" className={styles.whyTitle}>
-              Pourquoi ce choix ?
+              {t("cropDetail.why")}
             </h3>
             <p className={styles.whyText}>{crop.whyThisChoice}</p>
           </section>
@@ -93,12 +100,10 @@ function CropDetailScreen({ crop }: { crop: CropDetailData }) {
 
         {/* No persistence yet: the button only shows a local confirmation. */}
         <Button withArrow onClick={() => setSaved(true)}>
-          Enregistrer ce plan
+          {t("cropDetail.save")}
         </Button>
         <p className={styles.status} role="status">
-          {saved
-            ? "Plan enregistré pour cette session (démo : rien n'est sauvegardé)."
-            : ""}
+          {saved ? t("cropDetail.saved") : ""}
         </p>
       </div>
     </Screen>

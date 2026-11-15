@@ -1,0 +1,80 @@
+{
+  "app": {
+    "name": "FieldShift AI"
+  },
+  "language": {
+    "label": "Langue",
+    "ar": "AR",
+    "fr": "FR",
+    "en": "EN"
+  },
+  "tabs": {
+    "navLabel": "Navigation principale",
+    "home": "Accueil",
+    "insights": "Analyses",
+    "map": "Carte",
+    "profile": "Profil"
+  },
+  "common": {
+    "photo": "Photo : {{name}}"
+  },
+  "cover": {
+    "photo": "Photo : champ de blé",
+    "tagline": "Rotation de cultures intelligente pour un avenir durable.",
+    "start": "Commencer",
+    "signIn": "Se connecter"
+  },
+  "notFound": {
+    "message": "Page introuvable.",
+    "backHome": "Retour à l'accueil"
+  },
+  "farm": {
+    "title": "Votre ferme",
+    "mapPlaceholder": "Carte : vue satellite de la parcelle",
+    "detailsTitle": "Détails de la ferme",
+    "soilType": "Type de sol",
+    "waterAvailability": "Disponibilité en eau",
+    "currentCrop": "Culture actuelle",
+    "analyze": "Analyser ma ferme"
+  },
+  "overview": {
+    "title": "Aperçu de la ferme",
+    "climateSummary": "Résumé climatique",
+    "avgTemp": "Température moyenne",
+    "totalRainfall": "Précipitations totales",
+    "tempValue": "{{value}} °C",
+    "rainValue": "{{value}} mm",
+    "chartTitle": "Température et précipitations",
+    "soilMoisture": "Humidité du sol",
+    "healthIndex": "Indice de santé",
+    "healthValue": "{{label}} · {{percent}}%",
+    "seeRecommendations": "Voir mes recommandations"
+  },
+  "chart": {
+    "ariaLabel": "Température et précipitations par mois. {{summary}}.",
+    "monthSummary": "{{month}} : {{temp}} °C, {{rainfall}} mm",
+    "separator": " ; ",
+    "legendTemp": "Température (°C), ligne",
+    "legendRain": "Précipitations (mm), barres"
+  },
+  "recommendations": {
+    "title": "Recommandations",
+    "back": "Retour à l'aperçu de la ferme",
+    "bestCrop": "Meilleure culture pour vous",
+    "otherOptions": "Autres bonnes options",
+    "rotationPlan": "Plan de rotation des cultures",
+    "year": "Année {{year}}",
+    "learnMore": "En savoir plus"
+  },
+  "cropDetail": {
+    "title": "Détails",
+    "back": "Retour aux recommandations",
+    "recommended": "Recommandé",
+    "waterNeed": "Besoin en eau",
+    "bestSeason": "Meilleure saison",
+    "expectedYield": "Rendement attendu",
+    "why": "Pourquoi ce choix ?",
+    "save": "Enregistrer ce plan",
+    "saved": "Plan enregistré pour cette session (démo : rien n'est sauvegardé)."
+  }
+}

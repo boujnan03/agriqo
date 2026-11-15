@@ -3,10 +3,9 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { cropDetails } from "../../src/mocks/cropDetails";
-import { TAB_BAR_LABEL } from "../../src/router/tabs";
 import type { CropId } from "../../src/types/crop";
 import type { CropDetailsById } from "../../src/types/cropDetail";
-import { renderRoute } from "../utils";
+import { inLanguage, renderRoute, tabBarLabel } from "../utils";
 
 const CROPS = (Object.keys(cropDetails) as CropId[]).map((id) => ({
   id,
@@ -18,6 +17,9 @@ const factValue = (label: string) =>
   screen.getByText(label, { selector: "dt" }).nextElementSibling;
 
 describe("Crop detail page (design.md §7.5)", () => {
+  // French copy asserted below: render in French (the app default is Arabic).
+  inLanguage("fr");
+
   it("the mock lookup covers every CropId with a CropDetail", () => {
     // Type-level check (Record<CropId, …>): enforced by `npm run typecheck`.
     expectTypeOf(cropDetails).toEqualTypeOf<CropDetailsById>();
@@ -53,7 +55,7 @@ describe("Crop detail page (design.md §7.5)", () => {
       screen.getByRole("link", { name: "Retour aux recommandations" }),
     ).toHaveAttribute("href", "/recommendations");
     expect(
-      screen.queryByRole("navigation", { name: TAB_BAR_LABEL }),
+      screen.queryByRole("navigation", { name: tabBarLabel() }),
     ).not.toBeInTheDocument();
   });
 
@@ -79,6 +81,9 @@ describe("Crop detail page (design.md §7.5)", () => {
 });
 
 describe("full mocked click-through", () => {
+  // French copy asserted below: render in French (the app default is Arabic).
+  inLanguage("fr");
+
   it("Cover → Farm → Overview → Recommendations → Crop detail, and back", async () => {
     const user = userEvent.setup();
     renderRoute("/");

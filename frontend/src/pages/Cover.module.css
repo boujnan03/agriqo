@@ -60,6 +60,13 @@
   margin: 0;
 }
 
+/* §9a language switcher: top end corner, over the photo (Cover has no header). */
+.language {
+  position: absolute;
+  inset-block-start: var(--screen-padding);
+  inset-inline-end: var(--screen-padding);
+}
+
 .actions {
   display: flex;
   flex-direction: column;

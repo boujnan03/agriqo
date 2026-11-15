@@ -8,9 +8,14 @@
   background: var(--white);
 }
 
+/* min-width: 0 lets a long title shrink (ellipsis) instead of pushing the switcher off-screen. */
 .title {
   flex: 1;
+  min-width: 0;
   margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: var(--font-size-screen-title);
   font-weight: var(--font-weight-heading);
   color: var(--text-900);
