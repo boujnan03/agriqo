@@ -64,7 +64,6 @@
     "climateSummary": "Résumé climatique",
     "avgTemp": "Température moyenne",
     "tempValue": "{{value}} °C",
-    "chartTitle": "Température et précipitations",
     "soilMoisture": "Humidité du sol",
     "healthIndex": "Indice de santé",
     "seeRecommendations": "Voir mes recommandations",
@@ -72,7 +71,6 @@
     "frostDays": "Jours de gel",
     "healthSoon": "Bientôt disponible (NDVI)",
     "annualRainfall": "Pluie annuelle",
-    "chartUnavailable": "Pas encore disponible : le serveur n'envoie pas encore les valeurs mensuelles.",
     "climatePeriod": "Moyennes {{period}}",
     "frostPeriod": "Du {{start}} au {{end}}",
     "surfaceWetness": "Humidité du sol en surface"
@@ -129,13 +127,6 @@
     "outsideTitle": "Hors de la zone couverte",
     "outsideText": "Votre parcelle est hors de la zone couverte (Maroc, au nord de 29,5° N). Cellule la plus proche à ~{{km}} km.",
     "outsideAction": "Choisir une autre parcelle"
-  },
-  "chart": {
-    "ariaLabel": "Température et précipitations par mois. {{summary}}.",
-    "monthSummary": "{{month}} : {{temp}} °C, {{rainfall}} mm",
-    "separator": " ; ",
-    "legendTemp": "Température (°C), ligne",
-    "legendRain": "Précipitations (mm), barres"
   },
   "recommendations": {
     "title": "Recommandations",
