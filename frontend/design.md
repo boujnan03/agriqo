@@ -69,13 +69,15 @@ Rule: `--green-900` is the only color used for primary actions (buttons, active 
 
 **Badge/pill** — radius 999px, 4–6px / 10–12px padding, `--green-tint` bg + `--green-900` text, bold, 13px (bumped from the original 12px so farmer-facing values like "85%" always clear the §3 readability minimum). Used for short status words ("Recommandé", "85%") — never for anything longer than ~2 words.
 
-**Segmented control** — a row of mutually-exclusive options (e.g. the Map page's layer switcher), built from real `<button>`s (`role="radiogroup"`/`role="radio"` or a native radio group under the hood), `--green-tint` bg for the group, the selected option in `--green-900` with white text, others transparent with `--text-900`. Same radius/padding rhythm as a `Badge` row, not a new shape.
+**Segmented control** — a row of mutually-exclusive, single-select options, built from real `<button>`s (`role="radiogroup"`/`role="radio"` or a native radio group under the hood), `--green-tint` bg for the group, the selected option in `--green-900` with white text, others transparent with `--text-900`. Same radius/padding rhythm as a `Badge` row, not a new shape. No page currently uses this — kept here in case a future feature needs it, rather than improvising a one-off pattern then.
+
+**Data card** (Farm's 4 diagnostic cards — Sol, Climat, Humidité, Relief) — standard card styling (§6 above), plus two things every one of these cards must have: a small source caption naming where the value came from (e.g. "Données : NASA POWER", 13px, `--text-600`), and one of three required states — **ok** (show the real value), **indisponible** (the API failed, timed out, or is temporarily down — show "Donnée indisponible" in `--text-600`, never a blank space or a zero standing in for missing data), **pas de données** (the API responded but has nothing for this location — e.g. a point in the ocean — show the specific, plain-language reason, not the generic "indisponible" message). Never invent a value to paper over a gap — an absent number is shown as absent, per the project's honesty principle (§1).
 
 **Progress / data bar** — track `--border`, 8px height, radius 4px, fill `--green-900` or `--green-700`. Always paired with the numeric value as text — the bar illustrates, it never replaces the number.
 
-**Bottom tab bar** — fixed, ~64–72px tall, white bg, 1px top border (`--border`). Exactly these 4 destinations for the MVP: **Home · Insights · Map · Profile**. Icon + label stacked; active = `--green-900` + bold label; inactive = `--tab-inactive`. Present on every top-level ("section root") screen; absent on drill-in/detail screens (those use the header back-arrow instead — see §7).
+**Bottom tab bar** — fixed, ~64–72px tall, white bg, 1px top border (`--border`). Exactly these 5 destinations for the MVP, in this order: **Home · Farm · Insights · Weather · Profile**. Icon + label stacked; active = `--green-900` + bold label; inactive = `--tab-inactive`. Present on every top-level ("section root") screen; absent on drill-in/detail screens (those use the header back-arrow instead — see §7).
 
-**Tab-to-route mapping (explicit, not inferred)**: **Home → `/farm`** ("Your Farm" is the farmer's home base). **Insights → `/overview`** (climate/health data is the "insights"). **Map → `/map`** (§7 template 7 — satellite data layers, distinct from Farm's small location pin). **Profile → `/profile`** (§7 template 8). A page's purpose resembling "map" or "home" in casual conversation is not grounds to reassign it to a different tab than this table states.
+**Tab-to-route mapping (explicit, not inferred)**: **Home → `/home`** — the map/picker and a light, glanceable summary once a parcel is selected (§7 template 2). **Farm → `/farm`** — the full 4-card diagnostic for the selected parcel: Sol, Climat, Humidité, Relief (§7 template 3). **Insights → `/overview`** — statistics and charts (§7 template 4). **Weather → `/weather`** — the 7-day forecast for the same selected parcel, no separate picker (§7 template 8). **Profile → `/profile`** (§7 template 9). A page's purpose resembling "map" or "home" in casual conversation is not grounds to reassign it to a different tab than this table states. There is no separate "Map" tab — picking a parcel (Home) and the deep-dive on it (Farm) are deliberately two different tabs, not one merged page, per an explicit decision: Home is the quick entry point, Farm is where you go for the full picture.
 
 **Header** — 56–60px tall. Section-root screens: title left-aligned, optional right-side icon (bell/profile). Drill-in screens: back chevron + title, no tab bar.
 
@@ -83,23 +85,26 @@ Rule: `--green-900` is the only color used for primary actions (buttons, active 
 
 ## 7. Screen Templates
 
-Every new screen must match one of these five. If a genuinely new need doesn't fit any of them, that's a signal to add a 6th template here first — not to improvise inside an existing one.
+Every new screen must match one of these nine. If a genuinely new need doesn't fit any of them, that's a signal to add a 10th template here first — not to improvise inside an existing one.
 
-1. **Cover** (Welcome/onboarding) — full-bleed photo, centered logo + title + tagline, primary button + secondary link near the bottom. No header, no tab bar.
-2. **Map/Data-entry** (e.g. "Your Farm") — photo/map banner card, then a list of icon-labeled fact rows, then one primary CTA. Header + tab bar.
-3. **Dashboard** (e.g. "Farm Overview") — stacked standard cards: a summary-stat row, a chart card, one or more progress-bar cards. Header + tab bar.
-4. **Recommendation list** (e.g. "Recommendations") — one featured card, a row of smaller option cards (photo + name + %), then a stepped plan list. Header with back-arrow, **no** tab bar — reached by drilling in from the Dashboard, not from the tab bar directly.
-5. **Detail** (e.g. a single crop's page) — photo banner, title + badge, icon-labeled fact rows, one explanation/"why" box, one primary CTA. Header with back-arrow, **no** tab bar.
-6. **Error/Not found** — centered one-line plain-language message ("Page introuvable"), one primary button back to the Cover screen. No header, no tab bar.
-7. **Map / Data layers** (the Map tab) — a large map/satellite `PhotoFrame`, a segmented layer switcher (e.g. Végétation · Humidité du sol · Précipitations — mutually exclusive, single select), and a legend/description card for whichever layer is active, including a data-recency note showing the actual date, not a relative time ("Dernière mise à jour : 13 novembre 2026") — more honest about exactly how fresh the data is. Header + tab bar (Map active).
-8. **Profile / Settings** (the Profile tab) — a profile summary card (name, location), a short list of tappable setting rows (reusing the icon-labeled fact-row pattern from §2's data rows, with a trailing chevron to show they're actionable), then a secondary "sign out" action with no real auth behind it yet. Header + tab bar (Profile active).
+1. **Cover** (Welcome/onboarding) — full-bleed photo, centered logo + title + tagline, primary button + secondary link near the bottom. No header, no tab bar. Below the primary button: a simple login gate (username/password fields) checked against one seeded demo account — no real backend auth yet, no registration flow, no password reset. This is a UX gate so the app has a sign-in moment, not a real security system; treat it accordingly and don't over-build it.
+2. **Home** (the Home tab — map/picker + light summary) — map `PhotoFrame` banner (~4:3) the farmer taps to pick their parcel, then, once picked, a light summary: the confirmed location plus one or two headline facts only (not the full diagnostic), then one primary CTA — "Voir le diagnostic complet" — to Farm. Header + tab bar (Home active). This is deliberately the "quick glance" page, not the deep one.
+3. **Farm** (the Farm tab — the full diagnostic) — four `Data card`s (§6), one each for **Sol**, **Climat**, **Humidité**, **Relief**, for whichever parcel was picked on Home. No photo banner here — this page is data, not imagery. Header + tab bar (Farm active). If no parcel has been picked yet (the person reached Farm before Home), show a short empty state pointing back to Home rather than four empty/broken cards.
+4. **Insights (Dashboard)** (the Insights tab) — stacked standard cards: a climate-summary stat row (mean/max temp, annual rainfall), a monthly chart card, a frost-days stat, and one or more progress-bar cards (soil moisture). A "Health Index" card may appear as an explicit placeholder (labelled as not yet available) until a real data source (NDVI) exists for it — never show a fabricated score standing in for real data. Header + tab bar (Insights active).
+5. **Recommendation list** (e.g. "Recommendations") — one featured card, a row of smaller option cards (photo + name + %), then a stepped plan list. Header with back-arrow, **no** tab bar — reached by drilling in from Insights, not from the tab bar directly. Out of scope for now (a teammate's ML model will drive this) — don't rebuild its content, only its shell if it needs to keep compiling.
+6. **Detail** (e.g. a single crop's page) — photo banner, title + badge, icon-labeled fact rows, one explanation/"why" box, one primary CTA. Header with back-arrow, **no** tab bar.
+7. **Error/Not found** — centered one-line plain-language message ("Page introuvable"), one primary button back to the Cover screen. No header, no tab bar.
+8. **Weather** (the Weather tab) — for the same already-selected parcel, no separate picker. A small "today" summary at the top (icon, current temp, condition text, precipitation %/humidity/wind — reusing the `Data card` source/status rule if any of these can be unavailable), then a horizontal row of 7 day cards below it (day abbreviation, weather icon, high°/low°). No hourly breakdown, no Temperature/Precipitation/Wind tab-switching — daily only, kept simple. Header + tab bar (Weather active). Source: an external forecast API (not NASA POWER, which is historical/climatology only, not forward-looking) — name the source visibly, same honesty principle as every other real-data card.
+9. **Profile / Settings** (the Profile tab) — a profile summary card (name, location, email, phone), a short list of tappable setting rows (language, notifications, units — reusing the icon-labeled fact-row pattern from §2's data rows, with a trailing chevron to show they're actionable), a parcels summary (how many parcels diagnosed, linking back to Farm), then a secondary "sign out" action with no real auth behind it yet. Header + tab bar (Profile active).
+
+**Retired**: the earlier "Map / Data layers" template (a satellite layer switcher: Végétation · Humidité du sol · Précipitations) is removed, not reused. There is no separate Map tab — picking a parcel now lives on Home, and the deep data for it lives on Farm as four honest data cards, which is a closer match to the real spec this app is built against than the layer-switcher idea was. Don't resurrect that pattern for Farm or Home; if spatial/layer visualization is wanted again later, it needs a fresh decision, not a revival of the old template.
 
 ## 8. Image / Photo Guidelines
 
 Real photography is intended throughout (field shots, crop close-ups) but not yet produced. Until real images exist:
 
 - **Placeholder convention**: a `--green-tint` rounded rectangle at the slot's real aspect ratio, with a small centered icon + a one-line label in `--text-600` naming exactly what's missing, e.g. "Photo: champ de blé". Never leave a slot visually empty or fake it with a flat color pretending to be a photo.
-- **Aspect ratios to reserve**: Cover/welcome banner — tall, ~9:16 full-bleed; Farm/map banner — ~4:3; Recommendation option thumbnail — 1:1; Detail page banner — ~16:9.
+- **Aspect ratios to reserve**: Cover/welcome banner — tall, ~9:16 full-bleed; Home's map/picker banner — ~4:3; Recommendation option thumbnail — 1:1; Detail page banner — ~16:9. Farm and Weather are data-only (no photo slots); Insights and Profile likewise.
 - When real photos are ready, they drop into these exact slots at these exact ratios with no layout changes.
 
 ## 9. Accessibility Baseline
@@ -131,7 +136,7 @@ Real photography is intended throughout (field shots, crop close-ups) but not ye
 
 ## 11. Checklist Before Adding Any New Page or Feature
 
-1. Which of the 5 templates (§7) does this match? If none, propose the new template here first.
+1. Which of the 9 templates (§7) does this match? If none, propose the new template here first.
 2. Does it only use tokens from §2–§6? If it needs a new color/component, add it to this file before building.
 3. Tab bar or back-arrow header — which, per §7?
 4. Any photo slots — placeholder per §8, correct aspect ratio reserved?
