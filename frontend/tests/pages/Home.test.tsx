@@ -4,126 +4,173 @@ import { describe, expect, it } from "vitest";
 
 import i18n, { LANGUAGES } from "../../src/i18n";
 import { fakeBackend, unreachable } from "../fakeBackend";
-import { inLanguage, picked, renderRoute, tabBarLabel } from "../utils";
+import {
+  drawParcel,
+  inLanguage,
+  leafletMap,
+  picked,
+  renderRoute,
+  tabBarLabel,
+} from "../utils";
 
-/** The Leaflet map element inside Home's map region. */
-const leafletMap = () =>
-  screen
-    .getByRole("region", { name: i18n.t("home.mapLabel") })
-    .querySelector(".leaflet-container") as HTMLElement;
+const button = (name: string) => screen.getByRole("button", { name });
+const summary = async () =>
+  (
+    await screen.findByRole("heading", {
+      level: 2,
+      name: "Parcelle sélectionnée",
+    })
+  ).closest("section") as HTMLElement;
+/** The centroid shown in the summary, as numbers [lat, lon]. */
+const shownCentre = (section: HTMLElement) =>
+  [...section.querySelectorAll("bdi")].map((b) => Number(b.textContent));
 
-describe("Home page (design.md §7.2)", () => {
+describe("Home page (design.md §7.2): drawing the parcel", () => {
   // French copy asserted below: render in French (the app default is Arabic).
   inLanguage("fr");
 
-  it("before a pick: a real Leaflet map with OpenStreetMap tiles, no summary or CTA yet", () => {
+  it("before drawing: a real Leaflet map, the first instruction, nothing to close or clear", () => {
     renderRoute("/home");
     expect(
       screen.getByRole("heading", { level: 1, name: "Accueil" }),
     ).toBeInTheDocument();
-    expect(
-      screen.getByText("Touchez la carte à l'endroit de votre parcelle."),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Touchez la carte pour placer le premier coin de votre parcelle.",
+    );
     expect(leafletMap()).toBeInTheDocument();
-    // OSM's required attribution is shown (tile usage policy).
     expect(screen.getByRole("link", { name: "OpenStreetMap" })).toHaveAttribute(
       "href",
       "https://www.openstreetmap.org/copyright",
     );
-    // No illustration standing in for the map any more.
-    expect(screen.queryByRole("img", { name: /Carte/ })).toBeNull();
+    expect(button("Ajouter un coin au centre de la carte")).toBeEnabled();
+    expect(button("Fermer le contour")).toBeDisabled();
+    expect(button("Annuler le dernier coin")).toBeDisabled();
+    expect(button("Effacer")).toBeDisabled();
     expect(
       screen.queryByRole("heading", { name: "Parcelle sélectionnée" }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("link", { name: "Voir le diagnostic complet" }),
-    ).not.toBeInTheDocument();
+    ).toBeNull();
   });
 
-  it("tapping the map drops a pin and shows the real coordinates of that point", async () => {
+  it("each tap adds a corner where it lands; 3 corners → the outline can be closed", () => {
     renderRoute("/home");
-    // jsdom has no layout (a 0×0 map), so a tap at the origin lands on the map centre, which
-    // starts on the Tadla plain (32.4, -6.45).
     fireEvent.click(leafletMap(), { clientX: 0, clientY: 0 });
-
-    const summary = (
-      await screen.findByRole("heading", {
-        level: 2,
-        name: "Parcelle sélectionnée",
-      })
-    ).closest("section") as HTMLElement;
-    expect(summary).toHaveTextContent("Lat. 32.400");
-    expect(summary).toHaveTextContent("Long. -6.450");
-    // The pin is drawn on the map (a vector circle: no marker image to load).
+    fireEvent.click(leafletMap(), { clientX: 120, clientY: 0 });
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Coins placés : 2. Il en faut au moins 3.",
+    );
+    expect(button("Fermer le contour")).toBeDisabled();
+    fireEvent.click(leafletMap(), { clientX: 0, clientY: 90 });
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Coins placés : 3. Fermez le contour quand la parcelle est complète.",
+    );
+    expect(button("Fermer le contour")).toBeEnabled();
+    // 3 corner markers + the dashed line joining them.
     expect(
-      leafletMap().querySelector("path.leaflet-interactive"),
-    ).not.toBeNull();
-    expect(
-      screen.getByText(
-        "Touchez ailleurs sur la carte pour déplacer le repère.",
-      ),
-    ).toBeInTheDocument();
+      leafletMap().querySelectorAll("path.leaflet-interactive"),
+    ).toHaveLength(4);
   });
 
-  it("the pin goes where the map is tapped: east and south of the centre → larger lon, smaller lat", async () => {
+  it("closing makes it the parcel: its centroid lies inside the drawn triangle", async () => {
     renderRoute("/home");
-    fireEvent.click(leafletMap(), { clientX: 120, clientY: 80 });
-    const summary = (
-      await screen.findByRole("heading", {
-        level: 2,
-        name: "Parcelle sélectionnée",
-      })
-    ).closest("section") as HTMLElement;
-    const [lat, lon] = [...summary.querySelectorAll("bdi")].map((b) =>
-      Number(b.textContent),
-    );
+    drawParcel();
+    const section = await summary();
+    const [lat, lon] = shownCentre(section);
+    // Taps at (0,0), (120,0), (0,90) px from the centre at zoom 10: a triangle east and south
+    // of 32.4 / -6.45, whose centroid is one third of the way along each leg.
     expect(lon).toBeGreaterThan(-6.45);
     expect(lat).toBeLessThan(32.4);
-    expect(lat).toBeGreaterThan(31); // still on the Tadla plain, not a garbage value
+    expect(lat).toBeGreaterThan(32.2);
+    expect(section).toHaveTextContent("3 coins");
+    // French groups thousands with a narrow no-break space (this test triangle spans km).
+    expect(section).toHaveTextContent(/Surface ≈ [\d\s,]+ ha/);
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Contour fermé (3 coins). Effacez-le pour redessiner.",
+    );
   });
 
-  it("keyboard alternative: a real button picks the centre of the map (§9)", async () => {
-    const user = userEvent.setup();
+  it("the diagnostic request carries the centroid AND the drawn polygon (GeoJSON, closed ring)", async () => {
     renderRoute("/home");
-    await user.click(
-      screen.getByRole("button", { name: "Choisir le centre de la carte" }),
-    );
-    const summary = screen
-      .getByRole("heading", { level: 2, name: "Parcelle sélectionnée" })
-      .closest("section") as HTMLElement;
-    expect(summary).toHaveTextContent("Lat. 32.400");
-    expect(summary).toHaveTextContent("Long. -6.450");
-  });
-
-  it("after a pick: 2 headline facts from the REAL diagnostic for that point, with their sources", async () => {
-    const user = userEvent.setup();
-    renderRoute("/home");
-    await user.click(
-      screen.getByRole("button", { name: "Choisir le centre de la carte" }),
-    );
-    const summary = screen
-      .getByRole("heading", { level: 2, name: "Parcelle sélectionnée" })
-      .closest("section") as HTMLElement;
-    expect(
-      await within(summary).findByText("Franco-argileuse"),
-    ).toBeInTheDocument();
-    // jsdom's map centre is 32.4 / -6.45 up to float noise.
+    drawParcel();
+    await within(await summary()).findByText("Franco-argileuse");
     expect(fakeBackend.calls).toHaveLength(1);
-    expect(fakeBackend.calls[0].route).toBe("diagnostic");
-    expect(fakeBackend.calls[0].lat).toBeCloseTo(32.4, 6);
-    expect(fakeBackend.calls[0].lon).toBeCloseTo(-6.45, 6);
-    expect(
-      within(summary)
-        .getAllByRole("term")
-        .map((dt) => dt.textContent),
-    ).toEqual(["Texture du sol", "Pluie annuelle"]);
-    expect(summary.textContent?.replace(/\u00a0/g, " ")).toContain("526 mm/an");
-    expect(
-      within(summary).getByText("Données : ISRIC SoilGrids · NASA POWER"),
-    ).toBeInTheDocument();
+    const [call] = fakeBackend.calls;
+    const polygon = call.polygon as {
+      type: string;
+      coordinates: [number, number][][];
+    };
+    expect(polygon.type).toBe("Polygon");
+    const ring = polygon.coordinates[0];
+    expect(ring).toHaveLength(4); // 3 corners + the first repeated
+    expect(ring[3]).toEqual(ring[0]);
+    // [lon, lat] order; a triangle's centroid is the mean of its corners.
+    const mean = (i: 0 | 1) => (ring[0][i] + ring[1][i] + ring[2][i]) / 3;
+    expect(call.lon).toBeCloseTo(mean(0), 6);
+    expect(call.lat).toBeCloseTo(mean(1), 6);
   });
 
-  it("backend unreachable after a pick: the request error state, coordinates still shown", async () => {
+  it("undo removes the last corner; clear removes the closed parcel (and its summary)", async () => {
+    const user = userEvent.setup();
+    renderRoute("/home");
+    fireEvent.click(leafletMap(), { clientX: 0, clientY: 0 });
+    fireEvent.click(leafletMap(), { clientX: 50, clientY: 0 });
+    await user.click(button("Annuler le dernier coin"));
+    expect(screen.getByRole("status")).toHaveTextContent("Coins placés : 1.");
+
+    drawParcel(); // adds 3 more corners to the 1 left, then closes: a 4-corner parcel
+    expect(await summary()).toHaveTextContent("4 coins");
+    // Closed: further taps don't move it.
+    fireEvent.click(leafletMap(), { clientX: 300, clientY: 300 });
+    expect(await summary()).toHaveTextContent("4 coins");
+
+    await user.click(button("Effacer"));
+    expect(
+      screen.queryByRole("heading", { name: "Parcelle sélectionnée" }),
+    ).toBeNull();
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Touchez la carte pour placer le premier coin",
+    );
+  });
+
+  it("corners that enclose no area (all on one point) can't be closed", async () => {
+    const user = userEvent.setup();
+    renderRoute("/home");
+    for (let i = 0; i < 3; i++) {
+      await user.click(button("Ajouter un coin au centre de la carte"));
+    }
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Ces coins n'entourent aucune surface",
+    );
+    expect(button("Fermer le contour")).toBeDisabled();
+  });
+
+  it("keyboard only (§9): pan with the arrow keys, add corners at the centre, close", async () => {
+    const user = userEvent.setup();
+    renderRoute("/home");
+    const map = leafletMap();
+    const addAtCentre = () =>
+      user.click(button("Ajouter un coin au centre de la carte"));
+
+    // Leaflet's keyboard panning reads `keyCode`, which real browsers set but user-event's
+    // simulated keys leave at 0: send the real key codes (39 = →, 40 = ↓) to the focused map.
+    const press = (key: string, keyCode: number) => {
+      map.focus();
+      fireEvent.keyDown(map, { key, code: key, keyCode, which: keyCode });
+    };
+    await addAtCentre();
+    press("ArrowRight", 39);
+    await addAtCentre();
+    press("ArrowDown", 40);
+    await addAtCentre();
+    expect(button("Fermer le contour")).toBeEnabled();
+    await user.click(button("Fermer le contour"));
+
+    const [lat, lon] = shownCentre(await summary());
+    // Panned east then south of the start (32.4, -6.45): the centroid moved that way.
+    expect(lon).toBeGreaterThan(-6.45);
+    expect(lat).toBeLessThan(32.4);
+  });
+
+  it("backend unreachable after drawing: the request error state, the parcel still shown", async () => {
     fakeBackend.respond("diagnostic", unreachable);
     renderRoute("/home", picked);
     expect(await screen.findByRole("alert")).toHaveTextContent(
@@ -132,7 +179,7 @@ describe("Home page (design.md §7.2)", () => {
     expect(screen.getByText("32.400")).toBeInTheDocument();
   });
 
-  it("'Voir le diagnostic complet' is the one CTA and opens Farm for the same parcel", async () => {
+  it("'Voir le diagnostic complet' opens Farm for the same parcel, with ONE shared request", async () => {
     const user = userEvent.setup();
     renderRoute("/home", picked);
     const cta = screen.getByRole("link", {
@@ -144,7 +191,6 @@ describe("Home page (design.md §7.2)", () => {
       await screen.findByRole("heading", { level: 1, name: "Votre ferme" }),
     ).toBeInTheDocument();
     await screen.findByRole("heading", { level: 2, name: "Sol" });
-    // Home and Farm share one diagnostic request for the same point.
     expect(fakeBackend.calls).toHaveLength(1);
   });
 
@@ -162,7 +208,6 @@ describe.each(LANGUAGES)("Home page in %s", (lng) => {
   inLanguage(lng);
 
   it("renders every string translated; the map itself stays left-to-right", async () => {
-    const user = userEvent.setup();
     const { container } = renderRoute("/home");
     expect(document.documentElement).toHaveAttribute(
       "dir",
@@ -172,15 +217,16 @@ describe.each(LANGUAGES)("Home page in %s", (lng) => {
     expect(
       screen.getByRole("region", { name: i18n.t("home.mapLabel") }),
     ).toHaveAttribute("dir", "ltr");
-    await user.click(
-      screen.getByRole("button", { name: i18n.t("home.pickCenter") }),
-    );
+    drawParcel();
     expect(
-      screen.getByRole("heading", { level: 2, name: i18n.t("home.selected") }),
+      await screen.findByRole("heading", {
+        level: 2,
+        name: i18n.t("home.selected"),
+      }),
     ).toBeInTheDocument();
     const text = container.textContent ?? "";
-    expect(text).toContain("32.400");
-    expect(text).toContain(i18n.t("parcel.lat"));
+    expect(text).toContain(i18n.t("parcel.centre"));
+    expect(text).toContain(i18n.t("home.draw.clear"));
     expect(text).not.toMatch(/[٠-٩۰-۹]/); // Western digits only (§9a)
     expect(text).not.toMatch(/\b(home|parcel|data|units|dataCard)\.|\{\{/);
   });

@@ -3,6 +3,7 @@ import { type ReactNode, useId } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { BlockMeta, OkBlock } from "../types/diagnostic";
+import { Button } from "./Button";
 import { Card } from "./Card";
 import styles from "./DataCard.module.css";
 import type { FactTone } from "./FactList";
@@ -31,6 +32,13 @@ export interface DataCardProps<B extends BlockMeta> {
   caveat?: string;
   /** Heading level inside the page outline (default 2). */
   headingLevel?: 2 | 3;
+  /**
+   * Optional "Retry" for the `indisponible` state only (never for ok / pas_de_donnees: there
+   * is nothing to retry). The page re-sends the same request; this card only shows the button.
+   */
+  onRetry?: () => void;
+  /** State of that retry: in flight, or our backend couldn't be reached for it. */
+  retryState?: "retrying" | "failed";
 }
 
 /**
@@ -38,7 +46,8 @@ export interface DataCardProps<B extends BlockMeta> {
  * factual caption size, --text-600) + exactly one of three states, taken straight from the
  * backend block's `status` (never re-derived here):
  * - ok → the real values (children) + the optional caveat
- * - indisponible → "Donnée indisponible" in --text-600 (never a blank or a zero)
+ * - indisponible → "Donnée indisponible" in --text-600 (never a blank or a zero), and, when the
+ *   page offers it, a "Retry" outline button (+ a note while the backend is still trying)
  * - pas_de_donnees → the card's specific plain-language reason, not the generic message
  */
 export function DataCard<B extends BlockMeta>({
@@ -50,6 +59,8 @@ export function DataCard<B extends BlockMeta>({
   children,
   caveat,
   headingLevel = 2,
+  onRetry,
+  retryState,
 }: DataCardProps<B>) {
   const { t } = useTranslation();
   const id = useId();
@@ -74,12 +85,32 @@ export function DataCard<B extends BlockMeta>({
             {children(block as OkBlock<B>)}
             {caveat ? <p className={styles.caveat}>{caveat}</p> : null}
           </>
+        ) : block.status === "indisponible" ? (
+          <>
+            <p className={styles.missing}>{t("dataCard.unavailable")}</p>
+            {block.retry_pending && retryState !== "failed" ? (
+              <p className={styles.caveat}>{t("dataCard.retryPending")}</p>
+            ) : null}
+            {retryState === "failed" ? (
+              <p className={styles.caveat} role="alert">
+                {t("dataCard.retryFailed")}
+              </p>
+            ) : null}
+            {onRetry ? (
+              <Button
+                variant="outline"
+                onClick={onRetry}
+                disabled={retryState === "retrying"}
+                aria-busy={retryState === "retrying"}
+              >
+                {retryState === "retrying"
+                  ? t("dataCard.retrying")
+                  : t("request.retry")}
+              </Button>
+            ) : null}
+          </>
         ) : (
-          <p className={styles.missing}>
-            {block.status === "indisponible"
-              ? t("dataCard.unavailable")
-              : noDataText}
-          </p>
+          <p className={styles.missing}>{noDataText}</p>
         )}
         <p className={styles.source}>
           {t("dataCard.source", { source: block.source })}

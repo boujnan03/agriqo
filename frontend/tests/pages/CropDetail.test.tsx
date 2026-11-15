@@ -8,7 +8,7 @@ import cropWheat from "../../src/assets/illustrations/crop-wheat.svg";
 import { cropDetails } from "../../src/mocks/cropDetails";
 import type { CropId } from "../../src/types/crop";
 import type { CropDetailsById } from "../../src/types/cropDetail";
-import { inLanguage, renderRoute, tabBarLabel } from "../utils";
+import { drawParcel, inLanguage, renderRoute, tabBarLabel } from "../utils";
 
 const CROPS = (Object.keys(cropDetails) as CropId[]).map((id) => ({
   id,
@@ -108,9 +108,7 @@ describe("full mocked click-through", () => {
 
     await user.click(screen.getByRole("link", { name: "Commencer" }));
     await h1("Accueil");
-    await user.click(
-      screen.getByRole("button", { name: "Choisir le centre de la carte" }),
-    );
+    drawParcel();
     await user.click(
       screen.getByRole("link", { name: "Voir le diagnostic complet" }),
     );

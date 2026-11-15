@@ -116,11 +116,9 @@ describe("Weather page (design.md §7.8) with the real backend forecast", () => 
     expect(
       screen.queryByRole("list", { name: "7 prochains jours" }),
     ).toBeNull();
-    // Only the parcel's own coordinates contain digits; no forecast number anywhere.
-    const main = container.querySelector("main") as HTMLElement;
-    expect(main.textContent?.replace(/Lat\. .*?Long\. \S+/, "")).not.toMatch(
-      /\d/,
-    );
+    // No forecast number anywhere (the only digits on the page are the parcel's own).
+    expect(today.textContent).not.toMatch(/\d/);
+    expect(container.querySelector("main ol")).toBeNull();
   });
 
   it("our backend unreachable: the request error state, distinct from 'indisponible'", async () => {

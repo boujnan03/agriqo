@@ -24,6 +24,8 @@ export interface FakeRequest {
   route: "diagnostic" | "forecast";
   lat: number;
   lon: number;
+  /** Diagnostic only: the GeoJSON polygon sent (the drawn parcel). */
+  polygon?: unknown;
 }
 
 /** How the fake backend answers one request. */
@@ -42,6 +44,30 @@ export const json =
 /** The backend is down / unreachable: fetch itself rejects, like a browser would. */
 export const unreachable: Responder = () =>
   Promise.reject(new TypeError("Failed to fetch"));
+
+/**
+ * A request the test answers by hand (a simulated delay): `responder` waits until
+ * `answer(body)` is called, so a test can check the in-flight state first.
+ */
+export function deferred(): {
+  responder: Responder;
+  answer: (body: unknown, status?: number) => void;
+} {
+  let release: ((r: Response) => void) | null = null;
+  const waiting = new Promise<Response>((resolve) => {
+    release = resolve;
+  });
+  return {
+    responder: () => waiting,
+    answer: (body, status = 200) =>
+      release?.(
+        new Response(JSON.stringify(body), {
+          status,
+          headers: { "Content-Type": "application/json" },
+        }),
+      ),
+  };
+}
 
 /** A request that never answers: the page stays in its loading state. */
 export const pending: Responder = () => new Promise<Response>(() => {});
@@ -83,7 +109,11 @@ export async function fakeFetch(
     typeof input === "string" || input instanceof URL ? input : input.url,
   );
   if (url.pathname === "/api/parcel/diagnostic" && init?.method === "POST") {
-    const body = JSON.parse(String(init.body)) as { lat: number; lon: number };
+    const body = JSON.parse(String(init.body)) as {
+      lat: number;
+      lon: number;
+      polygon: unknown;
+    };
     const request: FakeRequest = { route: "diagnostic", ...body };
     state.calls.push(request);
     return state.diagnostic(request);

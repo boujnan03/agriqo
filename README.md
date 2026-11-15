@@ -89,7 +89,12 @@ Two endpoints serve real data. Spec:
 
 All four diagnostic calls run in parallel, so one slow or failing API never blocks the others.
 No value is ever invented. Recommendations are out of scope (a teammate's ML model, attached
-later); `previous_crop` and `polygon` are accepted but not used yet.
+later); `previous_crop` is accepted but not used yet.
+
+**Drawn parcel.** `polygon` (optional) is a GeoJSON Polygon: one closed ring of `[lon, lat]`
+positions. With it, `lat`/`lon` must be its centroid (checked: inside its extent, else 400).
+Point-based sources (NASA POWER, SoilGrids) use that centroid; OpenTopography's box is the
+polygon's extent and the slope is averaged over the pixels the polygon covers.
 
 **Cache.** In memory, keyed by coordinates rounded to 3 decimals, with a different lifetime
 per source:
@@ -99,6 +104,13 @@ per source:
 
 Failures are never cached. The cache is lost on restart, which is accepted for the MVP
 ([`backend/app/cache.py`](backend/app/cache.py)).
+
+**SoilGrids background re-fetch.** SoilGrids is often slower than the 15 s request limit. When it
+times out, the request still answers `indisponible` (`retry_pending: true`) within 15 s, and a
+background task keeps trying (3 attempts of up to 60 s each, 5 s / 15 s apart; one task per
+point, shared by concurrent requests). A real answer is written to the cache, so the Soil card's
+**Réessayer** (the same diagnostic request) then returns it. If every attempt fails, nothing is
+cached and soil stays `indisponible` ([`backend/app/background.py`](backend/app/background.py)).
 
 **OpenTopography key (relief block).** Free:
 1. Create an account at <https://portal.opentopography.org/newUser>.
