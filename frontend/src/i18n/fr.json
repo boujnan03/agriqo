@@ -95,9 +95,40 @@
     "signOut": "Se déconnecter"
   },
   "home": {
-    "title": "Accueil"
+    "title": "Accueil",
+    "intro": "Touchez la carte pour choisir votre parcelle.",
+    "pick": "Choisir ma parcelle sur la carte",
+    "mapAlt": "Carte : vue satellite de la parcelle",
+    "selected": "Parcelle sélectionnée",
+    "soilTexture": "Texture du sol",
+    "annualRain": "Pluie annuelle",
+    "seeDiagnostic": "Voir le diagnostic complet"
   },
   "weather": {
     "title": "Météo"
+  },
+  "dataCard": {
+    "source": "Données : {{source}}",
+    "unavailable": "Donnée indisponible",
+    "noDataShort": "Pas de données"
+  },
+  "units": {
+    "mmPerYear": "{{value}}\u00a0mm/an"
+  },
+  "data": {
+    "texture": {
+      "clay": "Argileuse",
+      "silty_clay": "Argilo-limoneuse",
+      "sandy_clay": "Argilo-sableuse",
+      "clay_loam": "Franco-argileuse",
+      "silty_clay_loam": "Franco-argilo-limoneuse",
+      "sandy_clay_loam": "Franco-argilo-sableuse",
+      "loam": "Franche",
+      "silt_loam": "Franco-limoneuse",
+      "sandy_loam": "Franco-sableuse",
+      "silt": "Limoneuse",
+      "loamy_sand": "Sablo-franche",
+      "sand": "Sableuse"
+    }
   }
 }

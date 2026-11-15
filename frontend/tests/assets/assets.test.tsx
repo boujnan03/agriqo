@@ -12,6 +12,7 @@ import { inLanguage, renderRoute } from "../utils";
 /** Every screen with an image slot, and how many illustrations it shows. */
 const IMAGE_SCREENS = [
   { path: "/", images: 1 }, // cover
+  { path: "/home", images: 1 }, // map/picker banner
   { path: "/farm", images: 1 }, // map banner
   { path: "/recommendations", images: 3 }, // featured + 2 options
   { path: "/crop/ble", images: 1 },
