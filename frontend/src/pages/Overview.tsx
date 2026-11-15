@@ -18,6 +18,7 @@ import { ProgressBar } from "../components/ProgressBar";
 import { RequestStatus } from "../components/RequestStatus";
 import { Screen } from "../components/Screen";
 import { useSeasonZone } from "../hooks/useSeasonZone";
+import { formatDate } from "../i18n/format";
 import { useFormat } from "../i18n/useFormat";
 import { AppTabBar } from "../router/AppTabBar";
 import { PATHS } from "../router/paths";
@@ -69,7 +70,7 @@ function Stats({ stats }: { stats: Stat[] }) {
  * header + tab bar.
  */
 export function Overview() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { maybe } = useFormat();
   const { parcel } = useSession();
   const { result, retry } = useParcelData("diagnostic");
@@ -166,7 +167,13 @@ export function Overview() {
           noDataText={t("dataCard.noData.climate")}
           caveat={
             climate.status === "ok" && climate.frost_days_period
-              ? t("overview.frostPeriod", climate.frost_days_period)
+              ? t("overview.frostPeriod", {
+                  start: formatDate(
+                    climate.frost_days_period.start,
+                    i18n.language,
+                  ),
+                  end: formatDate(climate.frost_days_period.end, i18n.language),
+                })
               : undefined
           }
         >
