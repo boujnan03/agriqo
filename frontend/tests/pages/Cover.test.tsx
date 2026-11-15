@@ -1,7 +1,7 @@
 import { screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import coverField from "../../src/assets/illustrations/cover-field.svg";
+import coverField from "../../src/assets/illustrations/cover-field.jpg";
 import logoFull from "../../src/assets/logo/logo-full.png";
 import { Cover } from "../../src/pages/Cover";
 import {
