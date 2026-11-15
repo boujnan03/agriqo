@@ -136,8 +136,15 @@ describe.each(LANGUAGES)("smoke: every screen renders in %s", (lng) => {
       "dir",
       lng === "ar" ? "rtl" : "ltr",
     );
-    // A real title, and the language switcher reachable on every screen (§9a).
-    expect(screen.getByRole("heading", { level: 1 })).not.toBeEmptyDOMElement();
+    // A real title (except Cover: its name is the logo baked into the photo, no heading),
+    // and the language switcher reachable on every screen (§9a).
+    if (path === "/") {
+      expect(screen.queryByRole("heading")).not.toBeInTheDocument();
+    } else {
+      expect(
+        screen.getByRole("heading", { level: 1 }),
+      ).not.toBeEmptyDOMElement();
+    }
     const switcher = screen.getByRole("group", {
       name: i18n.t("language.label"),
     });
