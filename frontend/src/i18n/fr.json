@@ -112,14 +112,22 @@
   },
   "home": {
     "title": "Accueil",
-    "intro": "Touchez la carte à l'endroit de votre parcelle.",
     "selected": "Parcelle sélectionnée",
     "soilTexture": "Texture du sol",
     "annualRain": "Pluie annuelle",
     "seeDiagnostic": "Voir le diagnostic complet",
-    "introPicked": "Touchez ailleurs sur la carte pour déplacer le repère.",
     "mapLabel": "Carte pour choisir votre parcelle",
-    "pickCenter": "Choisir le centre de la carte"
+    "draw": {
+      "start": "Touchez la carte pour placer le premier coin de votre parcelle.",
+      "more": "Coins placés : {{count}}. Il en faut au moins 3.",
+      "ready": "Coins placés : {{count}}. Fermez le contour quand la parcelle est complète.",
+      "flat": "Ces coins n'entourent aucune surface : déplacez-en un ou ajoutez-en un autre.",
+      "closed": "Contour fermé ({{count}} coins). Effacez-le pour redessiner.",
+      "addCenter": "Ajouter un coin au centre de la carte",
+      "undo": "Annuler le dernier coin",
+      "close": "Fermer le contour",
+      "clear": "Effacer"
+    }
   },
   "weather": {
     "title": "Météo",
@@ -195,6 +203,8 @@
     "noneText": "Choisissez d'abord votre parcelle sur la carte de l'accueil.",
     "choose": "Choisir ma parcelle",
     "lat": "Lat.",
-    "lon": "Long."
+    "lon": "Long.",
+    "centre": "Centre :",
+    "shape": "Surface ≈ {{area}} ha · {{count}} coins"
   }
 }

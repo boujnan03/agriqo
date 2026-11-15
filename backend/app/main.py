@@ -58,7 +58,14 @@ _RANGES = {"lat": (-90, 90), "lon": (-180, 180)}
 
 
 def _error_message(err: dict) -> str:
-    field = str(err["loc"][-1]) if err.get("loc") else "?"
+    loc = [str(part) for part in err.get("loc", ())]
+    # Our own validators' messages are already plain French: drop Pydantic's prefix.
+    msg = str(err.get("msg", "")).removeprefix("Value error, ")
+    if "polygon" in loc:
+        return f"Polygone invalide : {msg}."
+    if err.get("type") == "value_error":
+        return f"Requête invalide : {msg}."
+    field = loc[-1] if loc else "?"
     if field in _RANGES and err.get("type") in {
         "greater_than_equal",
         "less_than_equal",

@@ -89,7 +89,12 @@ Two endpoints serve real data. Spec:
 
 All four diagnostic calls run in parallel, so one slow or failing API never blocks the others.
 No value is ever invented. Recommendations are out of scope (a teammate's ML model, attached
-later); `previous_crop` and `polygon` are accepted but not used yet.
+later); `previous_crop` is accepted but not used yet.
+
+**Drawn parcel.** `polygon` (optional) is a GeoJSON Polygon: one closed ring of `[lon, lat]`
+positions. With it, `lat`/`lon` must be its centroid (checked: inside its extent, else 400).
+Point-based sources (NASA POWER, SoilGrids) use that centroid; OpenTopography's box is the
+polygon's extent and the slope is averaged over the pixels the polygon covers.
 
 **Cache.** In memory, keyed by coordinates rounded to 3 decimals, with a different lifetime
 per source:

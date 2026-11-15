@@ -369,3 +369,113 @@ def test_ttls_reflect_how_fast_each_source_changes():
     ttl = cache_module.TTL_S
     assert ttl["openmeteo"] < ttl["power_daily"] < ttl["power_climatology"]
     assert ttl["soilgrids"] == ttl["opentopography"] == ttl["power_climatology"]
+
+
+# ------------------------------------------------------------------------- drawn polygon
+
+# A ~110 m square around the Tadla point; GeoJSON order [lon, lat], closed ring.
+SQUARE = [[-6.4505, 32.3995], [-6.4495, 32.3995], [-6.4495, 32.4005], [-6.4505, 32.4005]]
+SQUARE_RING = SQUARE + [SQUARE[0]]
+
+
+def polygon_body(ring=SQUARE_RING, lat=32.40, lon=-6.45):
+    return {"lat": lat, "lon": lon, "polygon": {"type": "Polygon", "coordinates": [ring]}}
+
+
+def test_polygon_point_sources_use_centroid_terrain_uses_extent(client, mock_api):
+    mock_all_ok(mock_api)
+    r = post(client, polygon_body())
+    assert r.status_code == 200
+    # Point-based sources: the centroid (the request's lat/lon), nothing else.
+    sg = soilgrids_route(mock_api).calls.last.request.url.params
+    assert (sg["lat"], sg["lon"]) == ("32.4", "-6.45")
+    pw = power_daily_route(mock_api).calls.last.request.url.params
+    assert (pw["latitude"], pw["longitude"]) == ("32.4", "-6.45")
+    # OpenTopography: exactly the polygon's extent, not the ~500 m default box.
+    ot = opentopo_route(mock_api).calls.last.request.url.params
+    assert float(ot["south"]) == 32.3995 and float(ot["north"]) == 32.4005
+    assert float(ot["west"]) == -6.4505 and float(ot["east"]) == -6.4495
+    assert r.json()["terrain"]["note"].endswith("Pente moyenne sur la parcelle dessinée.")
+
+
+def _dem_flat_west_steep_east(lat: float, lon: float, size: int = 21) -> bytes:
+    """Flat (400 m) on the western half, a 20 % slope on the eastern half."""
+    import io
+
+    import numpy as np
+    import rasterio
+    from rasterio.transform import from_origin
+
+    from conftest import RES_DEG
+
+    dx_m = RES_DEG * 111_320.0 * np.cos(np.radians(lat))
+    grid = np.full((size, size), 400.0, dtype="float32")
+    for c in range(size // 2, size):
+        grid[:, c] = 400.0 + 0.20 * (c - size // 2) * dx_m
+    buf = io.BytesIO()
+    west, north = lon - (size / 2) * RES_DEG, lat + (size / 2) * RES_DEG
+    with rasterio.open(
+        buf, "w", driver="GTiff", width=size, height=size, count=1, dtype="float32",
+        crs="EPSG:4326", transform=from_origin(west, north, RES_DEG, RES_DEG), nodata=-32768,
+    ) as ds:
+        ds.write(grid, 1)
+    return buf.getvalue()
+
+
+def test_polygon_slope_is_averaged_inside_the_parcel_only(client, mock_api):
+    """Same raster: the default box mixes flat and steep land; a parcel drawn on the flat
+    western half must get 0 % slope, not the box average."""
+    from conftest import RES_DEG
+
+    lat, lon = 32.40, -6.45
+    dem = _dem_flat_west_steep_east(lat, lon)
+    mock_all_ok(mock_api)
+    opentopo_route(mock_api).respond(200, content=dem)
+
+    whole_box = post(client, TADLA).json()["terrain"]
+    assert whole_box["slope_pct"] > 5  # the box average includes the steep half
+
+    # A parcel well inside the flat western half (pixels 2..6 of 21 west of centre).
+    w, e = lon - 8 * RES_DEG, lon - 4 * RES_DEG
+    s_, n = lat - 2 * RES_DEG, lat + 2 * RES_DEG
+    ring = [[w, s_], [e, s_], [e, n], [w, n], [w, s_]]
+    centroid = {"lat": (s_ + n) / 2, "lon": (w + e) / 2}
+    parcel = post(client, polygon_body(ring, **centroid)).json()["terrain"]
+    assert parcel["status"] == "ok"
+    assert parcel["slope_pct"] == 0.0
+
+
+@pytest.mark.parametrize(
+    "polygon, needle",
+    [
+        ({"type": "Polygon", "coordinates": [SQUARE]}, "fermé"),  # open ring
+        ({"type": "Polygon", "coordinates": [SQUARE_RING[:2] + [SQUARE_RING[0]]]}, "3 coins"),
+        ({"type": "Polygon", "coordinates": [SQUARE_RING, SQUARE_RING]}, "trous"),
+        ({"type": "Point", "coordinates": [-6.45, 32.4]}, "Polygone invalide"),
+        ({"type": "Polygon", "coordinates": [[[200, 32.4], [-6.4, 32.4], [-6.4, 32.5], [200, 32.4]]]},
+         "hors limites"),
+    ],
+)
+def test_invalid_polygon_400(client, mock_api, polygon, needle):
+    r = post(client, {"lat": 32.40, "lon": -6.45, "polygon": polygon})
+    assert r.status_code == 400
+    assert needle in r.json()["detail"]
+    assert mock_api.calls.call_count == 0
+
+
+def test_point_outside_polygon_extent_400(client, mock_api):
+    r = post(client, polygon_body(lat=33.0, lon=-6.45))
+    assert r.status_code == 400
+    assert "centre du polygone" in r.json()["detail"]
+    assert mock_api.calls.call_count == 0
+
+
+def test_terrain_cache_is_keyed_by_polygon_point_sources_by_centroid(client, mock_api):
+    mock_all_ok(mock_api)
+    other = [[-6.4510, 32.3990], [-6.4490, 32.3990], [-6.4490, 32.4010], [-6.4510, 32.4010]]
+    post(client, polygon_body())
+    post(client, polygon_body())  # same parcel: everything cached
+    post(client, polygon_body(other + [other[0]]))  # same centroid, different shape
+    assert opentopo_route(mock_api).call_count == 2
+    assert soilgrids_route(mock_api).call_count == 1
+    assert power_daily_route(mock_api).call_count == 1

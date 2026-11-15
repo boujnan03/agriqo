@@ -9,6 +9,7 @@
  *
  * CORS: the backend allows http://localhost:8080 (nginx / dev container) and :5173 (Vite).
  */
+import { type Parcel, toGeoJson } from "../state/parcelGeometry";
 import type { DiagnosticResponse } from "../types/diagnostic";
 import type { ForecastResponse } from "../types/weather";
 
@@ -62,15 +63,23 @@ export function fetchHealth(signal?: AbortSignal): Promise<HealthResponse> {
   return request<HealthResponse>("/health", { signal });
 }
 
-/** `POST /api/parcel/diagnostic`: soil, climate, soil moisture and relief for one point. */
+/**
+ * `POST /api/parcel/diagnostic` for a drawn parcel: `lat`/`lon` = its centroid (used by the
+ * point-based sources, NASA POWER and SoilGrids), `polygon` = its real shape as GeoJSON (used
+ * by OpenTopography: box = the polygon's extent, slope averaged inside it).
+ */
 export function fetchDiagnostic(
-  location: { lat: number; lon: number },
+  parcel: Parcel,
   signal?: AbortSignal,
 ): Promise<DiagnosticResponse> {
   return request<DiagnosticResponse>("/api/parcel/diagnostic", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ lat: location.lat, lon: location.lon }),
+    body: JSON.stringify({
+      lat: parcel.lat,
+      lon: parcel.lon,
+      polygon: toGeoJson(parcel.polygon),
+    }),
     signal,
   });
 }

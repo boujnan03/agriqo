@@ -5,11 +5,6 @@
   gap: var(--card-gap);
 }
 
-.intro {
-  margin: 0;
-  color: var(--text-600);
-}
-
 .summary {
   display: flex;
   flex-direction: column;

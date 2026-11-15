@@ -73,10 +73,7 @@ export function Home() {
   return (
     <Screen header={<Header title={t("home.title")} />} tabBar={<AppTabBar />}>
       <div className={styles.stack}>
-        <p className={styles.intro}>
-          {parcel ? t("home.introPicked") : t("home.intro")}
-        </p>
-        <ParcelMap value={parcel} onPick={pickParcel} />
+        <ParcelMap value={parcel} onChange={pickParcel} />
 
         {parcel ? (
           <>

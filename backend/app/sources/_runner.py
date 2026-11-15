@@ -47,9 +47,15 @@ class Outcome:
 
 
 async def run_source(
-    namespace: str, lat: float, lon: float, fetch: Callable[[], Awaitable[Any]]
+    namespace: str,
+    lat: float,
+    lon: float,
+    fetch: Callable[[], Awaitable[Any]],
+    *,
+    variant: str = "",
 ) -> Outcome:
-    cached = cache.get(namespace, lat, lon)
+    """`variant`: extra cache-key part for answers that depend on more than the point."""
+    cached = cache.get(namespace, lat, lon, variant)
     if cached is not None:
         return cached
 
@@ -73,5 +79,5 @@ async def run_source(
         return Outcome("indisponible", error="invalid_response")
 
     outcome = Outcome("pas_de_donnees") if isinstance(result, NoData) else Outcome("ok", result)
-    cache.set(namespace, lat, lon, outcome)
+    cache.set(namespace, lat, lon, outcome, variant)
     return outcome
