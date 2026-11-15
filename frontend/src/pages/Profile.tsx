@@ -14,7 +14,7 @@ import {
 import type { ButtonHTMLAttributes } from "react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 
 import { Button } from "../components/Button";
 import { Card } from "../components/Card";
@@ -96,7 +96,7 @@ function LinkRow({ to, ...content }: RowContentProps & { to: string }) {
  * - Parcels: how many parcels have been diagnosed. The only parcel source in the app is the pick
  *   on Home, so the count follows the session (0 before a pick, 1 after) instead of a fixed
  *   fixture number that could contradict Farm's "no parcel picked" state.
- * - Sign out: clears the in-memory session set by the Cover login gate, then returns to Cover.
+ * - Sign out: no auth exists; like Cover's "Sign in", it is a link back to the Cover screen.
  */
 export function Profile() {
   const { t, i18n } = useTranslation();
@@ -104,9 +104,8 @@ export function Profile() {
     profileData.notificationsEnabled,
   );
   const [unitsNotice, setUnitsNotice] = useState(false);
-  const { signOut, parcelPicked } = useSession();
+  const { parcelPicked } = useSession();
   const parcelsDiagnosed = parcelPicked ? 1 : 0;
-  const navigate = useNavigate();
 
   const cycleLanguage = () => {
     const current = LANGUAGES.indexOf(i18n.language as Language);
@@ -202,14 +201,8 @@ export function Profile() {
           </Card>
         </section>
 
-        {/* No real auth: only the in-memory demo session is cleared. */}
-        <Button
-          variant="secondary"
-          onClick={() => {
-            signOut();
-            void navigate(PATHS.cover);
-          }}
-        >
+        {/* No auth flow yet: like Cover's "Sign in", this only leads back to the Cover screen. */}
+        <Button variant="secondary" to={PATHS.cover}>
           {t("profile.signOut")}
         </Button>
       </div>

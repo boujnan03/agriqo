@@ -127,14 +127,11 @@ describe("Profile page (design.md §7.9)", () => {
     expect(document.documentElement).toHaveAttribute("dir", "ltr");
   });
 
-  it("'Se déconnecter' clears the demo session and returns to the Cover login gate", async () => {
-    const user = userEvent.setup();
-    renderRoute("/profile", { signedIn: true });
-    await user.click(screen.getByRole("button", { name: "Se déconnecter" }));
+  it("'Se déconnecter' is a plain link back to the Cover screen (no auth)", () => {
+    renderRoute("/profile");
     expect(
-      await screen.findByRole("form", { name: "Connexion" }),
-    ).toBeInTheDocument();
-    expect(screen.queryByRole("banner")).not.toBeInTheDocument();
+      screen.getByRole("link", { name: "Se déconnecter" }),
+    ).toHaveAttribute("href", "/");
   });
 
   it("is a tab-bar root: Profile tab enabled and active, header without back arrow", () => {
@@ -173,7 +170,7 @@ describe.each(LANGUAGES)("Profile page in %s", (lng) => {
       screen.getByText(i18n.t("profile.memberSince", { year: "2026" })),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: i18n.t("profile.signOut") }),
+      screen.getByRole("link", { name: i18n.t("profile.signOut") }),
     ).toBeInTheDocument();
     const text = container.textContent ?? "";
     expect(text).not.toMatch(/\bprofile\.|\{\{/); // no leaked key or placeholder

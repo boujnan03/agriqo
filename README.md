@@ -68,17 +68,6 @@ npm run format       # Prettier
 Every screen and component follows [`frontend/design.md`](frontend/design.md). Design values
 live only in `frontend/src/theme/tokens.ts`; run `npm run tokens` after editing it.
 
-### Demo sign-in
-The Cover screen has a simple login gate. Use the one seeded demo account:
-
-| Username | Password |
-|---|---|
-| `demo` | `tadla2026` |
-
-This is a UX gate, not security: there is no backend auth, and the credentials are a constant in
-`frontend/src/auth/seedAccount.ts`. The signed-in state lives in memory only, so a page reload
-starts a fresh session.
-
 ## Data sources (Streamlit MVP; will move to the backend)
 
 | Data | Source | NASA? |
@@ -117,7 +106,7 @@ frontend/                       React + TypeScript + Vite (+ Dockerfile, nginx.c
   src/services/                 api.ts: placeholder backend client (GET /health), not used yet
   src/mocks/                    page fixture data (farmDiagnostic, home, weather, overview,
                                 profile, recommendations, cropDetails); illustrative, not NASA
-  src/state/  src/auth/         in-memory session (login, picked parcel) + seeded demo account
+  src/state/                    in-memory session (the parcel picked on Home)
   tests/                        Vitest + React Testing Library
 ```
 
@@ -184,8 +173,6 @@ agriqo
 │  │  │  └─ logo
 │  │  │     ├─ logo-full.png
 │  │  │     └─ logo-mark.png
-│  │  ├─ auth
-│  │  │  └─ seedAccount.ts
 │  │  ├─ components
 │  │  │  ├─ Badge.module.css
 │  │  │  ├─ Badge.tsx
@@ -231,9 +218,6 @@ agriqo
 │  │  │  └─ weather.ts
 │  │  ├─ pages
 │  │  │  ├─ BuildSmoke.tsx
-│  │  │  ├─ cover
-│  │  │  │  ├─ LoginForm.module.css
-│  │  │  │  └─ LoginForm.tsx
 │  │  │  ├─ Cover.module.css
 │  │  │  ├─ Cover.tsx
 │  │  │  ├─ CropDetail.module.css

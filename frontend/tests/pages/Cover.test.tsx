@@ -1,10 +1,9 @@
-import { screen, within } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
 import coverField from "../../src/assets/illustrations/cover-field.jpg";
 import logoFull from "../../src/assets/logo/logo-full.png";
-import { checkCredentials, SEED_ACCOUNT } from "../../src/auth/seedAccount";
 import i18n, { LANGUAGES } from "../../src/i18n";
 import { Cover } from "../../src/pages/Cover";
 import {
@@ -13,25 +12,6 @@ import {
   renderWithRouter,
   tabBarLabel,
 } from "../utils";
-
-/** Fill the Cover login form and submit it. */
-async function signIn(username: string, password: string) {
-  const user = userEvent.setup();
-  const form = screen.getByRole("form", { name: i18n.t("cover.loginForm") });
-  if (username)
-    await user.type(
-      within(form).getByLabelText(i18n.t("cover.username")),
-      username,
-    );
-  if (password)
-    await user.type(
-      within(form).getByLabelText(i18n.t("cover.password")),
-      password,
-    );
-  await user.click(
-    within(form).getByRole("button", { name: i18n.t("cover.signIn") }),
-  );
-}
 
 describe("Cover page (design.md §7.1)", () => {
   // French copy asserted below: render in French (the app default is Arabic).
@@ -61,80 +41,49 @@ describe("Cover page (design.md §7.1)", () => {
     expect(container.textContent).not.toContain("FieldShift");
   });
 
-  it("shows the login gate: labelled username + password fields and one primary button", () => {
+  it("'Commencer' leads to the home screen; 'Se connecter' is present", () => {
     renderWithRouter(<Cover />);
-    const form = screen.getByRole("form", { name: "Connexion" });
-    expect(within(form).getByLabelText("Nom d'utilisateur")).toHaveAttribute(
-      "autocomplete",
-      "username",
-    );
-    expect(within(form).getByLabelText("Mot de passe")).toHaveAttribute(
-      "type",
-      "password",
+    // A navigation action, so a real <a href> (design.md §9), styled as the primary button.
+    expect(screen.getByRole("link", { name: "Commencer" })).toHaveAttribute(
+      "href",
+      "/home",
     );
     expect(
-      within(form).getByRole("button", { name: "Se connecter" }),
-    ).toHaveAttribute("type", "submit");
-    // The gate replaced the old shortcut past Cover.
-    expect(
-      screen.queryByRole("link", { name: "Commencer" }),
-    ).not.toBeInTheDocument();
-    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+      screen.getByRole("link", { name: "Se connecter" }),
+    ).toBeInTheDocument();
   });
 
-  it("the seeded demo account signs in and opens Home", async () => {
+  it("'Commencer' opens Home directly (no authentication)", async () => {
+    const user = userEvent.setup();
     renderRoute("/");
-    await signIn(SEED_ACCOUNT.username, SEED_ACCOUNT.password);
+    await user.click(screen.getByRole("link", { name: "Commencer" }));
     expect(
       await screen.findByRole("heading", { level: 1, name: "Accueil" }),
     ).toBeInTheDocument();
   });
 
-  it.each([
-    ["wrong password", SEED_ACCOUNT.username, "nope"],
-    ["unknown user", "someone", SEED_ACCOUNT.password],
-    ["empty fields", "", ""],
-  ])("%s: stays on Cover with a plain inline error", async (_, u, p) => {
+  it("'Se connecter' is present but does nothing: the Cover screen stays", async () => {
+    const user = userEvent.setup();
     renderRoute("/");
-    await signIn(u, p);
-    expect(screen.getByRole("alert")).toHaveTextContent(
-      "Nom d'utilisateur ou mot de passe incorrect.",
-    );
-    expect(screen.getByLabelText("Mot de passe")).toHaveAttribute(
-      "aria-invalid",
-      "true",
-    );
-    expect(screen.queryByRole("heading", { level: 1 })).not.toBeInTheDocument();
+    await user.click(screen.getByRole("link", { name: "Se connecter" }));
+    expect(screen.getByRole("link", { name: "Commencer" })).toBeInTheDocument();
+    expect(screen.queryByRole("heading")).not.toBeInTheDocument();
+    expect(screen.queryByRole("banner")).not.toBeInTheDocument();
   });
 
-  it("checkCredentials: exact match, username trimmed", () => {
-    expect(checkCredentials(" demo ", SEED_ACCOUNT.password)).toBe(true);
-    expect(checkCredentials("Demo", SEED_ACCOUNT.password)).toBe(false);
-    expect(checkCredentials("demo", ` ${SEED_ACCOUNT.password}`)).toBe(false);
+  it("has no login form: no form, no text or password field", () => {
+    const { container } = renderWithRouter(<Cover />);
+    expect(screen.queryByRole("form")).not.toBeInTheDocument();
+    expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+    expect(container.querySelector("input")).toBeNull();
   });
 
   it("is served at / with no header and no tab bar", () => {
     renderRoute("/");
-    expect(screen.getByRole("form", { name: "Connexion" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Commencer" })).toBeInTheDocument();
     expect(screen.queryByRole("banner")).not.toBeInTheDocument();
     expect(
       screen.queryByRole("navigation", { name: tabBarLabel() }),
     ).not.toBeInTheDocument();
-  });
-});
-
-describe.each(LANGUAGES)("Cover login gate in %s", (lng) => {
-  inLanguage(lng);
-
-  it("rejects wrong credentials with the translated message", async () => {
-    renderRoute("/");
-    expect(document.documentElement).toHaveAttribute(
-      "dir",
-      lng === "ar" ? "rtl" : "ltr",
-    );
-    await signIn("x", "y");
-    expect(screen.getByRole("alert")).toHaveTextContent(
-      i18n.t("cover.loginError"),
-    );
   });
 });
