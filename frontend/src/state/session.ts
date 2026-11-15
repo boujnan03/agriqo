@@ -4,6 +4,7 @@ import type {
   DiagnosticBlockKey,
   DiagnosticResponse,
 } from "../types/diagnostic";
+import type { WaterRegime, ZoneResponse } from "../types/seasons";
 import type { ForecastResponse } from "../types/weather";
 import type { LatLon, Parcel } from "./parcelGeometry";
 
@@ -12,9 +13,9 @@ export type ParcelLocation = LatLon;
 export type { Parcel };
 
 /**
- * In-memory app session: plain React state, never persisted (a page reload starts over) and
- * never sent anywhere except to our own backend. Provided once for the whole route tree by
- * SessionProvider.
+ * App session: plain React state, never sent anywhere except to our own backend. Provided once
+ * for the whole route tree by SessionProvider. The parcel is in memory only (a page reload
+ * starts over); the water regime is a farmer preference kept in localStorage.
  */
 export interface SessionState {
   /**
@@ -23,6 +24,12 @@ export interface SessionState {
    * back to Home while it is null.
    */
   parcel: Parcel | null;
+  /**
+   * Rain-fed or irrigated, chosen by the farmer on Farm (design.md §7.3). Farmer-entered, NOT
+   * NASA data: it only selects the advice variant the season endpoint returns. Persisted in
+   * localStorage (key `agriqo.farm`), default "pluvial"; works without storage.
+   */
+  water: WaterRegime;
 }
 
 /** What each backend request returns. */
@@ -46,6 +53,8 @@ export type BlockRetryState = "retrying" | "failed";
 export interface Session extends SessionState {
   /** Set (or, with null, clear) the drawn parcel. */
   pickParcel: (parcel: Parcel | null) => void;
+  /** Set the water regime (and remember it on this device). */
+  setWater: (water: WaterRegime) => void;
   /** Latest result per request kind, for the current parcel only (undefined: not asked yet). */
   remote: { [K in RemoteKind]?: Remote<RemoteData[K]> };
   /**
@@ -63,6 +72,18 @@ export interface Session extends SessionState {
   retryDiagnosticBlock: (block: DiagnosticBlockKey) => void;
   /** State of each block retry, for the current parcel (absent: none running or failed). */
   blockRetry: Partial<Record<DiagnosticBlockKey, BlockRetryState>>;
+  /**
+   * Season types for the current parcel's centroid AND water regime (`GET /api/seasons/zone`),
+   * shared by Farm, Insights, Recommendations and Crop detail: one request per (centroid,
+   * water), never one per page. Undefined: not asked yet for the current inputs.
+   */
+  seasonZone?: Remote<ZoneResponse>;
+  /**
+   * Ask for the season zone of the current inputs. No-op if that answer is loading or loaded;
+   * a request for older inputs still in flight is aborted (its late answer is dropped).
+   * `retry` re-asks after an error.
+   */
+  loadSeasonZone: (options?: { retry?: boolean }) => void;
 }
 
 export const SessionContext = createContext<Session | null>(null);

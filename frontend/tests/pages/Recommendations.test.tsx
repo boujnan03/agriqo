@@ -5,11 +5,16 @@ import { describe, expect, expectTypeOf, it } from "vitest";
 import cropLegumineuses from "../../src/assets/illustrations/crop-legumineuses.svg";
 import cropOrge from "../../src/assets/illustrations/crop-orge.svg";
 import cropWheat from "../../src/assets/illustrations/crop-wheat.svg";
+import i18n from "../../src/i18n";
 import { recommendationsData } from "../../src/mocks/recommendations";
+import type { CropId } from "../../src/types/crop";
 import type { RecommendationsData } from "../../src/types/recommendations";
 import { inLanguage, renderRoute, tabBarLabel } from "../utils";
 
 const { featured, otherOptions, rotationPlan } = recommendationsData;
+
+/** A crop's name in the active language (the fixture holds only ids). */
+const nameOf = (id: CropId) => i18n.t(`crops.${id}.name`);
 
 describe("Recommendations page (design.md §7.4)", () => {
   // French copy asserted below: render in French (the app default is Arabic).
@@ -27,14 +32,16 @@ describe("Recommendations page (design.md §7.4)", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole("link", {
-        name: `Meilleure culture pour vous ${featured.name}`,
+        name: `Meilleure culture pour vous ${nameOf(featured.id)}`,
       }),
     ).toBeInTheDocument();
-    expect(screen.getByText(featured.suitability)).toBeInTheDocument();
+    expect(
+      screen.getByText("Haute adéquation pour vos conditions"),
+    ).toBeInTheDocument();
     for (const option of otherOptions) {
       expect(
         screen.getByRole("link", {
-          name: `${option.name} ${option.matchPercent}%`,
+          name: `${nameOf(option.id)} ${option.matchPercent}%`,
         }),
       ).toBeInTheDocument();
     }
@@ -57,7 +64,7 @@ describe("Recommendations page (design.md §7.4)", () => {
     const steps = within(plan).getAllByRole("link");
     expect(steps.map((s) => s.textContent)).toEqual(
       rotationPlan.map(
-        (step) => `${step.year}Année ${step.year} ${step.cropName}`,
+        (step) => `${step.year}Année ${step.year} ${nameOf(step.cropId)}`,
       ),
     );
   });
@@ -77,7 +84,7 @@ describe("Recommendations page (design.md §7.4)", () => {
     for (const step of rotationPlan) {
       expect(
         screen.getByRole("link", {
-          name: `Année ${step.year} ${step.cropName}`,
+          name: `Année ${step.year} ${nameOf(step.cropId)}`,
         }),
       ).toHaveAttribute("href", `/crop/${step.cropId}`);
     }
@@ -97,11 +104,11 @@ describe("Recommendations navigation", () => {
     const option = otherOptions[0];
     await user.click(
       screen.getByRole("link", {
-        name: `${option.name} ${option.matchPercent}%`,
+        name: `${nameOf(option.id)} ${option.matchPercent}%`,
       }),
     );
     expect(
-      await screen.findByRole("heading", { level: 2, name: option.name }),
+      await screen.findByRole("heading", { level: 2, name: nameOf(option.id) }),
     ).toBeInTheDocument();
   });
 
@@ -110,7 +117,10 @@ describe("Recommendations navigation", () => {
     renderRoute("/recommendations");
     await user.click(screen.getByRole("link", { name: "En savoir plus" }));
     expect(
-      await screen.findByRole("heading", { level: 2, name: featured.name }),
+      await screen.findByRole("heading", {
+        level: 2,
+        name: nameOf(featured.id),
+      }),
     ).toBeInTheDocument();
   });
 

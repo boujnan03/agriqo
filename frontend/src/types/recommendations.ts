@@ -1,17 +1,23 @@
 import type { CropId } from "./crop";
 
-/** The single best crop (design.md §6: the one featured card on the screen). */
+/**
+ * Suitability level of the featured crop, shown through `crops.suitability.<level>` in the
+ * translation files.
+ */
+export type Suitability = "high";
+
+/**
+ * The single best crop (design.md §6: the one featured card on the screen). Its name comes from
+ * the translation files (`crops.<id>.name`), never from the data.
+ */
 export interface FeaturedRecommendation {
   id: CropId;
-  name: string;
-  /** Short plain-language suitability statement, in French. */
-  suitability: string;
+  suitability: Suitability;
 }
 
 /** Another good option, shown as a smaller card with its match percentage. */
 export interface RecommendationOption {
   id: CropId;
-  name: string;
   /** Match score, 0–100. */
   matchPercent: number;
 }
@@ -21,10 +27,12 @@ export interface RotationStep {
   /** 1-based year of the rotation. */
   year: number;
   cropId: CropId;
-  cropName: string;
 }
 
-/** Data behind the "Recommandations" screen (design.md §7.4). */
+/**
+ * Data behind the "Recommandations" screen (design.md §7.4): ids and numbers only, every word
+ * is translated.
+ */
 export interface RecommendationsData {
   featured: FeaturedRecommendation;
   otherOptions: RecommendationOption[];

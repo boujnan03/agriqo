@@ -131,9 +131,13 @@ const SCREENS = [
 ].map((path) => ({ path, parcelPicked: false }));
 
 /** The screens whose content changes once a parcel is picked on Home. */
-const PICKED_SCREENS = ["/home", "/farm", "/weather", "/profile"].map(
-  (path) => ({ path, parcelPicked: true }),
-);
+const PICKED_SCREENS = [
+  "/home",
+  "/farm",
+  "/overview",
+  "/weather",
+  "/profile",
+].map((path) => ({ path, parcelPicked: true }));
 
 describe.each(LANGUAGES)("smoke: every screen renders in %s", (lng) => {
   it.each([...SCREENS, ...PICKED_SCREENS])(

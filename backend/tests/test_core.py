@@ -18,7 +18,7 @@ CLASSES = {
 
 def test_health(client):
     r = client.get("/health")
-    assert r.status_code == 200 and r.json() == {"status": "ok"}
+    assert r.status_code == 200 and r.json() == {"status": "ok", "seasonsModel": "ok"}
 
 
 # (sand, silt, clay) -> class, one point well inside each USDA region.

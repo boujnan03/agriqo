@@ -51,6 +51,10 @@
 }
 
 .whyTitle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-8);
   margin: 0;
   font-size: var(--font-size-label);
   font-weight: var(--font-weight-heading);
@@ -60,6 +64,13 @@
 .whyText {
   margin: 0;
   color: var(--text-900);
+}
+
+/* Source + "À valider par un agronome" under the real climate paragraphs (§3 caption). */
+.caveat {
+  margin: 0;
+  color: var(--text-600);
+  font-size: var(--font-size-caption-factual);
 }
 
 .status {

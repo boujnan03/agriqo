@@ -1,0 +1,50 @@
+/* design.md §6 Advice card: standard card, icon + advice, "why", source + validation caveat. */
+.advice {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-12);
+}
+
+/* General data icon: --green-700 in a tint circle, never the --icon-* data colors (§2). */
+.icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  padding: var(--space-8);
+  border-radius: var(--radius-pill);
+  background: var(--green-tint);
+  color: var(--green-700);
+}
+
+.text {
+  margin: 0;
+  font-weight: var(--font-weight-label);
+  color: var(--text-900);
+}
+
+.why {
+  margin: 0;
+  color: var(--text-900);
+}
+
+/* Source + caveat: factual captions (§3), muted. */
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-12);
+  margin: 0;
+  color: var(--text-600);
+  font-size: var(--font-size-caption-factual);
+}
+
+.validation {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  font-weight: var(--font-weight-label);
+}

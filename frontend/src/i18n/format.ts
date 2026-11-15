@@ -34,6 +34,44 @@ export function formatCoordinate(value: number): string {
   return value.toFixed(3);
 }
 
+/**
+ * A season is labelled by its END year (2025 = October 2024 → May 2025) but always shown as
+ * both years: 2025 → "2024–2025", never "2025" alone. Western digits in every language.
+ */
+export function formatSeason(endYear: number): string {
+  return `${endYear - 1}–${endYear}`;
+}
+
+/**
+ * Display-only distance for a NASA POWER cell: degrees × 111, rounded to 5 km, at least 5.
+ * Always shown with "~": an approximation of the cell's offset, not a measured value.
+ */
+export function approxKm(distanceDeg: number): number {
+  return Math.max(5, Math.round((distanceDeg * 111) / 5) * 5);
+}
+
+/** Month 1–12 → its short name: 11 → "nov." (fr) / "Nov" (en) / "نونبر" (ar-MA). */
+export function formatMonth(month: number, language: string): string {
+  return new Intl.DateTimeFormat(localeOf(language), {
+    month: "short",
+    timeZone: "UTC",
+  }).format(new Date(Date.UTC(2000, month - 1, 1)));
+}
+
+/**
+ * An ISO date sent by the backend ("2026-11-12") in the active language, Western digits:
+ * "12 novembre 2026" (fr) / "12 November 2026" (en) / "12 نونبر 2026" (ar).
+ */
+export function formatDate(isoDate: string, language: string): string {
+  return new Intl.DateTimeFormat(localeOf(language), {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    numberingSystem: "latn",
+    timeZone: "UTC", // an ISO date is UTC midnight: never shift it to the previous day
+  }).format(new Date(isoDate));
+}
+
 /** "2026-11-16" → "lun." (fr) / "Mon" (en) / "الاثنين" (ar). */
 export function formatWeekday(isoDate: string, language: string): string {
   return new Intl.DateTimeFormat(localeOf(language), {
