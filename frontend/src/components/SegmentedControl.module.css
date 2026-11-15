@@ -1,0 +1,30 @@
+/* design.md §6 Segmented control: green-tint group, badge-pill radius/padding rhythm. */
+.group {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border-radius: var(--radius-pill);
+  background: var(--green-tint);
+}
+
+/* Equal columns; long labels wrap instead of overflowing (§4 touch target kept). */
+.option {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--touch-target);
+  padding: var(--padding-badge-y) var(--padding-badge-x);
+  border: none;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-900);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-label);
+  text-align: center;
+  cursor: pointer;
+}
+
+.selected {
+  background: var(--green-900);
+  color: var(--white);
+}
