@@ -95,9 +95,40 @@
     "signOut": "Sign out"
   },
   "home": {
-    "title": "Home"
+    "title": "Home",
+    "intro": "Tap the map to pick your plot.",
+    "pick": "Pick my plot on the map",
+    "mapAlt": "Map: satellite view of the plot",
+    "selected": "Selected plot",
+    "soilTexture": "Soil texture",
+    "annualRain": "Annual rainfall",
+    "seeDiagnostic": "See the full diagnostic"
   },
   "weather": {
     "title": "Weather"
+  },
+  "dataCard": {
+    "source": "Data: {{source}}",
+    "unavailable": "Data unavailable",
+    "noDataShort": "No data"
+  },
+  "units": {
+    "mmPerYear": "{{value}} mm/year"
+  },
+  "data": {
+    "texture": {
+      "clay": "Clay",
+      "silty_clay": "Silty clay",
+      "sandy_clay": "Sandy clay",
+      "clay_loam": "Clay loam",
+      "silty_clay_loam": "Silty clay loam",
+      "sandy_clay_loam": "Sandy clay loam",
+      "loam": "Loam",
+      "silt_loam": "Silt loam",
+      "sandy_loam": "Sandy loam",
+      "silt": "Silt",
+      "loamy_sand": "Loamy sand",
+      "sand": "Sand"
+    }
   }
 }
