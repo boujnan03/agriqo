@@ -22,13 +22,13 @@ import { NoParcel } from "./parcel/NoParcel";
  */
 export function Farm() {
   const { t, i18n } = useTranslation();
-  const { parcelPicked } = useSession();
+  const { parcel } = useSession();
   const { location, soil, climate, humidity, relief } = farmDiagnostic;
   const num = (value: number) => formatNumber(value, i18n.language);
 
   return (
     <Screen header={<Header title={t("farm.title")} />} tabBar={<AppTabBar />}>
-      {parcelPicked ? (
+      {parcel ? (
         <div className={styles.stack}>
           <p className={styles.place}>
             <Icon icon={MapPin} />

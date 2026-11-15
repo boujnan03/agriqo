@@ -5,7 +5,7 @@ import i18n, { LANGUAGES } from "../../src/i18n";
 import { farmDiagnostic } from "../../src/mocks/farmDiagnostic";
 import { weatherData } from "../../src/mocks/weather";
 import type { WeatherData } from "../../src/types/weather";
-import { inLanguage, renderRoute, tabBarLabel } from "../utils";
+import { inLanguage, renderRoute, tabBarLabel, picked } from "../utils";
 
 const forecast =
   weatherData.forecast.status === "ok" ? weatherData.forecast.data : null;
@@ -29,7 +29,7 @@ describe("Weather page (design.md §7.8)", () => {
   });
 
   it("shows today's summary: icon, temperature, condition, rain chance, humidity, wind", () => {
-    renderRoute("/weather", { parcelPicked: true });
+    renderRoute("/weather", picked);
     expect(
       screen.getByRole("heading", { level: 1, name: "Météo" }),
     ).toBeInTheDocument();
@@ -56,13 +56,13 @@ describe("Weather page (design.md §7.8)", () => {
   });
 
   it("names its forecast source visibly", () => {
-    renderRoute("/weather", { parcelPicked: true });
+    renderRoute("/weather", picked);
     expect(screen.getByText("Données : Open-Meteo")).toBeInTheDocument();
     expect(screen.queryByText(/NASA POWER/)).not.toBeInTheDocument();
   });
 
   it("shows 7 day cards in order: weekday, condition icon, distinct high°/low°", () => {
-    renderRoute("/weather", { parcelPicked: true });
+    renderRoute("/weather", picked);
     const cards = dayCards();
     expect(cards).toHaveLength(7);
     // 2026-11-15 is a Sunday.
@@ -93,7 +93,7 @@ describe("Weather page (design.md §7.8)", () => {
   });
 
   it("is daily only: no hourly view, no metric tabs or switcher", () => {
-    renderRoute("/weather", { parcelPicked: true });
+    renderRoute("/weather", picked);
     expect(screen.queryByRole("tablist")).not.toBeInTheDocument();
     expect(screen.queryByRole("radiogroup")).not.toBeInTheDocument();
   });
@@ -127,7 +127,7 @@ describe.each(LANGUAGES)("Weather page in %s", (lng) => {
   inLanguage(lng);
 
   it("renders every string translated, 7 distinct weekdays, Western digits", () => {
-    const { container } = renderRoute("/weather", { parcelPicked: true });
+    const { container } = renderRoute("/weather", picked);
     expect(document.documentElement).toHaveAttribute(
       "dir",
       lng === "ar" ? "rtl" : "ltr",

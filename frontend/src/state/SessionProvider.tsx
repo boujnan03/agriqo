@@ -2,7 +2,7 @@ import { type ReactNode, useMemo, useState } from "react";
 
 import { type Session, SessionContext, type SessionState } from "./session";
 
-const INITIAL: SessionState = { parcelPicked: false };
+const INITIAL: SessionState = { parcel: null };
 
 export interface SessionProviderProps {
   /** Starting state; tests use it to open a screen in a given situation. */
@@ -21,7 +21,7 @@ export function SessionProvider({
   const session = useMemo<Session>(
     () => ({
       ...state,
-      pickParcel: () => setState((s) => ({ ...s, parcelPicked: true })),
+      pickParcel: (parcel) => setState((s) => ({ ...s, parcel })),
     }),
     [state],
   );

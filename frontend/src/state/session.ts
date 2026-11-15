@@ -1,19 +1,26 @@
 import { createContext, useContext } from "react";
 
+/** A real point picked on Home's map (WGS 84 degrees). */
+export interface ParcelLocation {
+  lat: number;
+  lon: number;
+}
+
 /**
  * In-memory app session: plain React state, never persisted (a page reload starts over) and
- * never sent anywhere. Provided once for the whole route tree by SessionProvider.
+ * never sent anywhere except to our own backend. Provided once for the whole route tree by
+ * SessionProvider.
  */
 export interface SessionState {
   /**
-   * A parcel has been picked on Home's map (design.md §7.2). Farm and Weather show data for
-   * it, or an empty state pointing back to Home while this is false (§7.3, §7.8).
+   * The parcel picked on Home's map (design.md §7.2), or null before any pick. Farm, Insights
+   * and Weather show data for it, or an empty state pointing back to Home while it is null.
    */
-  parcelPicked: boolean;
+  parcel: ParcelLocation | null;
 }
 
 export interface Session extends SessionState {
-  pickParcel: () => void;
+  pickParcel: (location: ParcelLocation) => void;
 }
 
 export const SessionContext = createContext<Session | null>(null);

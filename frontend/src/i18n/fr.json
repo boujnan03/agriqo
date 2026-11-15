@@ -107,13 +107,14 @@
   },
   "home": {
     "title": "Accueil",
-    "intro": "Touchez la carte pour choisir votre parcelle.",
-    "pick": "Choisir ma parcelle sur la carte",
-    "mapAlt": "Carte : vue satellite de la parcelle",
+    "intro": "Touchez la carte à l'endroit de votre parcelle.",
     "selected": "Parcelle sélectionnée",
     "soilTexture": "Texture du sol",
     "annualRain": "Pluie annuelle",
-    "seeDiagnostic": "Voir le diagnostic complet"
+    "seeDiagnostic": "Voir le diagnostic complet",
+    "introPicked": "Touchez ailleurs sur la carte pour déplacer le repère.",
+    "mapLabel": "Carte pour choisir votre parcelle",
+    "pickCenter": "Choisir le centre de la carte"
   },
   "weather": {
     "title": "Météo",
@@ -172,6 +173,8 @@
   "parcel": {
     "noneTitle": "Aucune parcelle choisie",
     "noneText": "Choisissez d'abord votre parcelle sur la carte de l'accueil.",
-    "choose": "Choisir ma parcelle"
+    "choose": "Choisir ma parcelle",
+    "lat": "Lat.",
+    "lon": "Long."
   }
 }

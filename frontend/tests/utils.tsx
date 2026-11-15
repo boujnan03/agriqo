@@ -7,8 +7,14 @@ import i18n, { type Language } from "../src/i18n";
 import { AppLayout } from "../src/router/AppLayout";
 import { pageRoutes } from "../src/router/routes";
 import { TAB_BAR_LABEL_KEY } from "../src/router/tabs";
-import type { SessionState } from "../src/state/session";
+import type { ParcelLocation, SessionState } from "../src/state/session";
 import { SessionProvider } from "../src/state/SessionProvider";
+
+/** The test parcel: Tadla plain farmland ~10 km NW of Béni Mellal (the backend's demo point). */
+export const TADLA: ParcelLocation = { lat: 32.4, lon: -6.45 };
+
+/** A session where that parcel has been picked on Home. */
+export const picked: Partial<SessionState> = { parcel: TADLA };
 
 /**
  * Runs every test of the enclosing describe/file in `language` instead of the Arabic default

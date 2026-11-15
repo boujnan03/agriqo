@@ -45,7 +45,7 @@ const CONDITION_ICON: Record<WeatherCondition, LucideIcon> = {
  */
 export function Weather() {
   const { t, i18n } = useTranslation();
-  const { parcelPicked } = useSession();
+  const { parcel } = useSession();
   const { location, forecast } = weatherData;
   const num = (value: number) => formatNumber(value, i18n.language);
   const conditionLabel = (c: WeatherCondition) => t(`weather.conditions.${c}`);
@@ -55,7 +55,7 @@ export function Weather() {
       header={<Header title={t("weather.title")} />}
       tabBar={<AppTabBar />}
     >
-      {parcelPicked ? (
+      {parcel ? (
         <div className={styles.stack}>
           <p className={styles.place}>
             <Icon icon={MapPin} />

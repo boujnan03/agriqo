@@ -1,37 +1,36 @@
-import { screen, within } from "@testing-library/react";
+import { fireEvent, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, expectTypeOf, it } from "vitest";
+import { describe, expect, it } from "vitest";
 
-import farmMap from "../../src/assets/illustrations/farm-map.svg";
 import i18n, { LANGUAGES } from "../../src/i18n";
-import { farmDiagnostic } from "../../src/mocks/farmDiagnostic";
-import { homeSummary } from "../../src/mocks/home";
-import type { HomeSummary } from "../../src/types/diagnostic";
-import { inLanguage, renderRoute, tabBarLabel } from "../utils";
+import { inLanguage, picked, renderRoute, tabBarLabel } from "../utils";
+
+/** The Leaflet map element inside Home's map region. */
+const leafletMap = () =>
+  screen
+    .getByRole("region", { name: i18n.t("home.mapLabel") })
+    .querySelector(".leaflet-container") as HTMLElement;
 
 describe("Home page (design.md §7.2)", () => {
   // French copy asserted below: render in French (the app default is Arabic).
   inLanguage("fr");
 
-  it("the mock fixture matches HomeSummary and is trimmed from the Farm diagnostic", () => {
-    expectTypeOf(homeSummary).toEqualTypeOf<HomeSummary>();
-    expect(homeSummary.location).toBe(farmDiagnostic.location);
-    expect(homeSummary.soil).toBe(farmDiagnostic.soil);
-    expect(homeSummary.climate).toBe(farmDiagnostic.climate);
-  });
-
-  it("before a pick: the map is one button to tap, with no summary or CTA yet", () => {
+  it("before a pick: a real Leaflet map with OpenStreetMap tiles, no summary or CTA yet", () => {
     renderRoute("/home");
     expect(
       screen.getByRole("heading", { level: 1, name: "Accueil" }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("Touchez la carte pour choisir votre parcelle."),
+      screen.getByText("Touchez la carte à l'endroit de votre parcelle."),
     ).toBeInTheDocument();
-    const pick = screen.getByRole("button", {
-      name: "Choisir ma parcelle sur la carte",
-    });
-    expect(pick.querySelector("img")).toHaveAttribute("src", farmMap);
+    expect(leafletMap()).toBeInTheDocument();
+    // OSM's required attribution is shown (tile usage policy).
+    expect(screen.getByRole("link", { name: "OpenStreetMap" })).toHaveAttribute(
+      "href",
+      "https://www.openstreetmap.org/copyright",
+    );
+    // No illustration standing in for the map any more.
+    expect(screen.queryByRole("img", { name: /Carte/ })).toBeNull();
     expect(
       screen.queryByRole("heading", { name: "Parcelle sélectionnée" }),
     ).not.toBeInTheDocument();
@@ -40,42 +39,64 @@ describe("Home page (design.md §7.2)", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("tapping the map confirms the location and shows the light summary (2 facts only)", async () => {
-    const user = userEvent.setup();
+  it("tapping the map drops a pin and shows the real coordinates of that point", async () => {
     renderRoute("/home");
-    await user.click(
-      screen.getByRole("button", { name: "Choisir ma parcelle sur la carte" }),
-    );
+    // jsdom has no layout (a 0×0 map), so a tap at the origin lands on the map centre, which
+    // starts on the Tadla plain (32.4, -6.45).
+    fireEvent.click(leafletMap(), { clientX: 0, clientY: 0 });
 
-    // Pin + location chip on the map, which is no longer a button.
+    const summary = (
+      await screen.findByRole("heading", {
+        level: 2,
+        name: "Parcelle sélectionnée",
+      })
+    ).closest("section") as HTMLElement;
+    expect(summary).toHaveTextContent("Lat. 32.400");
+    expect(summary).toHaveTextContent("Long. -6.450");
+    // The pin is drawn on the map (a vector circle: no marker image to load).
     expect(
-      screen.getByRole("img", { name: "Carte : vue satellite de la parcelle" }),
-    ).toHaveAttribute("src", farmMap);
+      leafletMap().querySelector("path.leaflet-interactive"),
+    ).not.toBeNull();
     expect(
-      screen.queryByRole("button", {
-        name: "Choisir ma parcelle sur la carte",
-      }),
-    ).not.toBeInTheDocument();
-
-    const summary = screen
-      .getByRole("heading", { level: 2, name: "Parcelle sélectionnée" })
-      .closest("section") as HTMLElement;
-    expect(within(summary).getByText("Béni Mellal")).toBeInTheDocument();
-    const facts = within(summary).getAllByRole("term");
-    expect(facts.map((dt) => dt.textContent)).toEqual([
-      "Texture du sol",
-      "Pluie annuelle",
-    ]);
-    expect(within(summary).getByText("Franco-argileuse")).toBeInTheDocument();
-    expect(within(summary).getByText("342 mm/an")).toBeInTheDocument();
-    expect(
-      within(summary).getByText("Données : ISRIC SoilGrids · NASA POWER"),
+      screen.getByText(
+        "Touchez ailleurs sur la carte pour déplacer le repère.",
+      ),
     ).toBeInTheDocument();
   });
 
-  it("'Voir le diagnostic complet' is the one CTA and opens Farm with the parcel", async () => {
+  it("the pin goes where the map is tapped: east and south of the centre → larger lon, smaller lat", async () => {
+    renderRoute("/home");
+    fireEvent.click(leafletMap(), { clientX: 120, clientY: 80 });
+    const summary = (
+      await screen.findByRole("heading", {
+        level: 2,
+        name: "Parcelle sélectionnée",
+      })
+    ).closest("section") as HTMLElement;
+    const [lat, lon] = [...summary.querySelectorAll("bdi")].map((b) =>
+      Number(b.textContent),
+    );
+    expect(lon).toBeGreaterThan(-6.45);
+    expect(lat).toBeLessThan(32.4);
+    expect(lat).toBeGreaterThan(31); // still on the Tadla plain, not a garbage value
+  });
+
+  it("keyboard alternative: a real button picks the centre of the map (§9)", async () => {
     const user = userEvent.setup();
-    renderRoute("/home", { parcelPicked: true });
+    renderRoute("/home");
+    await user.click(
+      screen.getByRole("button", { name: "Choisir le centre de la carte" }),
+    );
+    const summary = screen
+      .getByRole("heading", { level: 2, name: "Parcelle sélectionnée" })
+      .closest("section") as HTMLElement;
+    expect(summary).toHaveTextContent("Lat. 32.400");
+    expect(summary).toHaveTextContent("Long. -6.450");
+  });
+
+  it("'Voir le diagnostic complet' is the one CTA and opens Farm for the same parcel", async () => {
+    const user = userEvent.setup();
+    renderRoute("/home", picked);
     const cta = screen.getByRole("link", {
       name: "Voir le diagnostic complet",
     });
@@ -99,20 +120,27 @@ describe("Home page (design.md §7.2)", () => {
 describe.each(LANGUAGES)("Home page in %s", (lng) => {
   inLanguage(lng);
 
-  it("renders every string translated, before and after the pick", async () => {
+  it("renders every string translated; the map itself stays left-to-right", async () => {
     const user = userEvent.setup();
     const { container } = renderRoute("/home");
     expect(document.documentElement).toHaveAttribute(
       "dir",
       lng === "ar" ? "rtl" : "ltr",
     );
-    await user.click(screen.getByRole("button", { name: i18n.t("home.pick") }));
+    // A map is spatial (north up, east right): never mirrored, even in Arabic.
     expect(
-      screen.getByText(i18n.t("data.texture.clay_loam")),
+      screen.getByRole("region", { name: i18n.t("home.mapLabel") }),
+    ).toHaveAttribute("dir", "ltr");
+    await user.click(
+      screen.getByRole("button", { name: i18n.t("home.pickCenter") }),
+    );
+    expect(
+      screen.getByRole("heading", { level: 2, name: i18n.t("home.selected") }),
     ).toBeInTheDocument();
     const text = container.textContent ?? "";
-    expect(text).toContain("342");
+    expect(text).toContain("32.400");
+    expect(text).toContain(i18n.t("parcel.lat"));
     expect(text).not.toMatch(/[٠-٩۰-۹]/); // Western digits only (§9a)
-    expect(text).not.toMatch(/\b(home|data|units|dataCard)\.|\{\{/);
+    expect(text).not.toMatch(/\b(home|parcel|data|units|dataCard)\.|\{\{/);
   });
 });

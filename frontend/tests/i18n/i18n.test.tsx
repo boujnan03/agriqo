@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 
 import { Header } from "../../src/components/Header";
 import i18n, { LANGUAGES, type Language, resources } from "../../src/i18n";
-import { renderRoute, renderWithRouter } from "../utils";
+import { renderRoute, renderWithRouter, TADLA } from "../utils";
 
 type Tree = { [key: string]: string | Tree };
 
@@ -140,7 +140,9 @@ describe.each(LANGUAGES)("smoke: every screen renders in %s", (lng) => {
     "$path (parcel picked: $parcelPicked)",
     async ({ path, parcelPicked }) => {
       await i18n.changeLanguage(lng);
-      const { container } = renderRoute(path, { parcelPicked });
+      const { container } = renderRoute(path, {
+        parcel: parcelPicked ? TADLA : null,
+      });
 
       expect(document.documentElement).toHaveAttribute(
         "dir",
