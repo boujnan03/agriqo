@@ -93,7 +93,7 @@
     },
     "legends": {
       "vegetation": "Faible (jaune) → Élevée (vert foncé)",
-      "soilMoisture": "Sec (0 %) → Saturé (100 %)",
+      "soilMoisture": "Sec (0\u00a0%) → Saturé (100\u00a0%)",
       "rainfall": "Faibles → Élevées"
     },
     "descriptions": {
@@ -104,5 +104,21 @@
     "legend": "Légende",
     "unit": "Unité",
     "lastUpdated": "Dernière mise à jour : {{date}}"
+  },
+  "profile": {
+    "title": "Profil",
+    "memberSince": "Membre depuis {{year}}",
+    "settings": "Paramètres",
+    "language": "Langue",
+    "currentLanguage": "Français",
+    "notifications": "Notifications",
+    "notificationsOn": "Activées",
+    "notificationsOff": "Désactivées",
+    "units": "Unités",
+    "unitValues": {
+      "metric": "Métrique"
+    },
+    "unitsSoon": "D'autres unités seront bientôt disponibles.",
+    "signOut": "Se déconnecter"
   }
 }
