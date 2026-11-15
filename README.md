@@ -106,3 +106,138 @@ frontend/                       React + TypeScript + Vite (+ Dockerfile, nginx.c
   src/services/ src/mocks/      future backend calls / page fixture data (empty for now)
   tests/                        Vitest + React Testing Library
 ```
+
+```
+agriqo
+├─ ARCHITECTURE.md
+├─ audits
+│  ├─ mvp_audit_2026-11-14.md
+│  ├─ output prompt1
+│  ├─ output prompt2
+│  ├─ output prompt3
+│  ├─ output prompt4
+│  └─ output prompt5
+├─ backend
+│  ├─ .dockerignore
+│  ├─ app
+│  │  ├─ main.py
+│  │  └─ __init__.py
+│  ├─ Dockerfile
+│  └─ requirements.txt
+├─ CLAUDE.md
+├─ docker-compose.yml
+├─ frontend
+│  ├─ .dockerignore
+│  ├─ .prettierignore
+│  ├─ .prettierrc
+│  ├─ design.md
+│  ├─ Dockerfile
+│  ├─ eslint.config.js
+│  ├─ index.html
+│  ├─ nginx.conf
+│  ├─ package-lock.json
+│  ├─ package.json
+│  ├─ scripts
+│  │  └─ generate-tokens-css.ts
+│  ├─ src
+│  │  ├─ App.tsx
+│  │  ├─ assets
+│  │  ├─ components
+│  │  │  ├─ Badge.module.css
+│  │  │  ├─ Badge.tsx
+│  │  │  ├─ Button.module.css
+│  │  │  ├─ Button.tsx
+│  │  │  ├─ Card.module.css
+│  │  │  ├─ Card.tsx
+│  │  │  ├─ FactList.module.css
+│  │  │  ├─ FactList.tsx
+│  │  │  ├─ Header.module.css
+│  │  │  ├─ Header.tsx
+│  │  │  ├─ Icon.tsx
+│  │  │  ├─ index.ts
+│  │  │  ├─ PhotoFrame.module.css
+│  │  │  ├─ PhotoFrame.tsx
+│  │  │  ├─ ProgressBar.module.css
+│  │  │  ├─ ProgressBar.tsx
+│  │  │  ├─ Screen.module.css
+│  │  │  ├─ Screen.tsx
+│  │  │  ├─ TabBar.module.css
+│  │  │  └─ TabBar.tsx
+│  │  ├─ hooks
+│  │  ├─ main.tsx
+│  │  ├─ mocks
+│  │  │  ├─ cropDetails.ts
+│  │  │  ├─ farm.ts
+│  │  │  ├─ overview.ts
+│  │  │  └─ recommendations.ts
+│  │  ├─ pages
+│  │  │  ├─ BuildSmoke.tsx
+│  │  │  ├─ Cover.module.css
+│  │  │  ├─ Cover.tsx
+│  │  │  ├─ CropDetail.module.css
+│  │  │  ├─ CropDetail.tsx
+│  │  │  ├─ Farm.module.css
+│  │  │  ├─ Farm.tsx
+│  │  │  ├─ NotFound.module.css
+│  │  │  ├─ NotFound.tsx
+│  │  │  ├─ overview
+│  │  │  │  ├─ ClimateChart.module.css
+│  │  │  │  └─ ClimateChart.tsx
+│  │  │  ├─ Overview.module.css
+│  │  │  ├─ Overview.tsx
+│  │  │  ├─ placeholder
+│  │  │  │  ├─ placeholder.module.css
+│  │  │  │  └─ PlaceholderNotice.tsx
+│  │  │  ├─ Recommendations.module.css
+│  │  │  └─ Recommendations.tsx
+│  │  ├─ router
+│  │  │  ├─ AppTabBar.tsx
+│  │  │  ├─ paths.ts
+│  │  │  ├─ router.ts
+│  │  │  ├─ routes.tsx
+│  │  │  └─ tabs.ts
+│  │  ├─ services
+│  │  │  └─ api.ts
+│  │  ├─ theme
+│  │  │  ├─ cssVariables.ts
+│  │  │  ├─ global.css
+│  │  │  ├─ tokens.css
+│  │  │  └─ tokens.ts
+│  │  ├─ types
+│  │  │  ├─ crop.ts
+│  │  │  ├─ cropDetail.ts
+│  │  │  ├─ farm.ts
+│  │  │  ├─ overview.ts
+│  │  │  └─ recommendations.ts
+│  │  └─ vite-env.d.ts
+│  ├─ tests
+│  │  ├─ components
+│  │  │  ├─ Badge.test.tsx
+│  │  │  ├─ Button.test.tsx
+│  │  │  ├─ Card.test.tsx
+│  │  │  ├─ Header.test.tsx
+│  │  │  ├─ Icon.test.tsx
+│  │  │  ├─ PhotoFrame.test.tsx
+│  │  │  ├─ ProgressBar.test.tsx
+│  │  │  └─ TabBar.test.tsx
+│  │  ├─ pages
+│  │  │  ├─ ClimateChart.test.tsx
+│  │  │  ├─ Cover.test.tsx
+│  │  │  ├─ CropDetail.test.tsx
+│  │  │  ├─ Farm.test.tsx
+│  │  │  ├─ NotFound.test.tsx
+│  │  │  ├─ Overview.test.tsx
+│  │  │  ├─ Recommendations.test.tsx
+│  │  │  └─ routes.test.tsx
+│  │  ├─ setup.ts
+│  │  ├─ theme
+│  │  │  └─ tokens.test.ts
+│  │  └─ utils.tsx
+│  ├─ tsconfig.app.json
+│  ├─ tsconfig.json
+│  ├─ tsconfig.node.json
+│  ├─ tsconfig.test.json
+│  └─ vite.config.ts
+└─ README.md
+
+```
