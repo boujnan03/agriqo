@@ -1,10 +1,17 @@
 <!doctype html>
-<html lang="en">
+<!-- Arabic is the default language (design.md §9a); src/i18n keeps lang/dir in sync. -->
+<html lang="ar" dir="rtl">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- No favicon yet: design.md §1 describes a logo mark but no asset exists. -->
-    <link rel="icon" href="data:," />
+    <!-- AGRIQO icons (files in public/, served from the site root). -->
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <!-- Static files can't read CSS variables: this is design.md's --green-900 (tokens.ts). -->
+    <meta name="theme-color" content="#1E5631" />
     <title>FieldShift AI</title>
   </head>
   <body>

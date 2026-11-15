@@ -1,12 +1,15 @@
 import { screen } from "@testing-library/react";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
+import farmMap from "../../src/assets/illustrations/farm-map.svg";
 import { farmData } from "../../src/mocks/farm";
-import { TAB_BAR_LABEL } from "../../src/router/tabs";
 import type { FarmData } from "../../src/types/farm";
-import { renderRoute } from "../utils";
+import { inLanguage, renderRoute, tabBarLabel } from "../utils";
 
 describe("Farm page (design.md §7.2)", () => {
+  // French copy asserted below: render in French (the app default is Arabic).
+  inLanguage("fr");
+
   it("the mock fixture matches the FarmData type", () => {
     // Type-level check: enforced by `npm run typecheck`.
     expectTypeOf(farmData).toEqualTypeOf<FarmData>();
@@ -19,7 +22,7 @@ describe("Farm page (design.md §7.2)", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole("img", { name: "Carte : vue satellite de la parcelle" }),
-    ).toBeInTheDocument();
+    ).toHaveAttribute("src", farmMap);
     expect(screen.getByText(farmData.location)).toBeInTheDocument();
     expect(screen.getByText(farmData.soilType)).toBeInTheDocument();
     expect(screen.getByText(farmData.waterAvailability)).toBeInTheDocument();
@@ -39,10 +42,10 @@ describe("Farm page (design.md §7.2)", () => {
     expect(
       screen.queryByRole("link", { name: /retour|back/i }),
     ).not.toBeInTheDocument();
-    const tabBar = screen.getByRole("navigation", { name: TAB_BAR_LABEL });
+    const tabBar = screen.getByRole("navigation", { name: tabBarLabel() });
     expect(tabBar).toBeInTheDocument();
-    // Tab mapping (src/router/tabs.ts, team decision): /farm is the "Map" tab.
-    expect(screen.getByRole("link", { name: "Map" })).toHaveAttribute(
+    // Tab mapping (design.md §6): /farm is the "Home" tab ("Accueil" in French).
+    expect(screen.getByRole("link", { name: "Accueil" })).toHaveAttribute(
       "aria-current",
       "page",
     );

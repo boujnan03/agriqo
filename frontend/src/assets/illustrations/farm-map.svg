@@ -1,0 +1,20 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Vue satellite stylisée d'une parcelle agricole">
+  <rect width="400" height="300" fill="#DCEEDD"/>
+  <g opacity="0.5" stroke="#9FCB9F" stroke-width="1" fill="none">
+    <path d="M-10 40c80-20 140 20 220-6s140 10 200-4"/>
+    <path d="M-10 90c90-18 150 24 230-4s130 14 190-2"/>
+    <path d="M-10 230c80-16 150 18 230-8s120 12 190-2"/>
+    <path d="M-10 270c90-14 140 16 220-6s130 10 200-2"/>
+  </g>
+  <g>
+    <rect x="30" y="110" width="150" height="90" rx="6" fill="#9FCB9F" opacity="0.8"/>
+    <rect x="195" y="70" width="110" height="70" rx="6" fill="#7CBE88" opacity="0.8"/>
+    <rect x="220" y="160" width="130" height="80" rx="6" fill="#5E9C6A" opacity="0.8"/>
+  </g>
+  <g stroke="#1E5631" stroke-width="1.5" fill="none" opacity="0.6">
+    <line x1="30" y1="155" x2="180" y2="155"/>
+    <line x1="105" y1="110" x2="105" y2="200"/>
+    <line x1="195" y1="105" x2="305" y2="105"/>
+    <line x1="220" y1="200" x2="350" y2="200"/>
+  </g>
+</svg>

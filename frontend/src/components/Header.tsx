@@ -1,9 +1,12 @@
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Link } from "react-router";
 
+import { useDirection } from "../i18n/useDirection";
+import { logo } from "../assets/images";
 import styles from "./Header.module.css";
 import { Icon } from "./Icon";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 export interface HeaderAction {
   icon: LucideIcon;
@@ -13,7 +16,7 @@ export interface HeaderAction {
 }
 
 interface RootHeaderProps {
-  /** Section-root screen (§6/§7): title left-aligned, optional right-side icon button. */
+  /** Section-root screen (§6/§7): title at the start, optional icon button at the end. */
   variant?: "root";
   title: string;
   action?: HeaderAction;
@@ -31,9 +34,16 @@ interface DrillInHeaderProps {
 
 export type HeaderProps = RootHeaderProps | DrillInHeaderProps;
 
-/** design.md §6 Header (height token); the two variants follow the screen templates in §7. */
+/**
+ * design.md §6 Header (height token); the two variants follow the screen templates in §7.
+ * Both carry the §9a language switcher at the end. The back chevron points toward the start of
+ * the reading direction: left in French/English, right in Arabic (§9a).
+ * Section-root headers start with the AGRIQO mark (§1 logo); on drill-in screens that start slot
+ * belongs to the back chevron. The mark is decorative (alt=""): the title names the screen.
+ */
 export function Header(props: HeaderProps) {
   const isDrillIn = props.variant === "drill-in";
+  const BackChevron = useDirection() === "rtl" ? ChevronRight : ChevronLeft;
   return (
     <header className={styles.header}>
       {isDrillIn ? (
@@ -42,9 +52,11 @@ export function Header(props: HeaderProps) {
           className={styles.iconButton}
           aria-label={props.backLabel}
         >
-          <Icon icon={ChevronLeft} />
+          <Icon icon={BackChevron} />
         </Link>
-      ) : null}
+      ) : (
+        <img className={styles.logo} src={logo.mark} alt="" />
+      )}
       <h1 className={styles.title}>{props.title}</h1>
       {!isDrillIn && props.action ? (
         <button
@@ -56,6 +68,7 @@ export function Header(props: HeaderProps) {
           <Icon icon={props.action.icon} />
         </button>
       ) : null}
+      <LanguageSwitcher />
     </header>
   );
 }

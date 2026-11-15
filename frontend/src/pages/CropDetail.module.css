@@ -24,8 +24,7 @@
 
 .bannerText {
   position: absolute;
-  left: var(--padding-card);
-  right: var(--padding-card);
+  inset-inline: var(--padding-card);
   bottom: var(--padding-card);
   display: flex;
   align-items: center;

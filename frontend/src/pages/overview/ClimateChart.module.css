@@ -55,7 +55,10 @@
   border-radius: var(--radius-pill);
   background: var(--green-900);
   border: var(--border-width-hairline) solid var(--white);
-  transform: translate(-50%, 50%);
+  /* Centered on its point: half its width back along the inline axis (logical, so it also
+     works in RTL) and half its height down. */
+  margin-inline-start: calc(var(--space-8) / -2);
+  transform: translateY(50%);
 }
 
 .labels {

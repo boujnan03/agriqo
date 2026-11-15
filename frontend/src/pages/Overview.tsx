@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import { CloudRain, MapPin, Thermometer } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { Button } from "../components/Button";
 import { Card } from "../components/Card";
@@ -13,9 +14,6 @@ import { PATHS } from "../router/paths";
 import { ClimateChart } from "./overview/ClimateChart";
 import styles from "./Overview.module.css";
 
-/** French typography: a non-breaking space between a number and its unit ("24 °C"). */
-const NBSP = String.fromCharCode(0xa0);
-
 interface Stat {
   label: string;
   value: string;
@@ -28,23 +26,24 @@ interface Stat {
  * Data comes from the mock fixture for now.
  */
 export function Overview() {
+  const { t } = useTranslation();
   const data = overviewData;
   const stats: Stat[] = [
     {
-      label: "Température moyenne",
-      value: `${data.avgTemp}${NBSP}°C`,
+      label: t("overview.avgTemp"),
+      value: t("overview.tempValue", { value: data.avgTemp }),
       icon: Thermometer,
     },
     {
-      label: "Précipitations totales",
-      value: `${data.totalRainfall}${NBSP}mm`,
+      label: t("overview.totalRainfall"),
+      value: t("overview.rainValue", { value: data.totalRainfall }),
       icon: CloudRain,
     },
   ];
 
   return (
     <Screen
-      header={<Header title="Aperçu de la ferme" />}
+      header={<Header title={t("overview.title")} />}
       tabBar={<AppTabBar />}
     >
       <div className={styles.stack}>
@@ -52,7 +51,7 @@ export function Overview() {
           <section className={styles.section} aria-labelledby="climate-summary">
             <div className={styles.sectionHead}>
               <h2 id="climate-summary" className={styles.sectionTitle}>
-                Résumé climatique
+                {t("overview.climateSummary")}
               </h2>
               <span className={styles.location}>
                 <Icon icon={MapPin} />
@@ -78,7 +77,7 @@ export function Overview() {
         <Card>
           <section className={styles.section} aria-labelledby="climate-chart">
             <h2 id="climate-chart" className={styles.sectionTitle}>
-              Température et précipitations
+              {t("overview.chartTitle")}
             </h2>
             <ClimateChart monthly={data.monthly} />
           </section>
@@ -86,21 +85,21 @@ export function Overview() {
 
         <Card>
           <ProgressBar
-            label="Humidité du sol"
+            label={t("overview.soilMoisture")}
             value={data.soilMoisturePercent}
           />
         </Card>
 
         <Card>
           <ProgressBar
-            label="Indice de santé"
+            label={t("overview.healthIndex")}
             value={data.healthIndex.percent}
-            valueText={`${data.healthIndex.label} · ${data.healthIndex.percent}%`}
+            valueText={t("overview.healthValue", data.healthIndex)}
           />
         </Card>
 
         <Button to={PATHS.recommendations} withArrow>
-          Voir mes recommandations
+          {t("overview.seeRecommendations")}
         </Button>
       </div>
     </Screen>

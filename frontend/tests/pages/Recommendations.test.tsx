@@ -2,14 +2,19 @@ import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
+import cropLegumineuses from "../../src/assets/illustrations/crop-legumineuses.svg";
+import cropOrge from "../../src/assets/illustrations/crop-orge.svg";
+import cropWheat from "../../src/assets/illustrations/crop-wheat.svg";
 import { recommendationsData } from "../../src/mocks/recommendations";
-import { TAB_BAR_LABEL } from "../../src/router/tabs";
 import type { RecommendationsData } from "../../src/types/recommendations";
-import { renderRoute } from "../utils";
+import { inLanguage, renderRoute, tabBarLabel } from "../utils";
 
 const { featured, otherOptions, rotationPlan } = recommendationsData;
 
 describe("Recommendations page (design.md §7.4)", () => {
+  // French copy asserted below: render in French (the app default is Arabic).
+  inLanguage("fr");
+
   it("the mock fixture matches the RecommendationsData type", () => {
     // Type-level check: enforced by `npm run typecheck`.
     expectTypeOf(recommendationsData).toEqualTypeOf<RecommendationsData>();
@@ -35,6 +40,15 @@ describe("Recommendations page (design.md §7.4)", () => {
     }
   });
 
+  it("shows each crop's illustration on the featured card and the option cards", () => {
+    renderRoute("/recommendations");
+    const src = (name: string) =>
+      screen.getByRole("img", { name }).getAttribute("src");
+    expect(src("Photo : blé")).toBe(cropWheat); // featured: ble
+    expect(src("Photo : orge")).toBe(cropOrge);
+    expect(src("Photo : légumineuses")).toBe(cropLegumineuses);
+  });
+
   it("shows the 3 rotation steps in order", () => {
     renderRoute("/recommendations");
     const plan = screen.getByRole("list", {
@@ -54,7 +68,7 @@ describe("Recommendations page (design.md §7.4)", () => {
       screen.getByRole("link", { name: "Retour à l'aperçu de la ferme" }),
     ).toHaveAttribute("href", "/overview");
     expect(
-      screen.queryByRole("navigation", { name: TAB_BAR_LABEL }),
+      screen.queryByRole("navigation", { name: tabBarLabel() }),
     ).not.toBeInTheDocument();
   });
 
@@ -74,6 +88,9 @@ describe("Recommendations page (design.md §7.4)", () => {
 });
 
 describe("Recommendations navigation", () => {
+  // French copy asserted below: render in French (the app default is Arabic).
+  inLanguage("fr");
+
   it("tapping an option card opens that crop's detail page", async () => {
     const user = userEvent.setup();
     renderRoute("/recommendations");

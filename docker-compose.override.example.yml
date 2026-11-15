@@ -1,0 +1,38 @@
+# DEV MODE (hot reload), opt-in per machine. To enable it:
+#   cp docker-compose.override.example.yml docker-compose.override.yml   (git-ignored)
+# Docker Compose then merges docker-compose.override.yml over docker-compose.yml automatically,
+# so `docker compose up --build` runs the frontend as Vite's dev server: edits under
+# frontend/src/ appear in the browser within a second or two, no rebuild or restart.
+# Without the copy (the default), nothing changes: static build served by nginx.
+#
+# Production-style run while the override exists (ignores it):
+#   docker compose -f docker-compose.yml up --build
+#
+# Only the frontend service changes; the backend is exactly as in docker-compose.yml.
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    volumes:
+      # Live source from the host...
+      - ./frontend:/app
+      # ...except node_modules: an anonymous volume keeps the container's own installed
+      # dependencies (Linux builds) instead of whatever is, or isn't, on the host.
+      - /app/node_modules
+    environment:
+      # Windows/macOS hosts: file-change events don't cross the bind mount into the Linux
+      # container, so Vite's watcher (chokidar 3) polls instead.
+      CHOKIDAR_USEPOLLING: "true"
+      CHOKIDAR_INTERVAL: "300"
+    # Same URL as production (http://localhost:8080), now served by Vite on 5173.
+    # `!override` replaces the base file's "8080:80" instead of appending to it.
+    ports: !override
+      - "8080:5173"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:5173/"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 20s

@@ -1,3 +1,6 @@
+import { useTranslation } from "react-i18next";
+
+import { useDirection } from "../../i18n/useDirection";
 import type { MonthlyClimate } from "../../types/overview";
 import styles from "./ClimateChart.module.css";
 
@@ -12,7 +15,7 @@ const HEADROOM = 85;
 const scale = (value: number, max: number): number =>
   max > 0 ? (Math.max(value, 0) / max) * HEADROOM : 0;
 
-/** Horizontal center of column `i` of `n`, in percent. */
+/** Center of column `i` of `n`, in percent from the inline start (left in LTR, right in RTL). */
 const columnCenter = (i: number, n: number): number => ((i + 0.5) / n) * 100;
 
 /**
@@ -20,26 +23,41 @@ const columnCenter = (i: number, n: number): number => ((i + 0.5) / n) * 100;
  * chart component, so this is the simplest token-only version: each series on its own 0..max
  * scale, exact values printed under each month (the graphic illustrates, the numbers inform,
  * as for §6 progress bars), and a text legend so color is never the only signal (§9).
+ *
+ * RTL (design.md §9a): bars, dots and labels mirror on their own (grid flow + logical
+ * properties), so months run right-to-left in Arabic. The SVG line is the one exception: an SVG
+ * coordinate system ignores `dir`, so its x coordinates are mirrored here explicitly.
  */
 export function ClimateChart({ monthly }: ClimateChartProps) {
+  const { t } = useTranslation();
+  const rtl = useDirection() === "rtl";
   const n = monthly.length;
   const maxTemp = Math.max(...monthly.map((m) => m.temp), 0);
   const maxRain = Math.max(...monthly.map((m) => m.rainfall), 0);
 
   const linePoints = monthly
-    .map((m, i) => `${columnCenter(i, n)},${100 - scale(m.temp, maxTemp)}`)
+    .map((m, i) => {
+      const x = rtl ? 100 - columnCenter(i, n) : columnCenter(i, n);
+      return `${x},${100 - scale(m.temp, maxTemp)}`;
+    })
     .join(" ");
 
   const summary = monthly
-    .map((m) => `${m.month} : ${m.temp} °C, ${m.rainfall} mm`)
-    .join(" ; ");
+    .map((m) =>
+      t("chart.monthSummary", {
+        month: m.month,
+        temp: m.temp,
+        rainfall: m.rainfall,
+      }),
+    )
+    .join(t("chart.separator"));
 
   return (
     <figure className={styles.chart}>
       <div
         className={styles.plot}
         role="img"
-        aria-label={`Température et précipitations par mois. ${summary}.`}
+        aria-label={t("chart.ariaLabel", { summary })}
       >
         {monthly.map((m) => (
           <div key={m.month} className={styles.column}>
@@ -65,7 +83,7 @@ export function ClimateChart({ monthly }: ClimateChartProps) {
             className={styles.dot}
             data-point="temp"
             style={{
-              left: `${columnCenter(i, n)}%`,
+              insetInlineStart: `${columnCenter(i, n)}%`,
               bottom: `${scale(m.temp, maxTemp)}%`,
             }}
           />
@@ -85,11 +103,11 @@ export function ClimateChart({ monthly }: ClimateChartProps) {
       <figcaption className={styles.legend}>
         <span className={styles.legendItem}>
           <span className={styles.swatchLine} aria-hidden="true" />
-          Température (°C), ligne
+          {t("chart.legendTemp")}
         </span>
         <span className={styles.legendItem}>
           <span className={styles.swatchBar} aria-hidden="true" />
-          Précipitations (mm), barres
+          {t("chart.legendRain")}
         </span>
       </figcaption>
     </figure>
