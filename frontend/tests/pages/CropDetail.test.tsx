@@ -5,6 +5,7 @@ import { describe, expect, expectTypeOf, it } from "vitest";
 import cropLegumineuses from "../../src/assets/illustrations/crop-legumineuses.svg";
 import cropOrge from "../../src/assets/illustrations/crop-orge.svg";
 import cropWheat from "../../src/assets/illustrations/crop-wheat.svg";
+import { SEED_ACCOUNT } from "../../src/auth/seedAccount";
 import { cropDetails } from "../../src/mocks/cropDetails";
 import type { CropId } from "../../src/types/crop";
 import type { CropDetailsById } from "../../src/types/cropDetail";
@@ -99,14 +100,22 @@ describe("full mocked click-through", () => {
   // French copy asserted below: render in French (the app default is Arabic).
   inLanguage("fr");
 
-  it("Cover → Home → Insights tab → Recommendations → Crop detail, and back", async () => {
+  it("Cover login → Home → Insights tab → Recommendations → Crop detail, and back", async () => {
     const user = userEvent.setup();
     renderRoute("/");
 
     const h1 = (name: string) =>
       screen.findByRole("heading", { level: 1, name });
 
-    await user.click(screen.getByRole("link", { name: "Commencer" }));
+    await user.type(
+      screen.getByLabelText("Nom d'utilisateur"),
+      SEED_ACCOUNT.username,
+    );
+    await user.type(
+      screen.getByLabelText("Mot de passe"),
+      SEED_ACCOUNT.password,
+    );
+    await user.click(screen.getByRole("button", { name: "Se connecter" }));
     await h1("Accueil");
     await user.click(screen.getByRole("link", { name: "Analyses" }));
     await h1("Aperçu de la ferme");

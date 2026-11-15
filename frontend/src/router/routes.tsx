@@ -10,10 +10,11 @@ import { Overview } from "../pages/Overview";
 import { Profile } from "../pages/Profile";
 import { Recommendations } from "../pages/Recommendations";
 import { Weather } from "../pages/Weather";
+import { AppLayout } from "./AppLayout";
 import { PATHS } from "./paths";
 
-/** Route table, shared by the browser router (router.ts) and the tests (memory router). */
-export const routes: RouteObject[] = [
+/** One route per screen. */
+export const pageRoutes: RouteObject[] = [
   { path: PATHS.cover, element: <Cover /> },
   { path: PATHS.home, element: <Home /> },
   { path: PATHS.farm, element: <Farm /> },
@@ -24,4 +25,9 @@ export const routes: RouteObject[] = [
   { path: PATHS.profile, element: <Profile /> },
   { path: PATHS.smoke, element: <BuildSmoke /> },
   { path: PATHS.notFound, element: <NotFound /> },
+];
+
+/** Route table, shared by the browser router (router.ts) and the tests (memory router). */
+export const routes: RouteObject[] = [
+  { element: <AppLayout />, children: pageRoutes },
 ];

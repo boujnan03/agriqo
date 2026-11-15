@@ -19,8 +19,11 @@
   "cover": {
     "photo": "Photo : champ de blé",
     "tagline": "Rotation de cultures intelligente pour un avenir durable.",
-    "start": "Commencer",
-    "signIn": "Se connecter"
+    "signIn": "Se connecter",
+    "loginForm": "Connexion",
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "loginError": "Nom d'utilisateur ou mot de passe incorrect."
   },
   "notFound": {
     "message": "Page introuvable.",

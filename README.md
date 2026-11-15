@@ -68,6 +68,17 @@ npm run format       # Prettier
 Every screen and component follows [`frontend/design.md`](frontend/design.md). Design values
 live only in `frontend/src/theme/tokens.ts`; run `npm run tokens` after editing it.
 
+### Demo sign-in
+The Cover screen has a simple login gate. Use the one seeded demo account:
+
+| Username | Password |
+|---|---|
+| `demo` | `tadla2026` |
+
+This is a UX gate, not security: there is no backend auth, and the credentials are a constant in
+`frontend/src/auth/seedAccount.ts`. The signed-in state lives in memory only, so a page reload
+starts a fresh session.
+
 ## Data sources (Streamlit MVP; will move to the backend)
 
 | Data | Source | NASA? |
