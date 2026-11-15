@@ -9,8 +9,9 @@
     "navLabel": "Main navigation",
     "home": "Home",
     "insights": "Insights",
-    "map": "Map",
-    "profile": "Profile"
+    "profile": "Profile",
+    "farm": "Farm",
+    "weather": "Weather"
   },
   "common": {
     "photo": "Photo: {{name}}"
@@ -27,12 +28,21 @@
   },
   "farm": {
     "title": "Your farm",
-    "mapPlaceholder": "Map: satellite view of the plot",
-    "detailsTitle": "Farm details",
-    "soilType": "Soil type",
-    "waterAvailability": "Water availability",
-    "currentCrop": "Current crop",
-    "analyze": "Analyze my farm"
+    "soil": "Soil",
+    "climate": "Climate",
+    "humidity": "Moisture",
+    "relief": "Relief",
+    "texture": "Texture",
+    "ph": "pH",
+    "organicCarbon": "Organic carbon",
+    "tempMean": "Mean temperature",
+    "tempMax": "Average high",
+    "rainYear": "Annual rainfall",
+    "frostDays": "Frost days per year",
+    "surfaceWetness": "Surface soil moisture",
+    "level": "Level",
+    "altitude": "Altitude",
+    "slope": "Slope"
   },
   "overview": {
     "title": "Farm overview",
@@ -44,8 +54,11 @@
     "chartTitle": "Temperature and rainfall",
     "soilMoisture": "Soil moisture",
     "healthIndex": "Health index",
-    "healthValue": "{{label}} · {{percent}}%",
-    "seeRecommendations": "See my recommendations"
+    "seeRecommendations": "See my recommendations",
+    "minTemp": "Average low",
+    "maxTemp": "Average high",
+    "frostDays": "Frost days",
+    "healthSoon": "Coming soon (NDVI)"
   },
   "chart": {
     "ariaLabel": "Temperature and rainfall by month. {{summary}}.",
@@ -74,34 +87,6 @@
     "save": "Save this plan",
     "saved": "Plan saved for this session (demo: nothing is actually stored)."
   },
-  "map": {
-    "title": "Map",
-    "layerSwitcher": "Data layer",
-    "placeholder": "Map: {{layer}} layer",
-    "layers": {
-      "vegetation": "Vegetation",
-      "soilMoisture": "Soil moisture",
-      "rainfall": "Rainfall"
-    },
-    "units": {
-      "vegetation": "NDVI",
-      "soilMoisture": "%",
-      "rainfall": "mm"
-    },
-    "legends": {
-      "vegetation": "Low (yellow) → High (dark green)",
-      "soilMoisture": "Dry (0%) → Saturated (100%)",
-      "rainfall": "Low → High"
-    },
-    "descriptions": {
-      "vegetation": "Shows how healthy the vegetation on your plot is.",
-      "soilMoisture": "Shows how wet the surface soil is.",
-      "rainfall": "Total recent rainfall over the area."
-    },
-    "legend": "Legend",
-    "unit": "Unit",
-    "lastUpdated": "Last updated: {{date}}"
-  },
   "profile": {
     "title": "Profile",
     "memberSince": "Member since {{year}}",
@@ -116,6 +101,77 @@
       "metric": "Metric"
     },
     "unitsSoon": "Other units are coming soon.",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "parcels": "My plots",
+    "parcelsDiagnosed": "Plots diagnosed"
+  },
+  "home": {
+    "title": "Home",
+    "intro": "Tap the map to pick your plot.",
+    "pick": "Pick my plot on the map",
+    "mapAlt": "Map: satellite view of the plot",
+    "selected": "Selected plot",
+    "soilTexture": "Soil texture",
+    "annualRain": "Annual rainfall",
+    "seeDiagnostic": "See the full diagnostic"
+  },
+  "weather": {
+    "title": "Weather",
+    "today": "Today",
+    "next7": "Next 7 days",
+    "precipitation": "Chance of rain",
+    "humidity": "Humidity",
+    "wind": "Wind",
+    "degrees": "{{value}}°",
+    "conditions": {
+      "sunny": "Sunny",
+      "partlyCloudy": "Partly cloudy",
+      "cloudy": "Cloudy",
+      "showers": "Showers",
+      "rain": "Rain"
+    }
+  },
+  "dataCard": {
+    "source": "Data: {{source}}",
+    "unavailable": "Data unavailable",
+    "noDataShort": "No data",
+    "noData": {
+      "outsideCoverage": "No data for this point: it is outside the area this source covers.",
+      "waterBody": "No data for this point: it lies on a body of water."
+    }
+  },
+  "units": {
+    "mmPerYear": "{{value}} mm/year",
+    "celsius": "{{value}} °C",
+    "percent": "{{value}}%",
+    "gPerKg": "{{value}} g/kg",
+    "meters": "{{value}} m",
+    "kmh": "{{value}} km/h"
+  },
+  "data": {
+    "texture": {
+      "clay": "Clay",
+      "silty_clay": "Silty clay",
+      "sandy_clay": "Sandy clay",
+      "clay_loam": "Clay loam",
+      "silty_clay_loam": "Silty clay loam",
+      "sandy_clay_loam": "Sandy clay loam",
+      "loam": "Loam",
+      "silt_loam": "Silt loam",
+      "sandy_loam": "Sandy loam",
+      "silt": "Silt",
+      "loamy_sand": "Loamy sand",
+      "sand": "Sand"
+    },
+    "humidityLevel": {
+      "sec": "Dry",
+      "moyen": "Medium",
+      "humide": "Wet"
+    }
+  },
+  "parcel": {
+    "noneTitle": "No plot picked yet",
+    "noneText": "First pick your plot on the Home map.",
+    "choose": "Pick my plot"
   }
 }

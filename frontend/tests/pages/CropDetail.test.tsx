@@ -99,7 +99,7 @@ describe("full mocked click-through", () => {
   // French copy asserted below: render in French (the app default is Arabic).
   inLanguage("fr");
 
-  it("Cover → Farm → Overview → Recommendations → Crop detail, and back", async () => {
+  it("Cover → Home pick → Farm → Insights tab → Recommendations → Crop detail, and back", async () => {
     const user = userEvent.setup();
     renderRoute("/");
 
@@ -107,8 +107,18 @@ describe("full mocked click-through", () => {
       screen.findByRole("heading", { level: 1, name });
 
     await user.click(screen.getByRole("link", { name: "Commencer" }));
+    await h1("Accueil");
+    await user.click(
+      screen.getByRole("button", { name: "Choisir ma parcelle sur la carte" }),
+    );
+    await user.click(
+      screen.getByRole("link", { name: "Voir le diagnostic complet" }),
+    );
     await h1("Votre ferme");
-    await user.click(screen.getByRole("link", { name: "Analyser ma ferme" }));
+    expect(
+      screen.getByRole("heading", { level: 2, name: "Sol" }),
+    ).toBeInTheDocument();
+    await user.click(screen.getByRole("link", { name: "Analyses" }));
     await h1("Aperçu de la ferme");
     await user.click(
       screen.getByRole("link", { name: "Voir mes recommandations" }),

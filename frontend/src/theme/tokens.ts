@@ -51,6 +51,7 @@ export const fontSize = {
   body: fromRange([14, 16]), // §3 "Body … 14–16px"
   label: fromRange([15, 16]), // §3 "Buttons/labels … 15–16px"
   caption: fromRange([11, 13]), // §3 "Captions/muted … 11–13px" (decorative-only below 13px)
+  captionFactual: 13, // §3 "13px for anything factual the farmer might rely on" (source notes)
   badge: 12, // §6 Badge "12px"
 } as const;
 
@@ -133,7 +134,7 @@ export const icon = {
 /** §8 Aspect ratios to reserve for photo slots. */
 export const aspectRatio = {
   cover: "9 / 16", // §8 "Cover/welcome banner — tall, ~9:16 full-bleed"
-  farm: "4 / 3", // §8 "Farm/map banner — ~4:3"
+  farm: "4 / 3", // §8 "Home's map/picker banner — ~4:3" (slot name kept from the old Farm page)
   thumbnail: "1 / 1", // §8 "Recommendation option thumbnail — 1:1"
   detail: "16 / 9", // §8 "Detail page banner — ~16:9"
 } as const;

@@ -1,5 +1,13 @@
 import type { LucideIcon } from "lucide-react";
-import { CloudRain, MapPin, Thermometer } from "lucide-react";
+import {
+  CloudRain,
+  Leaf,
+  MapPin,
+  Snowflake,
+  Thermometer,
+  ThermometerSnowflake,
+  ThermometerSun,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "../components/Button";
@@ -21,8 +29,10 @@ interface Stat {
 }
 
 /**
- * Route "/overview" · design.md §7.3 Dashboard: stacked standard cards (summary stats, a chart,
- * progress-bar cards), then one primary CTA into Recommendations. Root header + tab bar.
+ * Route "/overview" · design.md §7.4 Insights (the Insights tab): stacked standard cards (climate
+ * summary: mean / min / max temperature + rainfall, the monthly chart, frost days, soil
+ * moisture), the Health Index as an explicit "not yet available" placeholder (no NDVI source
+ * yet, so no score is shown), then one primary CTA into Recommendations. Root header + tab bar.
  * Data comes from the mock fixture for now.
  */
 export function Overview() {
@@ -33,6 +43,16 @@ export function Overview() {
       label: t("overview.avgTemp"),
       value: t("overview.tempValue", { value: data.avgTemp }),
       icon: Thermometer,
+    },
+    {
+      label: t("overview.minTemp"),
+      value: t("overview.tempValue", { value: data.minTemp }),
+      icon: ThermometerSnowflake,
+    },
+    {
+      label: t("overview.maxTemp"),
+      value: t("overview.tempValue", { value: data.maxTemp }),
+      icon: ThermometerSun,
     },
     {
       label: t("overview.totalRainfall"),
@@ -84,6 +104,20 @@ export function Overview() {
         </Card>
 
         <Card>
+          <dl className={styles.single}>
+            <div className={styles.stat}>
+              <dt className={styles.statLabel}>
+                <span className={styles.statIcon}>
+                  <Icon icon={Snowflake} />
+                </span>
+                {t("overview.frostDays")}
+              </dt>
+              <dd className={styles.statValue}>{data.frostDays}</dd>
+            </div>
+          </dl>
+        </Card>
+
+        <Card>
           <ProgressBar
             label={t("overview.soilMoisture")}
             value={data.soilMoisturePercent}
@@ -91,11 +125,16 @@ export function Overview() {
         </Card>
 
         <Card>
-          <ProgressBar
-            label={t("overview.healthIndex")}
-            value={data.healthIndex.percent}
-            valueText={t("overview.healthValue", data.healthIndex)}
-          />
+          <section className={styles.section} aria-labelledby="health-index">
+            <h2 id="health-index" className={styles.sectionTitle}>
+              <span className={styles.statIcon}>
+                <Icon icon={Leaf} />
+              </span>
+              {t("overview.healthIndex")}
+            </h2>
+            {/* Placeholder until a real NDVI source exists: no score, not even a fake one. */}
+            <p className={styles.placeholder}>{t("overview.healthSoon")}</p>
+          </section>
         </Card>
 
         <Button to={PATHS.recommendations} withArrow>
