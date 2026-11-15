@@ -57,7 +57,12 @@ def test_full_diagnostic_tadla(client, mock_api):
     climate = d["climate"]
     assert climate["status"] == "ok" and climate["source"] == "NASA POWER"
     assert climate["temp_mean_c"] == round(clim_fx["T2M"]["ANN"], 1)
-    assert climate["temp_max_c"] == round(clim_fx["T2M_MAX"]["ANN"], 1)
+    # Typical high = mean of the 12 monthly T2M_MAX_AVG (mean daily max), not the record.
+    months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
+    typical_max = sum(clim_fx["T2M_MAX_AVG"][m] for m in months) / 12
+    assert climate["temp_max_c"] == round(typical_max, 1) == 31.5
+    assert climate["temp_max_c"] != round(clim_fx["T2M_MAX"]["ANN"], 1)  # 44.1 = record
+    assert "pas un record" in climate["note"]
     assert climate["rain_mm_year"] == round(clim_fx["PRECTOTCORR"]["ANN"] * 365.25)
     assert climate["climatology_period"] == "2001-2025"
 
@@ -306,6 +311,18 @@ def test_daily_down_nulls_frost_days_only(client, mock_api):
     assert d["climate"]["temp_mean_c"] is not None
     assert "frost_days indisponible" in d["climate"]["note"]
     assert d["soil_moisture"]["status"] == "indisponible"
+
+
+def test_temp_max_null_when_a_month_is_missing(client, mock_api):
+    """A mean over 11 months would be biased by season: report it missing instead."""
+    payload = load("power_climatology_tadla.json")
+    payload["properties"]["parameter"]["T2M_MAX_AVG"]["JUL"] = -999.0
+    mock_all_ok(mock_api)
+    power_climatology_route(mock_api).respond(200, json=payload)
+    climate = post(client, TADLA).json()["climate"]
+    assert climate["status"] == "ok"
+    assert climate["temp_max_c"] is None
+    assert climate["temp_mean_c"] is not None
 
 
 def test_stale_soil_moisture_is_no_data(client, mock_api):

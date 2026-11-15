@@ -32,7 +32,8 @@ MSG_NO_SOIL = "Pas de données de sol ici. Vérifiez que le point est sur une te
 NOTE_SOIL = "Estimation (~250 m), pas une analyse de laboratoire"
 NOTE_CLIMATE = (
     "Résolution ~50 km : deux parcelles proches ont le même climat. "
-    "temp_max_c = température horaire la plus élevée sur la période de climatologie ; "
+    "temp_max_c = moyenne des 12 mois de la température maximale journalière moyenne "
+    "(T2M_MAX_AVG) sur la période de climatologie : un maximum habituel, pas un record ; "
     "frost_days = jours avec T2M_MIN < 0 °C sur les 12 derniers mois (données journalières)."
 )
 NOTE_CLIMATE_NO_FROST = (
@@ -94,7 +95,9 @@ def climate_block(clim: Outcome, daily: Outcome) -> ClimateBlock:
         status="ok",
         source=SRC_POWER,
         temp_mean_c=_r1(c.annual.get("T2M")),
-        temp_max_c=_r1(c.annual.get("T2M_MAX")),
+        # Typical daily high, averaged over the 12 months (T2M_MAX_AVG), not the
+        # all-time hourly record that T2M_MAX holds. Null if any month is missing.
+        temp_max_c=_r1(power.mean_of_months(c, "T2M_MAX_AVG")),
         # mm/day x 365.25 days = mean annual total.
         rain_mm_year=None if rain_rate is None else round(rain_rate * 365.25),
         frost_days=None if frost is None else frost.days,
