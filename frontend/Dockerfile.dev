@@ -1,0 +1,18 @@
+# Dev-mode image for the frontend: Vite dev server with hot reload, used ONLY by
+# docker-compose.override.yml. The production image is ./Dockerfile (static build + nginx).
+FROM node:24-alpine
+WORKDIR /app
+
+# Dependencies live in the image (and in an anonymous volume at runtime), never on the host:
+# the source is bind-mounted over /app, node_modules is not.
+COPY package.json package-lock.json ./
+RUN npm ci --no-audit --no-fund
+
+# Same browser-side backend URL as the production build, read by Vite at dev time.
+ARG VITE_API_BASE_URL=http://localhost:8000
+ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
+
+EXPOSE 5173
+# --host 0.0.0.0: reachable from outside the container; --strictPort: fail loudly, never
+# silently move to another port the compose mapping doesn't know about.
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "5173", "--strictPort"]

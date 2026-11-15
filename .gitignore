@@ -7,3 +7,6 @@ node_modules/
 dist/
 coverage/
 *.tsbuildinfo
+
+# Local opt-in dev mode (copy of docker-compose.override.example.yml)
+docker-compose.override.yml

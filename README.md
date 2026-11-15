@@ -37,6 +37,24 @@ docker compose up --build        # UI → http://localhost:8080 · backend → h
 The `frontend` container serves the React build through nginx. The `backend` container is an
 empty FastAPI placeholder that only answers `/health`. Details: [ARCHITECTURE.md](ARCHITECTURE.md).
 
+### Two modes: production-style (default) and hot-reload dev (opt-in)
+- **Production-style (default):** `docker compose up --build` builds the frontend once and
+  serves the static bundle through nginx. It does **not** see later source edits: after
+  changing code, run `docker compose up --build` again, or the browser keeps the old bundle.
+- **Hot-reload dev mode (opt-in, per machine):** copy the example override once:
+  ```bash
+  cp docker-compose.override.example.yml docker-compose.override.yml   # git-ignored
+  docker compose up --build        # same URL: http://localhost:8080
+  ```
+  Compose merges `docker-compose.override.yml` automatically whenever it is present, so from
+  then on the frontend runs Vite's dev server (`frontend/Dockerfile.dev`) on your mounted
+  `frontend/` folder: edits under `frontend/src/` appear in the browser within a second or two,
+  no rebuild or restart. The backend is unchanged.
+  - Production-style run while the override exists: `docker compose -f docker-compose.yml up --build`.
+  - Back to the default for good: delete `docker-compose.override.yml`.
+  - After changing `frontend/package.json` dependencies: `docker compose up --build -V`
+    (`-V` renews the container's own `node_modules` volume).
+
 ## Frontend development (Node ≥ 24.15)
 ```bash
 cd frontend
