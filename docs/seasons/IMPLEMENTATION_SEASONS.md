@@ -20,7 +20,7 @@ Runtime files: `backend/app/seasons/model_files/`. Training files: `ml/seasons/`
 
 - Projet **AGRIQO / Field Shift**, NASA Space Apps Challenge 2026, challenge « Field Shift:
   Adapting Farms with NASA Data ». Public : agriculteurs de la plaine du Tadla (Béni Mellal).
-- À lire avant tout : `CLAUDE.md` (stack, commandes, conventions), `ARCHITECTURE.md` §8 (état
+- À lire avant tout : `README.md` (stack, commandes), `ARCHITECTURE.md` §8 (état
   actuel du frontend) et §7 (prochaine étape backend), `frontend/design.md` (design system).
 - **État actuel :**
   - backend : FastAPI, `backend/app/main.py` ne sert que `GET /health` ;
@@ -198,8 +198,8 @@ dépôt). Les références ci-dessous utilisent ses titres de section.
 | i18n : **exactement les mêmes clés et les mêmes `{{placeholders}}`** dans `ar.json`, `fr.json` et `en.json` | `frontend/tests/i18n/i18n.test.tsx`. Les clés de pluriel en découlent (§9.2). |
 | Arabe par défaut ; les tests remettent l'arabe après chaque test | `frontend/src/i18n/index.ts`, `frontend/tests/setup.ts`, `inLanguage()` dans `frontend/tests/utils.tsx` |
 | Services : une fonction par endpoint, `AbortSignal`, erreur levée si la réponse HTTP n'est pas OK | `frontend/src/services/api.ts` |
-| Tests sans réseau ; ne jamais inventer de chiffres ; séparer données NASA et non-NASA | `CLAUDE.md`, section Conventions |
-| Garder `docker compose up --build` fonctionnel | `CLAUDE.md` |
+| Tests sans réseau ; ne jamais inventer de chiffres ; séparer données NASA et non-NASA | `README.md` (section Backend) et les suites de tests (`backend/tests/conftest.py`, `frontend/tests/fakeBackend.ts`) |
+| Garder `docker compose up --build` fonctionnel | `README.md`, section « Run with Docker » |
 
 ## 6. Architecture backend
 
@@ -729,7 +729,7 @@ MARGIN_LIMIT = 0.15         NEAR_MAX_DEG = 0.5
   conséquence de la décennie sèche, pas un bug. Cela figure dans les questions ouvertes (§14).
 - Documenter ces règles dans `docs/seasons_rules.md`, avec une ligne par règle, ses seuils et
   « needs_validation ». Toute modification d'un seuil doit mettre à jour le code, ce document et
-  les tests (même principe que pour le scoring dans `CLAUDE.md`).
+  les tests (même principe que pour les règles de scoring).
 
 **Résultats attendus** (vérifiés, `water=pluvial`) :
 
@@ -936,7 +936,7 @@ limite d'un point exactement à 0,5° d'une cellule et hors de toute cellule : s
   - `tests/pages/Map.test.tsx` (étape 4) ;
   - `tests/pages/ClimateChart.test.tsx` (supprimé avec le composant).
 
-**Commandes de fin de chaque étape**, depuis `frontend/` (voir `CLAUDE.md`) :
+**Commandes de fin de chaque étape**, depuis `frontend/` (voir `README.md`) :
 `npm test`, `npm run typecheck`, `npm run lint`, `npm run format:check`, puis `npm run build`.
 Ensuite, `docker compose up --build` depuis la racine.
 
@@ -1018,8 +1018,7 @@ l'équipe avant l'étape 3.**
 - toutes les vérifications passent.
 
 **À la fin de chaque étape :** mettre à jour `ARCHITECTURE.md` (nouvelle section « Types de
-saison »), `CLAUDE.md` (Stack, Layout, Commands : le backend n'est plus un placeholder) et
-`README.md` (comment lancer les tests backend).
+saison ») et `README.md` (comment lancer les tests backend).
 
 ## 14. Questions encore ouvertes
 

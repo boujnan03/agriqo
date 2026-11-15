@@ -17,3 +17,6 @@ results__1_.zip.zip
 power_cache/
 # Season-model training data (NASA POWER cache etc.): local only, see ml/seasons/README.md
 ml/seasons/data/
+
+# Local assistant notes: kept on each machine, never committed
+CLAUDE.md
