@@ -1,0 +1,5 @@
+# Test-only dependencies (kept out of the production image).
+-r requirements.txt
+pytest==9.2.0
+# Mocks every external HTTP call in the test suite: tests never touch the network.
+respx==0.23.1

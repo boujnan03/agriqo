@@ -1,2 +1,7 @@
 fastapi==0.115.6
 uvicorn==0.34.0
+# Async HTTP client for the external APIs (NASA POWER, SoilGrids, OpenTopography, Open-Meteo).
+httpx==0.28.1
+# Reading the OpenTopography GeoTIFF (elevation, slope). Wheels bundle GDAL: no system deps.
+rasterio==1.4.4
+numpy==2.4.6

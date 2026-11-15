@@ -11,7 +11,8 @@ the method's limits and uncertainty.
 > *Data sources* and *Limitations* below has been **removed from the working tree**. It is intact
 > in git commit `639732c`. The frontend is being rebuilt in React/TypeScript from
 > [`frontend/design.md`](frontend/design.md). The NASA POWER + scoring pipeline will move into
-> `backend/`. **What runs today:** placeholder screens and the backend's `/health` route. See
+> `backend/`. **What runs today:** placeholder screens, and the backend's `/health`, parcel
+> diagnostic and weather forecast routes (real data; not wired into the pages yet). See
 > [ARCHITECTURE.md](ARCHITECTURE.md) §8.
 
 ## How it works (Streamlit MVP, commit `639732c`)
@@ -34,8 +35,9 @@ the method's limits and uncertainty.
 ```bash
 docker compose up --build        # UI → http://localhost:8080 · backend → http://localhost:8000/health
 ```
-The `frontend` container serves the React build through nginx. The `backend` container is an
-empty FastAPI placeholder that only answers `/health`. Details: [ARCHITECTURE.md](ARCHITECTURE.md).
+The `frontend` container serves the React build through nginx. The `backend` container runs
+the FastAPI service: `/health`, the parcel diagnostic and the 7-day forecast (see *Backend*
+below; the pages don't call it yet). Details: [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ### Two modes: production-style (default) and hot-reload dev (opt-in)
 - **Production-style (default):** `docker compose up --build` builds the frontend once and
@@ -68,6 +70,82 @@ npm run format       # Prettier
 Every screen and component follows [`frontend/design.md`](frontend/design.md). Design values
 live only in `frontend/src/theme/tokens.ts`; run `npm run tokens` after editing it.
 
+## Backend (FastAPI, Python 3.11)
+
+Two endpoints serve real data. Spec:
+[`docs/SPEC_Diagnostic_Parcelle.md`](docs/SPEC_Diagnostic_Parcelle.md).
+
+| Endpoint | Returns | Sources |
+|---|---|---|
+| `POST /api/parcel/diagnostic` | `soil`, `climate`, `soil_moisture`, `terrain` blocks | ISRIC SoilGrids, **NASA POWER** (climatology + last 12 months daily), OpenTopography (SRTM GL1) |
+| `GET /api/weather/forecast?lat=&lon=` | `today` + 7 `days` (condition key + lucide icon name) | Open-Meteo (not NASA: POWER can't forecast) |
+| `GET /health` | `{"status": "ok"}` | none |
+
+**Honesty rules.** Every block carries its own `status` and `source`:
+- `ok`: real values. A value the source lacks is an explicit `null`.
+- `indisponible`: failed, timed out (15 s per call) or not configured, with an `error` code.
+- `pas_de_donnees`: the source answered but has nothing at that point (water, city…),
+  with a `message`.
+
+All four diagnostic calls run in parallel, so one slow or failing API never blocks the others.
+No value is ever invented. Recommendations are out of scope (a teammate's ML model, attached
+later); `previous_crop` and `polygon` are accepted but not used yet.
+
+**Cache.** In memory, keyed by coordinates rounded to 3 decimals, with a different lifetime
+per source:
+- SoilGrids, SRTM and POWER climatology: 30 days.
+- POWER daily: 6 h.
+- Open-Meteo: 30 min.
+
+Failures are never cached. The cache is lost on restart, which is accepted for the MVP
+([`backend/app/cache.py`](backend/app/cache.py)).
+
+**OpenTopography key (relief block).** Free:
+1. Create an account at <https://portal.opentopography.org/newUser>.
+2. On the MyOpenTopo dashboard, click "Get an API Key".
+3. Put the key in a git-ignored `.env` at the repo root: `OPENTOPO_API_KEY=...`
+   (template: [`.env.example`](.env.example)). `docker compose` passes it to the backend.
+
+Without a key, `terrain` answers `indisponible` / `missing_api_key` and everything else works.
+
+**Run standalone** (without Docker):
+```bash
+cd backend
+python -m venv .venv
+.venv/Scripts/activate              # Windows (Git Bash); macOS/Linux: source .venv/bin/activate
+pip install -r requirements-dev.txt
+export OPENTOPO_API_KEY=your-key    # PowerShell: $env:OPENTOPO_API_KEY = "your-key"
+uvicorn app.main:app --reload --port 8000     # API docs: http://localhost:8000/docs
+pytest                              # mocked HTTP only: the suite never touches the network
+```
+
+**Try it on the Tadla plain** (32.40, -6.45, farmland ~10 km NW of Béni Mellal):
+```bash
+curl -X POST http://localhost:8000/api/parcel/diagnostic \
+  -H "Content-Type: application/json" \
+  -d '{"lat": 32.40, "lon": -6.45, "previous_crop": null}'
+
+curl "http://localhost:8000/api/weather/forecast?lat=32.40&lon=-6.45"
+```
+A real response from that call is saved in
+[`docs/example_diagnostic_response.json`](docs/example_diagnostic_response.json). It was
+captured without a working OpenTopography key, so `terrain` shows the real `indisponible`
+answer. With a key set, `terrain` returns `altitude` and `slope_pct`.
+
+> The city centre (32.34, -6.36), the spec's own "Tadla" example, returns **no soil data**:
+> SoilGrids masks urban areas. Use a point in the fields around it.
+
+**Known data caveats** (also in each block's `note`):
+- SoilGrids values are ~250 m model estimates, not a lab analysis.
+- POWER is ~50 km. `temp_max_c` is a typical maximum, not a record: the mean of the 12
+  monthly `T2M_MAX_AVG` values (average daily high per month, 2001–2025). POWER's
+  `T2M_MAX` would give the hottest single hour of the whole period. `frost_days` counts
+  the days with T2M_MIN < 0 °C over the last 12 months of daily data.
+- The soil-moisture labels (`sec` < 0.30 ≤ `moyen` < 0.60 ≤ `humide`, on GWETTOP) are a
+  project choice that needs validation.
+- SoilGrids can be slow: responses from 6 s to 40 s were seen on 2026-11-15, so it may show
+  `indisponible` (timeout) until a point is cached.
+
 ## Data sources (Streamlit MVP; will move to the backend)
 
 | Data | Source | NASA? |
@@ -97,7 +175,8 @@ live only in `frontend/src/theme/tokens.ts`; run `npm run tokens` after editing 
 ```
 docker-compose.yml              frontend (nginx :8080) + backend (:8000) services
 ARCHITECTURE.md                 architecture, decisions, how to run (start at §8)
-backend/                        FastAPI placeholder (GET /health only) + Dockerfile
+backend/                        FastAPI: /health, parcel diagnostic, weather forecast + Dockerfile
+docs/                           diagnostic spec + a real example diagnostic response
 frontend/                       React + TypeScript + Vite (+ Dockerfile, nginx.conf)
   design.md                     design system: source of truth
   src/theme/                    design tokens (tokens.ts → generated tokens.css)
@@ -127,12 +206,36 @@ agriqo
 │  ├─ .dockerignore
 │  ├─ app
 │  │  ├─ __init__.py
-│  │  └─ main.py
+│  │  ├─ cache.py
+│  │  ├─ config.py
+│  │  ├─ diagnostic.py
+│  │  ├─ main.py
+│  │  ├─ models.py
+│  │  ├─ soil_texture.py
+│  │  ├─ sources
+│  │  │  ├─ __init__.py
+│  │  │  ├─ _runner.py
+│  │  │  ├─ openmeteo.py
+│  │  │  ├─ opentopography.py
+│  │  │  ├─ power.py
+│  │  │  └─ soilgrids.py
+│  │  └─ weather.py
 │  ├─ Dockerfile
-│  └─ requirements.txt
+│  ├─ pytest.ini
+│  ├─ requirements-dev.txt
+│  ├─ requirements.txt
+│  └─ tests
+│     ├─ conftest.py
+│     ├─ fixtures                (real API responses captured 2026-11-15)
+│     ├─ test_core.py
+│     ├─ test_diagnostic.py
+│     └─ test_weather.py
 ├─ CLAUDE.md
 ├─ docker-compose.override.example.yml
 ├─ docker-compose.yml
+├─ docs
+│  ├─ example_diagnostic_response.json
+│  └─ SPEC_Diagnostic_Parcelle.md
 ├─ frontend
 │  ├─ .dockerignore
 │  ├─ .prettierignore
