@@ -72,14 +72,15 @@ live only in `frontend/src/theme/tokens.ts`; run `npm run tokens` after editing 
 
 ## Backend (FastAPI, Python 3.11)
 
-Two endpoints serve real data. Spec:
+Three endpoints serve real data. Spec (diagnostic and weather):
 [`docs/SPEC_Diagnostic_Parcelle.md`](docs/SPEC_Diagnostic_Parcelle.md).
 
 | Endpoint | Returns | Sources |
 |---|---|---|
 | `POST /api/parcel/diagnostic` | `soil`, `climate`, `soil_moisture`, `terrain` blocks | ISRIC SoilGrids, **NASA POWER** (climatology + last 12 months daily), OpenTopography (SRTM GL1) |
 | `GET /api/weather/forecast?lat=&lon=` | `today` + 7 `days` (condition key + lucide icon name) | Open-Meteo (not NASA: POWER can't forecast) |
-| `GET /health` | `{"status": "ok"}` | none |
+| `GET /api/seasons/zone?lat=&lon=[&water=pluvial\|irrigue]` | Past season types (Oct–May, 1996–2025) of the point's NASA POWER cell, last 10 seasons, counts and rule-based advice (`needsValidation`); `hors_zone` (200) outside the 102 cells. Offline model: [`docs/seasons/IMPLEMENTATION_SEASONS.md`](docs/seasons/IMPLEMENTATION_SEASONS.md), rules: [`docs/seasons_rules.md`](docs/seasons_rules.md) | **NASA POWER** daily (precomputed, AGRIQO v5 model; no live call) |
+| `GET /health` | `{"status": "ok", "seasonsModel": "ok" \| "error"}` (always 200) | none |
 
 **Honesty rules.** Every block carries its own `status` and `source`:
 - `ok`: real values. A value the source lacks is an explicit `null`.
