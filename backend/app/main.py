@@ -3,6 +3,7 @@
 Endpoints:
 - GET  /health                  liveness probe (Docker healthcheck)
 - POST /api/parcel/diagnostic   soil + climate + soil moisture + relief for a point
+- GET  /api/weather/forecast    today + 7-day forecast for a point
 
 Every data block reports its own `status` and `source`; missing data is never invented.
 Recommendations are out of scope here (a teammate's ML model, attached later).
@@ -15,14 +16,15 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
 import httpx
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Query, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app import config
 from app.diagnostic import build_diagnostic
-from app.models import DiagnosticRequest, DiagnosticResponse
+from app.models import DiagnosticRequest, DiagnosticResponse, WeatherResponse
+from app.weather import build_forecast
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 
@@ -85,3 +87,11 @@ def health() -> dict[str, str]:
 async def parcel_diagnostic(body: DiagnosticRequest, request: Request) -> DiagnosticResponse:
     return await build_diagnostic(request.app.state.http, body)
 
+
+@app.get("/api/weather/forecast", response_model=WeatherResponse)
+async def weather_forecast(
+    request: Request,
+    lat: float = Query(ge=-90, le=90, allow_inf_nan=False),
+    lon: float = Query(ge=-180, le=180, allow_inf_nan=False),
+) -> WeatherResponse:
+    return await build_forecast(request.app.state.http, lat, lon)
