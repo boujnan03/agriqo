@@ -27,7 +27,7 @@ export function Cover() {
           <p className={styles.tagline}>{t("cover.tagline")}</p>
         </div>
         <div className={styles.actions}>
-          <Button to={PATHS.farm} withArrow>
+          <Button to={PATHS.home} withArrow>
             {t("cover.start")}
           </Button>
           {/* No auth flow yet: "Sign in" stays on the Cover screen. */}

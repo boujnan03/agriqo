@@ -1,41 +1,14 @@
-/* design.md §7.2 Map/Data-entry template: map banner card, fact rows, one primary CTA. */
+/* design.md §7.3 Farm: the parcel's location, then four stacked Data cards. Data only. */
 .stack {
   display: flex;
   flex-direction: column;
   gap: var(--card-gap);
 }
 
-/* Map banner: in-card PhotoFrame (rounded, 4:3) with the pin + location chip overlaid. */
-.map {
-  position: relative;
-}
-
-.location {
-  position: absolute;
-  inset-inline-start: var(--space-12);
-  bottom: var(--space-12);
-  display: flex;
-  align-items: center;
-  gap: var(--space-8);
-}
-
-.pin {
+.place {
   display: inline-flex;
-  padding: var(--space-8);
-  border-radius: var(--radius-pill);
-  background: var(--white);
-  color: var(--green-700); /* §2 secondary green accent (not an action) */
-}
-
-.section {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-12);
-}
-
-.sectionTitle {
+  align-items: center;
+  gap: var(--space-4);
   margin: 0;
-  font-size: var(--font-size-label);
-  font-weight: var(--font-weight-heading);
-  color: var(--text-900);
+  color: var(--text-600);
 }

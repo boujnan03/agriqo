@@ -12,8 +12,7 @@ import { inLanguage, renderRoute } from "../utils";
 /** Every screen with an image slot, and how many illustrations it shows. */
 const IMAGE_SCREENS = [
   { path: "/", images: 1 }, // cover
-  { path: "/farm", images: 1 }, // map banner
-  { path: "/map", images: 1 }, // active layer
+  { path: "/home", images: 1 }, // map/picker banner
   { path: "/recommendations", images: 3 }, // featured + 2 options
   { path: "/crop/ble", images: 1 },
   { path: "/crop/orge", images: 1 },
@@ -49,7 +48,7 @@ describe("illustrations replace every PhotoFrame placeholder (identical in all l
 describe("Header logo", () => {
   inLanguage("fr");
 
-  it.each(["/farm", "/overview", "/map", "/profile"])(
+  it.each(["/home", "/farm", "/overview", "/weather", "/profile"])(
     "section-root header %s starts with the AGRIQO mark",
     (path) => {
       renderRoute(path);
