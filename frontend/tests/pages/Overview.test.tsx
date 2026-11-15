@@ -52,7 +52,7 @@ describe("Insights page (design.md §7.4) with the real diagnostic", () => {
     const frost = await section("Jours de gel");
     expect(frost).toHaveTextContent("4");
     expect(
-      within(frost).getByText("Du 2025-11-15 au 2026-11-12"),
+      within(frost).getByText("Du 15 novembre 2025 au 12 novembre 2026"),
     ).toBeInTheDocument();
     const moisture = screen.getByRole("progressbar", {
       name: "Humidité du sol en surface",

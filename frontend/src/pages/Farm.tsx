@@ -6,6 +6,7 @@ import { FactList } from "../components/FactList";
 import { Header } from "../components/Header";
 import { RequestStatus } from "../components/RequestStatus";
 import { Screen } from "../components/Screen";
+import { formatDate } from "../i18n/format";
 import { useFormat } from "../i18n/useFormat";
 import { AppTabBar } from "../router/AppTabBar";
 import { useSession } from "../state/session";
@@ -48,7 +49,7 @@ export function Farm() {
 
 /** The four diagnostic Data cards, or the diagnostic request's state. */
 function Diagnostic() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { maybe } = useFormat();
   const { retryDiagnosticBlock, blockRetry } = useSession();
   const { result, retry } = useParcelData("diagnostic");
@@ -137,7 +138,9 @@ function Diagnostic() {
           noDataText={t("dataCard.noData.soil_moisture")}
           caveat={
             soil_moisture.status === "ok" && soil_moisture.date
-              ? t("farm.moistureCaveat", { date: soil_moisture.date })
+              ? t("farm.moistureCaveat", {
+                  date: formatDate(soil_moisture.date, i18n.language),
+                })
               : undefined
           }
         >

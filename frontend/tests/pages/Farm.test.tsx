@@ -99,7 +99,7 @@ describe("Farm page (design.md §7.3) with the real backend response", () => {
     });
     expect(
       within(moisture).getByText(
-        "Valeur du 2026-11-12 (les données ont quelques jours de retard).",
+        "Valeur du 12 novembre 2026 (les données ont quelques jours de retard).",
       ),
     ).toBeInTheDocument();
   });
