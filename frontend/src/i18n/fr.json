@@ -110,11 +110,11 @@
     "nearbyNote": "Zone voisine : votre parcelle est juste hors des cellules couvertes ; ces données sont celles de la cellule la plus proche (~{{km}} km).",
     "chartTitle": "Pluie des 10 dernières saisons",
     "chart": {
-      "ariaLabel": "Pluie par saison : {{summary}}. Normale : {{normal}} mm.",
-      "item": "{{season}} : {{value}} mm",
-      "separator": " ; ",
+      "listLabel": "Pluie de chaque saison (mm)",
+      "row": "{{season}} : {{value}} mm (normale {{normal}} mm)",
+      "value": "{{value}} mm",
       "legendBars": "Pluie de la saison (mm), barres",
-      "legendNormal": "Normale : {{value}} mm, ligne"
+      "legendNormal": "Normale {{from}}–{{to}} : {{value}} mm, trait pointillé"
     },
     "historyTitle": "Vos 10 dernières saisons",
     "dryCount": "Saisons sèches et chaudes : {{dry}} sur {{total}}",

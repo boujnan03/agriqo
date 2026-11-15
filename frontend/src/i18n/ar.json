@@ -110,11 +110,11 @@
     "nearbyNote": "منطقة مجاورة: قطعتك خارج الخلايا المغطاة مباشرةً، وهذه بيانات أقرب خلية (~{{km}} كم).",
     "chartTitle": "أمطار آخر 10 مواسم",
     "chart": {
-      "ariaLabel": "الأمطار حسب الموسم: {{summary}}. المعدل العادي: {{normal}} مم.",
-      "item": "{{season}}: {{value}} مم",
-      "separator": "؛ ",
+      "listLabel": "أمطار كل موسم (مم)",
+      "row": "{{season}}: {{value}} مم (المعدل العادي {{normal}} مم)",
+      "value": "{{value}} مم",
       "legendBars": "أمطار الموسم (مم)، أعمدة",
-      "legendNormal": "المعدل العادي: {{value}} مم، خط"
+      "legendNormal": "المعدل العادي {{from}}–{{to}}: {{value}} مم، خط متقطع"
     },
     "historyTitle": "آخر 10 مواسم في منطقتك",
     "dryCount": "المواسم الجافة والحارة: {{dry}} من أصل {{total}}",

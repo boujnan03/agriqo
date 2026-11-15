@@ -28,6 +28,9 @@ const rows = (el: HTMLElement) =>
       dt.nextElementSibling?.textContent?.replace(/\u00a0/g, " "),
     ]);
 
+const norm = (s: string | null | undefined) =>
+  (s ?? "").replace(/\u00a0/g, " ");
+
 const text = (el: Element | null) =>
   (el?.textContent ?? "").replace(/\u00a0/g, " ");
 
@@ -79,23 +82,28 @@ describe("Insights: season types of the parcel's NASA POWER cell (real C057 answ
     expect(within(last).getByText(SOURCE)).toBeInTheDocument();
   });
 
-  it("rain of the last 10 seasons: 10 bars + the normal line, every value written", async () => {
+  it("rain of the last 10 seasons: a horizontal bar per season + the normal line, every value written", async () => {
     const { container } = renderRoute("/overview", picked);
     const chartCard = await section("Pluie des 10 dernières saisons");
-    expect(container.querySelectorAll("[data-season]")).toHaveLength(10);
+    const list = within(chartCard).getByRole("list", {
+      name: "Pluie de chaque saison (mm)",
+    });
+    const rows = within(list).getAllByRole("listitem");
+    expect(rows).toHaveLength(10);
+    expect(norm(rows[0].getAttribute("aria-label"))).toBe(
+      "2015–2016 : 229,9 mm (normale 458,6 mm)",
+    );
+    expect(norm(rows[9].getAttribute("aria-label"))).toBe(
+      "2024–2025 : 370,6 mm (normale 458,6 mm)",
+    );
     expect(container.querySelectorAll('[data-point="normal"]')).toHaveLength(1);
-    const chart = within(chartCard).getByRole("img");
-    const label = chart.getAttribute("aria-label")?.replace(/\u00a0/g, " ");
-    expect(label).toContain("2015–2016 : 229,9 mm");
-    expect(label).toContain("2024–2025 : 370,6 mm");
-    expect(label).toContain("Normale : 458,6 mm");
-    expect(text(chartCard)).toContain("230"); // printed under the 2016 bar
+    expect(text(chartCard)).toContain("230 mm"); // written next to the 2015–2016 bar
     expect(
       within(chartCard).getByText("Pluie de la saison (mm), barres"),
     ).toBeInTheDocument();
     expect(
-      within(chartCard).getByText(/^Normale : 458,6\smm, ligne$/),
-    ).toBeInTheDocument();
+      norm(within(chartCard).getByText(/^Normale 1996–2025/).textContent),
+    ).toBe("Normale 1996–2025 : 458,6 mm, trait pointillé");
   });
 
   it("the last 10 seasons, most recent first, with the dry count and the Field Shift message", async () => {
@@ -245,8 +253,10 @@ describe("Insights season section in Arabic (RTL)", () => {
     expect(all).toContain("370,6"); // ar-MA: decimal comma, Western digits
     expect(all).toContain("2015–2016");
     expect(all).not.toMatch(/[٠-٩۰-۹]/);
-    const chart = screen.getByRole("img", { name: /الأمطار حسب الموسم/ });
-    expect(chart.getAttribute("aria-label")).not.toMatch(/[٠-٩۰-۹]/);
+    const chart = screen.getByRole("list", { name: "أمطار كل موسم (مم)" });
+    for (const row of within(chart).getAllByRole("listitem")) {
+      expect(row.getAttribute("aria-label")).not.toMatch(/[٠-٩۰-۹]/);
+    }
   });
 });
 
