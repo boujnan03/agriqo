@@ -89,8 +89,8 @@ Three endpoints serve real data. Spec (diagnostic and weather):
   with a `message`.
 
 All four diagnostic calls run in parallel, so one slow or failing API never blocks the others.
-No value is ever invented. Recommendations are out of scope (a teammate's ML model, attached
-later); `previous_crop` is accepted but not used yet.
+No value is ever invented. The diagnostic itself makes no recommendation (`previous_crop` is
+accepted but not used yet); rule-based climate advice comes from the season model below.
 
 **Drawn parcel.** `polygon` (optional) is a GeoJSON Polygon: one closed ring of `[lon, lat]`
 positions. With it, `lat`/`lon` must be its centroid (checked: inside its extent, else 400).
@@ -158,6 +158,31 @@ answer. With a key set, `terrain` returns `altitude` and `slope_pct`.
   project choice that needs validation.
 - SoilGrids can be slow: responses from 6 s to 40 s were seen on 2026-11-15, so it may show
   `indisponible` (timeout) until a point is cached.
+
+## Season types (AGRIQO v5 model)
+
+An offline model classifies every past growing season (October → May, 1996–2025) of 102 NASA
+POWER cells in Morocco (north of 29.5° N, ~50 × 60 km each) into 4 types: *sèche et chaude*,
+*normale et fraîche*, *normale et chaude*, *très humide et fraîche*. It is `StandardScaler` +
+`KMeans(k=4)` on 3 anomalies vs each cell's own 1996–2025 normal (season rain, root-zone soil
+wetness, spring days > 30 °C). No network call at runtime.
+
+- **Backend:** `GET /api/seasons/zone?lat=&lon=[&water=pluvial|irrigue]` (`backend/app/seasons/`).
+  The 4 model files in `backend/app/seasons/model_files/` are SHA-256-checked before loading. If a
+  check fails, `/health` still answers 200 with `seasonsModel: "error"` and the route answers 503.
+- **Advice:** 7 rules over the last 10 seasons vs the earlier ones, every number in `evidence`,
+  all `needsValidation` (thresholds pending an agronomist): [`docs/seasons_rules.md`](docs/seasons_rules.md).
+- **Frontend:** Farm sets the water regime (farmer-entered) and shows the climate zone. Insights
+  shows the latest available season, the last 10 seasons, the Field Shift message and root-zone
+  moisture. Recommendations shows one advice card per rule above the mock crop ranking, which is
+  marked "Exemple". Crop detail adds the advice that names that crop. All of them share one request.
+- **Training / retraining:** [`ml/seasons/README.md`](ml/seasons/README.md). Full spec:
+  [`docs/seasons/IMPLEMENTATION_SEASONS.md`](docs/seasons/IMPLEMENTATION_SEASONS.md).
+
+```bash
+curl "http://localhost:8000/api/seasons/zone?lat=32.34&lon=-6.36&water=pluvial"
+# C057 · 2024–2025 dry_hot at 81 % of normal · 9 of the last 10 seasons dry_hot · 5 advice items
+```
 
 ## Data sources (Streamlit MVP; will move to the backend)
 
