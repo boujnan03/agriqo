@@ -44,9 +44,16 @@ describe("Farm page (design.md §7.3) with the real backend response", () => {
     await card("Sol");
     // The centroid for the point-based sources + the real polygon (GeoJSON) for terrain.
     expect(fakeBackend.calls).toEqual([TADLA_REQUEST]);
+    // The water-regime card first (FarmWater.test.tsx), then the 4 diagnostic cards.
     expect(
       screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent),
-    ).toEqual(["Sol", "Climat", "Humidité", "Relief"]);
+    ).toEqual([
+      "Eau et zone climatique",
+      "Sol",
+      "Climat",
+      "Humidité",
+      "Relief",
+    ]);
     // The drawn parcel: its centroid and size (4 corners of a ~110 m square ≈ 1 ha).
     const main = container.querySelector("main") as HTMLElement;
     expect(main).toHaveTextContent("Centre :Lat. 32.400·Long. -6.450");
@@ -208,7 +215,7 @@ describe.each(LANGUAGES)("Farm page in %s", (lng) => {
     expect(
       screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent),
     ).toEqual(
-      ["soil", "climate", "humidity", "relief"].map((k) =>
+      ["waterTitle", "soil", "climate", "humidity", "relief"].map((k) =>
         i18n.t(`farm.${k}` as "farm.soil"),
       ),
     );
