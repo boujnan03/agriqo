@@ -41,8 +41,8 @@ describe("Farm page (design.md §7.2)", () => {
     ).not.toBeInTheDocument();
     const tabBar = screen.getByRole("navigation", { name: TAB_BAR_LABEL });
     expect(tabBar).toBeInTheDocument();
-    // Tab mapping (src/router/tabs.ts, team decision): /farm is the "Map" tab.
-    expect(screen.getByRole("link", { name: "Map" })).toHaveAttribute(
+    // Tab mapping (design.md §6): /farm is the "Home" tab.
+    expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute(
       "aria-current",
       "page",
     );

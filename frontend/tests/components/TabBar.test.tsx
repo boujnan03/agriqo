@@ -23,11 +23,11 @@ describe("TabBar", () => {
       <TabBar items={TAB_ITEMS} ariaLabel={TAB_BAR_LABEL} />,
       "/farm",
     );
-    expect(screen.getByRole("link", { name: "Map" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute(
       "aria-current",
       "page",
     );
-    expect(screen.getByRole("link", { name: "Home" })).not.toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Insights" })).not.toHaveAttribute(
       "aria-current",
     );
   });
@@ -37,6 +37,7 @@ describe("TabBar", () => {
       <TabBar items={TAB_ITEMS} ariaLabel={TAB_BAR_LABEL} />,
       "/overview",
     );
+    expect(screen.getByRole("button", { name: "Map" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "Profile" })).toBeDisabled();
   });
 });
