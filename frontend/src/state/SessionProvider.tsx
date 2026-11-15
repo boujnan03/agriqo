@@ -1,10 +1,17 @@
 import { type ReactNode, useCallback, useMemo, useRef, useState } from "react";
 
-import { fetchDiagnostic, fetchForecast } from "../services/api";
+import {
+  fetchDiagnostic,
+  fetchForecast,
+  fetchSeasonZone,
+  REQUEST_TIMEOUT_MS,
+} from "../services/api";
 import type {
   DiagnosticBlockKey,
   DiagnosticResponse,
 } from "../types/diagnostic";
+import type { ZoneResponse } from "../types/seasons";
+import { readStoredWater, storeWater } from "./farmStorage";
 import {
   type BlockRetryState,
   type Parcel,
@@ -15,8 +22,6 @@ import {
   SessionContext,
   type SessionState,
 } from "./session";
-
-const INITIAL: SessionState = { parcel: null };
 
 const FETCHERS: {
   [K in RemoteKind]: (parcel: Parcel) => Promise<RemoteData[K]>;
@@ -37,6 +42,16 @@ const keyOf = (p: Parcel) =>
 type Entry = { key: string; result: Remote<unknown> };
 type Cache = Partial<Record<RemoteKind, Entry>>;
 
+/** The season zone depends on the centroid AND the water regime (the advice variant). */
+const zoneKeyOf = (p: Parcel, water: string) => `${p.lat},${p.lon},${water}`;
+
+type ZoneEntry = {
+  key: string;
+  result: Remote<ZoneResponse>;
+  /** Aborts this request (when newer inputs replace it). */
+  controller: AbortController;
+};
+
 export interface SessionProviderProps {
   /** Starting state; tests use it to open a screen in a given situation. */
   initialState?: Partial<SessionState>;
@@ -47,10 +62,11 @@ export function SessionProvider({
   initialState,
   children,
 }: SessionProviderProps) {
-  const [state, setState] = useState<SessionState>({
-    ...INITIAL,
+  const [state, setState] = useState<SessionState>(() => ({
+    parcel: null,
+    water: readStoredWater(),
     ...initialState,
-  });
+  }));
   // The cache is read synchronously by `load` (a ref), and mirrored into state to re-render.
   // Without the ref, StrictMode's double effects would start the same request twice.
   const cacheRef = useRef<Cache>({});
@@ -93,6 +109,57 @@ export function SessionProvider({
       );
     },
     [commit, state.parcel],
+  );
+
+  // Season zone: one shared answer for the current (centroid, water). Ref read synchronously by
+  // `loadSeasonZone` (no double request under StrictMode), mirrored into state to re-render.
+  const zoneRef = useRef<ZoneEntry | null>(null);
+  const [zone, setZone] = useState<ZoneEntry | null>(null);
+
+  const loadSeasonZone = useCallback<Session["loadSeasonZone"]>(
+    (options) => {
+      const { parcel, water } = state;
+      if (!parcel) return;
+      const key = zoneKeyOf(parcel, water);
+      const current = zoneRef.current;
+      if (current?.key === key) {
+        const retrying = options?.retry && current.result.state === "error";
+        if (!retrying) return;
+      }
+      // Newer inputs: the request for the old ones is of no use any more.
+      current?.controller.abort();
+      const controller = new AbortController();
+      let timedOut = false;
+      const timer = setTimeout(() => {
+        timedOut = true;
+        controller.abort();
+      }, REQUEST_TIMEOUT_MS);
+      const settle = (result: Remote<ZoneResponse>) => {
+        // Only the request still current may write: a late answer to an abandoned one never
+        // replaces a newer answer.
+        if (zoneRef.current?.controller !== controller) return;
+        zoneRef.current = { key, result, controller };
+        setZone(zoneRef.current);
+      };
+      zoneRef.current = { key, result: { state: "loading" }, controller };
+      setZone(zoneRef.current);
+      fetchSeasonZone(
+        { lat: parcel.lat, lon: parcel.lon, water },
+        controller.signal,
+      )
+        .then(
+          (data) => {
+            if (controller.signal.aborted && !timedOut) return;
+            settle(timedOut ? { state: "error" } : { state: "success", data });
+          },
+          () => {
+            if (controller.signal.aborted && !timedOut) return;
+            settle({ state: "error" });
+          },
+        )
+        .finally(() => clearTimeout(timer));
+    },
+    [state],
   );
 
   const retryDiagnosticBlock = useCallback<Session["retryDiagnosticBlock"]>(
@@ -144,12 +211,30 @@ export function SessionProvider({
     return {
       ...state,
       pickParcel: (parcel) => setState((s) => ({ ...s, parcel })),
+      setWater: (water) => {
+        storeWater(water);
+        setState((s) => ({ ...s, water }));
+      },
       remote,
       load,
       retryDiagnosticBlock,
       blockRetry: blockRetry.key === key ? blockRetry.blocks : {},
+      // Only the answer for the current (centroid, water) is visible.
+      seasonZone:
+        state.parcel && zone?.key === zoneKeyOf(state.parcel, state.water)
+          ? zone.result
+          : undefined,
+      loadSeasonZone,
     };
-  }, [state, cache, load, retryDiagnosticBlock, blockRetry]);
+  }, [
+    state,
+    cache,
+    load,
+    retryDiagnosticBlock,
+    blockRetry,
+    zone,
+    loadSeasonZone,
+  ]);
 
   return (
     <SessionContext.Provider value={session}>

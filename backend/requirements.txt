@@ -4,4 +4,13 @@ uvicorn==0.34.0
 httpx==0.28.1
 # Reading the OpenTopography GeoTIFF (elevation, slope). Wheels bundle GDAL: no system deps.
 rasterio==1.4.4
+# numpy must stay 2.x: the season model pickle (app/seasons/model_files/) was made with numpy 2.
 numpy==2.4.6
+# Season-type model (app/seasons/). scikit-learn must be EXACTLY the version in
+# season_model_meta.json (sklearn_version): the loader refuses any other. scipy and
+# threadpoolctl are scikit-learn's own dependencies, pinned for a reproducible build.
+scikit-learn==1.6.1
+scipy==1.17.1
+pandas==3.1.1
+joblib==1.6.0
+threadpoolctl==3.8.0

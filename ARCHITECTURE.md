@@ -285,3 +285,38 @@ Still open. Nothing was invented for these:
     at 600px everything fits.
   - A build from a fresh clone, since nothing is committed yet. The build context is the working
     tree minus `.dockerignore`.
+
+## 9. Season types (AGRIQO v5 model, 2026-11-15)
+
+**Spec:** [`docs/seasons/IMPLEMENTATION_SEASONS.md`](docs/seasons/IMPLEMENTATION_SEASONS.md) (written
+against an older repo state; the routes are `/api/seasons/*`, there is no `/seasons/map`, and
+invalid input answers 400 like the rest of the API).
+
+- **Model, offline:** `StandardScaler` + `KMeans(k=4)` on 3 per-cell anomalies (season rain,
+  root-zone wetness, spring days > 30 °C). It classifies every Oct–May season 1996–2025 of 102
+  NASA POWER cells into `dry_hot` / `normal_cool` / `normal_hot` / `very_wet_cool`. Training
+  material is in `ml/seasons/` (notebook, reports; the ~90 MB POWER cache stays local and
+  gitignored).
+- **Backend (`backend/app/seasons/`):** `store.py` loads the 4 runtime files once, in `lifespan`,
+  from a fixed path, and checks them in order (SHA-256 before `joblib.load`, exact scikit-learn
+  version, pipeline shape, features, labels, data consistency, predict = nearest centroid, a
+  non-regression check). It never crashes the app: on failure `/health` stays 200 with
+  `seasonsModel: "error"` and the route answers 503. `grid.py` matches a point to its cell (`ok`),
+  the nearest one within 0.5° (`proche`), or none (`hors_zone`, still a 200). `advice.py` holds the
+  7 rules ([`docs/seasons_rules.md`](docs/seasons_rules.md)). `GET /api/seasons/zone` returns
+  camelCase JSON.
+- **Frontend:**
+  - The parcel's centroid and the farmer's water regime (`pluvial` / `irrigue`, kept in
+    localStorage) drive ONE season request, held in the session and shared by Farm (water regime
+    + climate zone), Insights (latest season, rain chart, last 10 seasons, Field Shift, root-zone
+    moisture), Recommendations (one Advice card per rule) and Crop detail (the advice naming that
+    crop).
+  - The crop ranking and the crop facts stay mock data, marked "Exemple".
+- **Honesty rules kept:**
+  - Every number shown comes from the API (advice reasons only from `evidence`).
+  - Every advice says "À valider par un agronome".
+  - Seasons are always written "2024–2025".
+  - The 2026 season and the season in progress are not available (no live call).
+- **Open (spec §14):** thresholds pending an agronomist (`drought_tolerant` fires in 87 of 102
+  cells); k = 4 stability (`ari_boot_min` 0.46); review of the Arabic strings; default water
+  regime.

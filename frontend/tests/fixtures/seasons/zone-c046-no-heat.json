@@ -1,0 +1,238 @@
+{
+  "status": "ok",
+  "query": {
+    "lat": 32.0,
+    "lon": -5.625,
+    "water": "pluvial"
+  },
+  "nearestCell": {
+    "id": "C046",
+    "lat": 32.0,
+    "lon": -5.625,
+    "distanceDeg": 0.0
+  },
+  "maxDistanceDeg": 0.5,
+  "cell": {
+    "id": "C046",
+    "lat": 32.0,
+    "lon": -5.625,
+    "distanceDeg": 0.0,
+    "region": "Centre",
+    "heatRelevant": false
+  },
+  "reference": {
+    "from": 1996,
+    "to": 2025
+  },
+  "normals": {
+    "rainMm": 297.7,
+    "rainAutumnMm": 112.3,
+    "rainSpringMm": 117.2,
+    "heatSpringDays": 0.0,
+    "gwetrootMean": 0.57,
+    "tMeanC": 7.6
+  },
+  "lastSeason": {
+    "season": 2025,
+    "type": "normal_hot",
+    "margin": 0.51,
+    "borderline": false,
+    "rainMm": 326.3,
+    "rainPctNormal": 110,
+    "rainAutumnMm": 108.1,
+    "rainSpringMm": 165.9,
+    "heatSpringDays": 0,
+    "gwetrootMean": 0.6,
+    "tMeanC": 7.9
+  },
+  "history": [
+    {
+      "season": 2016,
+      "type": "dry_hot",
+      "margin": 0.36,
+      "borderline": false,
+      "rainMm": 148.5,
+      "rainPctNormal": 50,
+      "rainAutumnMm": 27.9,
+      "rainSpringMm": 78.6,
+      "heatSpringDays": 0,
+      "gwetrootMean": 0.52,
+      "tMeanC": 8.2
+    },
+    {
+      "season": 2017,
+      "type": "normal_cool",
+      "margin": 0.01,
+      "borderline": true,
+      "rainMm": 275.4,
+      "rainPctNormal": 93,
+      "rainAutumnMm": 144.9,
+      "rainSpringMm": 43.8,
+      "heatSpringDays": 0,
+      "gwetrootMean": 0.57,
+      "tMeanC": 7.7
+    },
+    {
+      "season": 2018,
+      "type": "normal_hot",
+      "margin": 0.03,
+      "borderline": true,
+      "rainMm": 334.7,
+      "rainPctNormal": 112,
+      "rainAutumnMm": 41.7,
+      "rainSpringMm": 176.0,
+      "heatSpringDays": 0,
+      "gwetrootMean": 0.55,
+      "tMeanC": 6.7
+    },
+    {
+      "season": 2019,
+      "type": "normal_hot",
+      "margin": 0.39,
+      "borderline": false,
+      "rainMm": 289.4,
+      "rainPctNormal": 97,
+      "rainAutumnMm": 145.8,
+      "rainSpringMm": 125.7,
+      "heatSpringDays": 0,
+      "gwetrootMean": 0.61,
+      "tMeanC": 7.7
+    },
+    {
+      "season": 2020,
+      "type": "very_wet_cool",
+      "margin": 0.39,
+      "borderline": false,
+      "rainMm": 455.6,
+      "rainPctNormal": 153,
+      "rainAutumnMm": 145.3,
+      "rainSpringMm": 294.3,
+      "heatSpringDays": 0,
+      "gwetrootMean": 0.61,
+      "tMeanC": 8.2
+    },
+    {
+      "season": 2021,
+      "type": "normal_cool",
+      "margin": 0.01,
+      "borderline": true,
+      "rainMm": 294.5,
+      "rainPctNormal": 99,
+      "rainAutumnMm": 84.6,
+      "rainSpringMm": 79.9,
+      "heatSpringDays": 0,
+      "gwetrootMean": 0.56,
+      "tMeanC": 8.0
+    },
+    {
+      "season": 2022,
+      "type": "normal_hot",
+      "margin": 0.25,
+      "borderline": false,
+      "rainMm": 374.9,
+      "rainPctNormal": 126,
+      "rainAutumnMm": 58.4,
+      "rainSpringMm": 278.5,
+      "heatSpringDays": 0,
+      "gwetrootMean": 0.6,
+      "tMeanC": 7.5
+    },
+    {
+      "season": 2023,
+      "type": "dry_hot",
+      "margin": 0.3,
+      "borderline": false,
+      "rainMm": 241.0,
+      "rainPctNormal": 81,
+      "rainAutumnMm": 83.3,
+      "rainSpringMm": 74.6,
+      "heatSpringDays": 0,
+      "gwetrootMean": 0.52,
+      "tMeanC": 8.9
+    },
+    {
+      "season": 2024,
+      "type": "dry_hot",
+      "margin": 0.33,
+      "borderline": false,
+      "rainMm": 162.0,
+      "rainPctNormal": 54,
+      "rainAutumnMm": 41.2,
+      "rainSpringMm": 76.5,
+      "heatSpringDays": 0,
+      "gwetrootMean": 0.49,
+      "tMeanC": 10.0
+    },
+    {
+      "season": 2025,
+      "type": "normal_hot",
+      "margin": 0.51,
+      "borderline": false,
+      "rainMm": 326.3,
+      "rainPctNormal": 110,
+      "rainAutumnMm": 108.1,
+      "rainSpringMm": 165.9,
+      "heatSpringDays": 0,
+      "gwetrootMean": 0.6,
+      "tMeanC": 7.9
+    }
+  ],
+  "counts": {
+    "recent": {
+      "from": 2016,
+      "to": 2025,
+      "total": 10,
+      "byType": {
+        "dry_hot": 3,
+        "normal_cool": 2,
+        "normal_hot": 4,
+        "very_wet_cool": 1
+      }
+    },
+    "before": {
+      "from": 1996,
+      "to": 2015,
+      "total": 20,
+      "byType": {
+        "dry_hot": 5,
+        "normal_cool": 4,
+        "normal_hot": 9,
+        "very_wet_cool": 2
+      }
+    },
+    "reference": {
+      "from": 1996,
+      "to": 2025,
+      "total": 30,
+      "byType": {
+        "dry_hot": 8,
+        "normal_cool": 6,
+        "normal_hot": 13,
+        "very_wet_cool": 3
+      }
+    }
+  },
+  "advice": [
+    {
+      "id": "dry_autumn",
+      "variant": "pluvial",
+      "crops": [],
+      "needsValidation": true,
+      "evidence": {
+        "below": 7,
+        "total": 10,
+        "meanMm": 88.1,
+        "normalMm": 112.3,
+        "pct": 78
+      }
+    }
+  ],
+  "model": {
+    "name": "StandardScaler + KMeans",
+    "k": 4,
+    "version": "v5",
+    "trainedAt": "2026-11-15T10:29:22+00:00",
+    "sklearnVersion": "1.6.1"
+  },
+  "source": "NASA POWER daily API (community AG), modÃ¨le AGRIQO v5"
+}

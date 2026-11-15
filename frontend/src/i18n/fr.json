@@ -14,7 +14,8 @@
     "weather": "Météo"
   },
   "common": {
-    "photo": "Photo : {{name}}"
+    "photo": "Photo : {{name}}",
+    "example": "Exemple"
   },
   "cover": {
     "photo": "Photo : champ de blé",
@@ -45,14 +46,25 @@
     "slope": "Pente",
     "soilCaveat": "Estimation (~250 m), pas une analyse de laboratoire.",
     "climateCaveat": "Moyennes régionales (~50 km) : des parcelles voisines ont le même climat.",
-    "moistureCaveat": "Valeur du {{date}} (les données ont quelques jours de retard)."
+    "moistureCaveat": "Valeur du {{date}} (les données ont quelques jours de retard).",
+    "waterTitle": "Eau et zone climatique",
+    "waterLabel": "Irrigation",
+    "water": {
+      "pluvial": "Pluviale",
+      "irrigue": "Irriguée"
+    },
+    "waterNote": "Choix renseigné par vous (pas une donnée NASA) : il adapte les conseils, pas les données.",
+    "zoneLabel": "Zone climatique NASA POWER :",
+    "zoneDistance": "~{{km}} km",
+    "zoneLoading": "Recherche de la zone climatique…",
+    "zoneError": "Zone climatique non disponible pour le moment.",
+    "zoneOutside": "Hors de la zone couverte par le modèle de saisons."
   },
   "overview": {
     "title": "Aperçu de la ferme",
     "climateSummary": "Résumé climatique",
     "avgTemp": "Température moyenne",
     "tempValue": "{{value}} °C",
-    "chartTitle": "Température et précipitations",
     "soilMoisture": "Humidité du sol",
     "healthIndex": "Indice de santé",
     "seeRecommendations": "Voir mes recommandations",
@@ -60,17 +72,108 @@
     "frostDays": "Jours de gel",
     "healthSoon": "Bientôt disponible (NDVI)",
     "annualRainfall": "Pluie annuelle",
-    "chartUnavailable": "Pas encore disponible : le serveur n'envoie pas encore les valeurs mensuelles.",
     "climatePeriod": "Moyennes {{period}}",
     "frostPeriod": "Du {{start}} au {{end}}",
     "surfaceWetness": "Humidité du sol en surface"
   },
-  "chart": {
-    "ariaLabel": "Température et précipitations par mois. {{summary}}.",
-    "monthSummary": "{{month}} : {{temp}} °C, {{rainfall}} mm",
-    "separator": " ; ",
-    "legendTemp": "Température (°C), ligne",
-    "legendRain": "Précipitations (mm), barres"
+  "seasons": {
+    "types": {
+      "dry_hot": {
+        "name": "Sèche et chaude",
+        "short": "Sèche",
+        "nameNoHeat": "Sèche"
+      },
+      "normal_cool": {
+        "name": "Normale et fraîche",
+        "short": "Normale fraîche",
+        "nameNoHeat": "Normale"
+      },
+      "normal_hot": {
+        "name": "Normale et chaude",
+        "short": "Normale chaude",
+        "nameNoHeat": "Normale"
+      },
+      "very_wet_cool": {
+        "name": "Très humide et fraîche",
+        "short": "Très humide",
+        "nameNoHeat": "Très humide"
+      }
+    },
+    "lastTitle": "Dernière saison disponible : {{season}}",
+    "rain": "Pluie",
+    "rainValue": "{{value}} mm · normale {{normal}} mm",
+    "pctLabel": "Pluie par rapport à la normale",
+    "hotDays": "Jours > 30 °C (mars–mai)",
+    "hotDaysValue": "{{value}} · normale {{normal}}",
+    "borderline": "Classement limite : cette saison est proche de deux types.",
+    "nearby": "Zone voisine",
+    "nearbyNote": "Zone voisine : votre parcelle est juste hors des cellules couvertes ; ces données sont celles de la cellule la plus proche (~{{km}} km).",
+    "chartTitle": "Pluie des 10 dernières saisons",
+    "chart": {
+      "listLabel": "Pluie de chaque saison (mm)",
+      "row": "{{season}} : {{value}} mm (normale {{normal}} mm)",
+      "value": "{{value}} mm",
+      "legendBars": "Pluie de la saison (mm), barres",
+      "legendNormal": "Normale {{from}}–{{to}} : {{value}} mm, trait pointillé"
+    },
+    "historyTitle": "Vos 10 dernières saisons",
+    "dryCount": "Saisons sèches et chaudes : {{dry}} sur {{total}}",
+    "historyValue": "{{type}} · {{pct}} %",
+    "historyBorderline": "{{type}} · {{pct}} % · limite",
+    "fieldShift": "Par rapport à {{refFrom}}–{{refTo}} : saisons sèches et chaudes {{recent}} sur {{recentTotal}} depuis {{since}}, contre {{before}} sur {{beforeTotal}} de {{beforeFrom}} à {{beforeTo}}.",
+    "moistureTitle": "Humidité de la zone racinaire (oct.–mai)",
+    "moistureLabel": "Saison {{season}}",
+    "moistureNormal": "Normale : {{value}} %",
+    "source": "Source : NASA POWER, normale {{from}}–{{to}} de votre zone (~50 km).",
+    "outsideTitle": "Hors de la zone couverte",
+    "outsideText": "Votre parcelle est hors de la zone couverte (Maroc, au nord de 29,5° N). Cellule la plus proche à ~{{km}} km.",
+    "outsideAction": "Choisir une autre parcelle"
+  },
+  "advice": {
+    "forWater": {
+      "pluvial": "Conseils pour une parcelle pluviale.",
+      "irrigue": "Conseils pour une parcelle irriguée."
+    },
+    "changeWater": "Changer dans Ferme",
+    "why": "Pourquoi : {{reason}}",
+    "source": "Source : NASA POWER, normale {{from}}–{{to}} de votre zone.",
+    "validate": "À valider par un agronome",
+    "none": "Aucun signal climatique marqué dans votre zone de {{from}} à {{to}}.",
+    "cropClimate": "Climat de votre zone :",
+    "text": {
+      "drought_tolerant": {
+        "pluvial": "Privilégiez des cultures tolérantes à la sécheresse (orge, pois chiche, lentille) et des variétés à cycle court.",
+        "irrigue": "Avec l'irrigation, la sécheresse pèse moins, mais prévoyez des restrictions d'eau d'irrigation les années sèches."
+      },
+      "dry_autumn": {
+        "pluvial": "Ne semez pas sur sol sec : attendez la première pluie utile.",
+        "irrigue": "Prévoyez une irrigation d'installation après le semis."
+      },
+      "hot_spring": {
+        "pluvial": "Semez tôt et choisissez des variétés précoces, pour finir le remplissage du grain avant la chaleur.",
+        "irrigue": "Semez tôt et choisissez des variétés précoces, pour finir le remplissage du grain avant la chaleur."
+      },
+      "dry_spring": {
+        "pluvial": "Choisissez des variétés précoces, qui finissent leur cycle plus tôt.",
+        "irrigue": "Gardez de l'eau pour une irrigation au remplissage du grain."
+      },
+      "last_season_dry": {
+        "pluvial": "Les réserves d'eau du sol sont probablement basses : prudence avec les intrants coûteux.",
+        "irrigue": "Vérifiez vos dotations d'eau d'irrigation avant de choisir vos cultures."
+      },
+      "wet_frequent": {
+        "pluvial": "Le blé est envisageable ; surveillez les maladies fongiques (rouilles).",
+        "irrigue": "Le blé est envisageable ; surveillez les maladies fongiques (rouilles)."
+      }
+    },
+    "reason": {
+      "drought_tolerant": "saisons sèches et chaudes : {{n}} sur {{total}} (de {{from}} à {{to}}).",
+      "dry_autumn": "pluie d'octobre à décembre sous la normale {{below}} fois sur {{total}} ; {{meanMm}} mm contre {{normalMm}} mm ({{pct}} %).",
+      "hot_spring": "jours > 30 °C (mars–mai) au-dessus de la normale {{above}} fois sur {{total}} ; moyenne {{meanDays}}, normale {{normalDays}}.",
+      "dry_spring": "pluie de mars à mai sous la normale {{below}} fois sur {{total}} ; {{pct}} % de la normale.",
+      "last_season_dry": "saison {{season}} : {{rainMm}} mm, soit {{pct}} % de la normale ({{normalMm}} mm).",
+      "wet_frequent": "saisons très humides : {{n}} sur {{total}}."
+    }
   },
   "recommendations": {
     "title": "Recommandations",
@@ -79,7 +182,10 @@
     "otherOptions": "Autres bonnes options",
     "rotationPlan": "Plan de rotation des cultures",
     "year": "Année {{year}}",
-    "learnMore": "En savoir plus"
+    "learnMore": "En savoir plus",
+    "climateTitle": "Ce que dit le climat de votre zone",
+    "crops": "Cultures",
+    "exampleNotice": "Classement d'exemple : pas encore calculé à partir de vos données."
   },
   "cropDetail": {
     "title": "Détails",
@@ -91,6 +197,34 @@
     "why": "Pourquoi ce choix ?",
     "save": "Enregistrer ce plan",
     "saved": "Plan enregistré pour cette session (démo : rien n'est sauvegardé)."
+  },
+  "crops": {
+    "ble": {
+      "name": "Blé",
+      "description": "Idéal pour le climat et le type de sol de Béni Mellal.",
+      "why": "Un temps frais et des pluies modérées font du blé une excellente option."
+    },
+    "orge": {
+      "name": "Orge",
+      "description": "Bonne tolérance à la sécheresse, adaptée en rotation après le blé.",
+      "why": "Sa faible demande en eau en fait un bon choix pour préserver le sol entre deux cultures plus exigeantes."
+    },
+    "legumineuses": {
+      "name": "Légumineuses",
+      "description": "Enrichissent naturellement le sol en azote, utiles entre deux céréales.",
+      "why": "Elles améliorent la santé du sol pour la culture suivante plutôt que de viser le rendement maximal."
+    },
+    "level": {
+      "low": "Faible",
+      "low_medium": "Faible à moyen",
+      "medium": "Moyen",
+      "medium_high": "Moyen à élevé",
+      "high": "Élevé"
+    },
+    "suitability": {
+      "high": "Haute adéquation pour vos conditions"
+    },
+    "monthRange": "{{from}} – {{to}}"
   },
   "profile": {
     "title": "Profil",
@@ -209,5 +343,8 @@
     "lon": "Long.",
     "centre": "Centre :",
     "shape": "Surface ≈ {{area}} ha · {{count}} coins"
+  },
+  "places": {
+    "beniMellal": "Béni Mellal"
   }
 }
