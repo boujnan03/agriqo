@@ -42,22 +42,15 @@
   gap: var(--space-8);
 }
 
-.logo {
-  display: inline-flex;
-  padding: var(--space-12);
-  border-radius: var(--radius-pill);
-  background: var(--white);
-  color: var(--green-900);
-}
-
-.title {
-  margin: 0;
-  font-size: var(--font-size-hero-title);
-  font-weight: var(--font-weight-heading);
-}
-
 .tagline {
   margin: 0;
+}
+
+/* §9a language switcher: top end corner, over the photo (Cover has no header). */
+.language {
+  position: absolute;
+  inset-block-start: var(--screen-padding);
+  inset-inline-end: var(--screen-padding);
 }
 
 .actions {

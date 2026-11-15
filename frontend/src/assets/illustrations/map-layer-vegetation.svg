@@ -1,0 +1,28 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Carte stylisée de la santé de la végétation, du jaune au vert foncé">
+  <rect width="400" height="300" fill="#FBF3E3"/>
+  <rect x="0" y="0" width="400" height="300" fill="url(#vegGrid)"/>
+  <defs>
+    <pattern id="vegGrid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <rect width="40" height="40" fill="none"/>
+    </pattern>
+  </defs>
+  <g opacity="0.9">
+    <rect x="10" y="10" width="80" height="80" fill="#F6E2A0"/>
+    <rect x="90" y="10" width="80" height="80" fill="#D8DE8E"/>
+    <rect x="170" y="10" width="80" height="80" fill="#A9CB7E"/>
+    <rect x="250" y="10" width="80" height="80" fill="#7CBE88"/>
+    <rect x="330" y="10" width="70" height="80" fill="#5E9C6A"/>
+
+    <rect x="10" y="90" width="80" height="80" fill="#D8DE8E"/>
+    <rect x="90" y="90" width="80" height="80" fill="#A9CB7E"/>
+    <rect x="170" y="90" width="80" height="80" fill="#5E9C6A"/>
+    <rect x="250" y="90" width="80" height="80" fill="#3F8350"/>
+    <rect x="330" y="90" width="70" height="80" fill="#5E9C6A"/>
+
+    <rect x="10" y="170" width="80" height="130" fill="#A9CB7E"/>
+    <rect x="90" y="170" width="80" height="130" fill="#7CBE88"/>
+    <rect x="170" y="170" width="80" height="130" fill="#3F8350"/>
+    <rect x="250" y="170" width="80" height="130" fill="#5E9C6A"/>
+    <rect x="330" y="170" width="70" height="130" fill="#7CBE88"/>
+  </g>
+</svg>

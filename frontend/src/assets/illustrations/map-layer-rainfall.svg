@@ -1,0 +1,22 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Carte stylisée des précipitations, du faible à l'élevé">
+  <rect width="400" height="300" fill="#EAF2E7"/>
+  <g opacity="0.9">
+    <rect x="10" y="10" width="80" height="80" fill="#DCEEDD"/>
+    <rect x="90" y="10" width="80" height="80" fill="#B7D9BC"/>
+    <rect x="170" y="10" width="80" height="80" fill="#7CBE88"/>
+    <rect x="250" y="10" width="80" height="80" fill="#4C9A4C"/>
+    <rect x="330" y="10" width="70" height="80" fill="#2E6B47"/>
+
+    <rect x="10" y="90" width="80" height="80" fill="#B7D9BC"/>
+    <rect x="90" y="90" width="80" height="80" fill="#7CBE88"/>
+    <rect x="170" y="90" width="80" height="80" fill="#2E6B47"/>
+    <rect x="250" y="90" width="80" height="80" fill="#1E5631"/>
+    <rect x="330" y="90" width="70" height="80" fill="#4C9A4C"/>
+
+    <rect x="10" y="170" width="80" height="130" fill="#7CBE88"/>
+    <rect x="90" y="170" width="80" height="130" fill="#4C9A4C"/>
+    <rect x="170" y="170" width="80" height="130" fill="#1E5631"/>
+    <rect x="250" y="170" width="80" height="130" fill="#2E6B47"/>
+    <rect x="330" y="170" width="70" height="130" fill="#7CBE88"/>
+  </g>
+</svg>

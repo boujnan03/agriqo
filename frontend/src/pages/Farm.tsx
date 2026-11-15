@@ -1,5 +1,7 @@
 import { Droplets, Layers, MapPin, Wheat } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
+import { illustrations, photo } from "../assets/images";
 import { Badge } from "../components/Badge";
 import { Button } from "../components/Button";
 import { Card } from "../components/Card";
@@ -18,21 +20,22 @@ import styles from "./Farm.module.css";
  * primary CTA. Root header (title only) + tab bar. Data comes from the mock fixture for now.
  */
 export function Farm() {
+  const { t } = useTranslation();
   const facts: Fact[] = [
     {
-      label: "Type de sol",
+      label: t("farm.soilType"),
       value: farmData.soilType,
       icon: Layers,
       tone: "soil",
     },
     {
-      label: "Disponibilité en eau",
+      label: t("farm.waterAvailability"),
       value: farmData.waterAvailability,
       icon: Droplets,
       tone: "water",
     },
     {
-      label: "Culture actuelle",
+      label: t("farm.currentCrop"),
       value: farmData.currentCrop,
       icon: Wheat,
       tone: "plant",
@@ -40,13 +43,13 @@ export function Farm() {
   ];
 
   return (
-    <Screen header={<Header title="Votre ferme" />} tabBar={<AppTabBar />}>
+    <Screen header={<Header title={t("farm.title")} />} tabBar={<AppTabBar />}>
       <div className={styles.stack}>
         {/* Pin + chip are real UI: they stay on top of the real map image later (§8). */}
         <div className={styles.map}>
           <PhotoFrame
             slot="farm"
-            placeholderLabel="Carte : vue satellite de la parcelle"
+            {...photo(illustrations.farm, t("farm.mapPlaceholder"))}
           />
           <div className={styles.location}>
             <span className={styles.pin}>
@@ -58,7 +61,7 @@ export function Farm() {
 
         <section className={styles.section} aria-labelledby="farm-details">
           <h2 id="farm-details" className={styles.sectionTitle}>
-            Détails de la ferme
+            {t("farm.detailsTitle")}
           </h2>
           <Card>
             <FactList facts={facts} />
@@ -66,7 +69,7 @@ export function Farm() {
         </section>
 
         <Button to={PATHS.overview} withArrow>
-          Analyser ma ferme
+          {t("farm.analyze")}
         </Button>
       </div>
     </Screen>

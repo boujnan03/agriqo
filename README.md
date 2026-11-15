@@ -37,6 +37,24 @@ docker compose up --build        # UI → http://localhost:8080 · backend → h
 The `frontend` container serves the React build through nginx. The `backend` container is an
 empty FastAPI placeholder that only answers `/health`. Details: [ARCHITECTURE.md](ARCHITECTURE.md).
 
+### Two modes: production-style (default) and hot-reload dev (opt-in)
+- **Production-style (default):** `docker compose up --build` builds the frontend once and
+  serves the static bundle through nginx. It does **not** see later source edits: after
+  changing code, run `docker compose up --build` again, or the browser keeps the old bundle.
+- **Hot-reload dev mode (opt-in, per machine):** copy the example override once:
+  ```bash
+  cp docker-compose.override.example.yml docker-compose.override.yml   # git-ignored
+  docker compose up --build        # same URL: http://localhost:8080
+  ```
+  Compose merges `docker-compose.override.yml` automatically whenever it is present, so from
+  then on the frontend runs Vite's dev server (`frontend/Dockerfile.dev`) on your mounted
+  `frontend/` folder: edits under `frontend/src/` appear in the browser within a second or two,
+  no rebuild or restart. The backend is unchanged.
+  - Production-style run while the override exists: `docker compose -f docker-compose.yml up --build`.
+  - Back to the default for good: delete `docker-compose.override.yml`.
+  - After changing `frontend/package.json` dependencies: `docker compose up --build -V`
+    (`-V` renews the container's own `node_modules` volume).
+
 ## Frontend development (Node ≥ 24.15)
 ```bash
 cd frontend
@@ -85,6 +103,195 @@ frontend/                       React + TypeScript + Vite (+ Dockerfile, nginx.c
   src/theme/                    design tokens (tokens.ts → generated tokens.css)
   src/components/               shared components (Button, Card, Badge, TabBar, Header, …)
   src/router/  src/pages/       routes + one placeholder page per design.md §7 template
-  src/services/ src/mocks/      future backend calls / page fixture data (empty for now)
+  src/services/                 api.ts: placeholder backend client (GET /health), not used yet
+  src/mocks/                    page fixture data, one file per screen (farm, overview, map,
+                                profile, recommendations, cropDetails); illustrative, not NASA
   tests/                        Vitest + React Testing Library
+```
+
+```
+agriqo
+├─ .env.example
+├─ .gitignore
+├─ ARCHITECTURE.md
+├─ audits
+│  ├─ frontend_pages_audit_2026-11-15.md
+│  ├─ mvp_audit_2026-11-14.md
+│  ├─ output prompt1
+│  ├─ output prompt2
+│  ├─ output prompt3
+│  ├─ output prompt4
+│  └─ output prompt5
+├─ backend
+│  ├─ .dockerignore
+│  ├─ app
+│  │  ├─ __init__.py
+│  │  └─ main.py
+│  ├─ Dockerfile
+│  └─ requirements.txt
+├─ CLAUDE.md
+├─ docker-compose.override.example.yml
+├─ docker-compose.yml
+├─ frontend
+│  ├─ .dockerignore
+│  ├─ .prettierignore
+│  ├─ .prettierrc
+│  ├─ design.md
+│  ├─ Dockerfile
+│  ├─ Dockerfile.dev
+│  ├─ eslint.config.js
+│  ├─ index.html
+│  ├─ nginx.conf
+│  ├─ package-lock.json
+│  ├─ package.json
+│  ├─ public
+│  │  ├─ apple-touch-icon.png
+│  │  ├─ favicon-16x16.png
+│  │  ├─ favicon-32x32.png
+│  │  ├─ favicon.ico
+│  │  ├─ icons
+│  │  │  ├─ icon-192.png
+│  │  │  ├─ icon-512-maskable.png
+│  │  │  └─ icon-512.png
+│  │  └─ manifest.webmanifest
+│  ├─ scripts
+│  │  └─ generate-tokens-css.ts
+│  ├─ src
+│  │  ├─ App.tsx
+│  │  ├─ assets
+│  │  │  ├─ illustrations
+│  │  │  │  ├─ cover-field.jpg
+│  │  │  │  ├─ crop-legumineuses.svg
+│  │  │  │  ├─ crop-orge.svg
+│  │  │  │  ├─ crop-wheat.svg
+│  │  │  │  ├─ farm-map.svg
+│  │  │  │  ├─ map-layer-rainfall.svg
+│  │  │  │  ├─ map-layer-soil-moisture.svg
+│  │  │  │  └─ map-layer-vegetation.svg
+│  │  │  ├─ images.ts
+│  │  │  └─ logo
+│  │  │     ├─ logo-full.png
+│  │  │     └─ logo-mark.png
+│  │  ├─ components
+│  │  │  ├─ Badge.module.css
+│  │  │  ├─ Badge.tsx
+│  │  │  ├─ Button.module.css
+│  │  │  ├─ Button.tsx
+│  │  │  ├─ Card.module.css
+│  │  │  ├─ Card.tsx
+│  │  │  ├─ FactList.module.css
+│  │  │  ├─ FactList.tsx
+│  │  │  ├─ Header.module.css
+│  │  │  ├─ Header.tsx
+│  │  │  ├─ Icon.tsx
+│  │  │  ├─ index.ts
+│  │  │  ├─ LanguageSwitcher.module.css
+│  │  │  ├─ LanguageSwitcher.tsx
+│  │  │  ├─ PhotoFrame.module.css
+│  │  │  ├─ PhotoFrame.tsx
+│  │  │  ├─ ProgressBar.module.css
+│  │  │  ├─ ProgressBar.tsx
+│  │  │  ├─ Screen.module.css
+│  │  │  ├─ Screen.tsx
+│  │  │  ├─ SegmentedControl.module.css
+│  │  │  ├─ SegmentedControl.tsx
+│  │  │  ├─ TabBar.module.css
+│  │  │  └─ TabBar.tsx
+│  │  ├─ i18n
+│  │  │  ├─ ar.json
+│  │  │  ├─ en.json
+│  │  │  ├─ fr.json
+│  │  │  ├─ index.ts
+│  │  │  └─ useDirection.ts
+│  │  ├─ main.tsx
+│  │  ├─ mocks
+│  │  │  ├─ cropDetails.ts
+│  │  │  ├─ farm.ts
+│  │  │  ├─ map.ts
+│  │  │  ├─ overview.ts
+│  │  │  ├─ profile.ts
+│  │  │  └─ recommendations.ts
+│  │  ├─ pages
+│  │  │  ├─ BuildSmoke.tsx
+│  │  │  ├─ Cover.module.css
+│  │  │  ├─ Cover.tsx
+│  │  │  ├─ CropDetail.module.css
+│  │  │  ├─ CropDetail.tsx
+│  │  │  ├─ Farm.module.css
+│  │  │  ├─ Farm.tsx
+│  │  │  ├─ Map.module.css
+│  │  │  ├─ Map.tsx
+│  │  │  ├─ NotFound.module.css
+│  │  │  ├─ NotFound.tsx
+│  │  │  ├─ overview
+│  │  │  │  ├─ ClimateChart.module.css
+│  │  │  │  └─ ClimateChart.tsx
+│  │  │  ├─ Overview.module.css
+│  │  │  ├─ Overview.tsx
+│  │  │  ├─ placeholder
+│  │  │  │  ├─ placeholder.module.css
+│  │  │  │  └─ PlaceholderNotice.tsx
+│  │  │  ├─ Profile.module.css
+│  │  │  ├─ Profile.tsx
+│  │  │  ├─ Recommendations.module.css
+│  │  │  └─ Recommendations.tsx
+│  │  ├─ router
+│  │  │  ├─ AppTabBar.tsx
+│  │  │  ├─ paths.ts
+│  │  │  ├─ router.ts
+│  │  │  ├─ routes.tsx
+│  │  │  └─ tabs.ts
+│  │  ├─ services
+│  │  │  └─ api.ts
+│  │  ├─ theme
+│  │  │  ├─ cssVariables.ts
+│  │  │  ├─ global.css
+│  │  │  ├─ tokens.css
+│  │  │  └─ tokens.ts
+│  │  ├─ types
+│  │  │  ├─ crop.ts
+│  │  │  ├─ cropDetail.ts
+│  │  │  ├─ farm.ts
+│  │  │  ├─ map.ts
+│  │  │  ├─ overview.ts
+│  │  │  ├─ profile.ts
+│  │  │  └─ recommendations.ts
+│  │  └─ vite-env.d.ts
+│  ├─ tests
+│  │  ├─ assets
+│  │  │  └─ assets.test.tsx
+│  │  ├─ components
+│  │  │  ├─ Badge.test.tsx
+│  │  │  ├─ Button.test.tsx
+│  │  │  ├─ Card.test.tsx
+│  │  │  ├─ Header.test.tsx
+│  │  │  ├─ Icon.test.tsx
+│  │  │  ├─ PhotoFrame.test.tsx
+│  │  │  ├─ ProgressBar.test.tsx
+│  │  │  └─ TabBar.test.tsx
+│  │  ├─ i18n
+│  │  │  └─ i18n.test.tsx
+│  │  ├─ pages
+│  │  │  ├─ ClimateChart.test.tsx
+│  │  │  ├─ Cover.test.tsx
+│  │  │  ├─ CropDetail.test.tsx
+│  │  │  ├─ Farm.test.tsx
+│  │  │  ├─ Map.test.tsx
+│  │  │  ├─ NotFound.test.tsx
+│  │  │  ├─ Overview.test.tsx
+│  │  │  ├─ Profile.test.tsx
+│  │  │  ├─ Recommendations.test.tsx
+│  │  │  └─ routes.test.tsx
+│  │  ├─ setup.ts
+│  │  ├─ theme
+│  │  │  ├─ rtl.test.ts
+│  │  │  └─ tokens.test.ts
+│  │  └─ utils.tsx
+│  ├─ tsconfig.app.json
+│  ├─ tsconfig.json
+│  ├─ tsconfig.node.json
+│  ├─ tsconfig.test.json
+│  └─ vite.config.ts
+└─ README.md
+
 ```

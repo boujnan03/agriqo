@@ -1,0 +1,121 @@
+{
+  "language": {
+    "label": "اللغة",
+    "ar": "AR",
+    "fr": "FR",
+    "en": "EN"
+  },
+  "tabs": {
+    "navLabel": "التنقل الرئيسي",
+    "home": "الرئيسية",
+    "insights": "التحليلات",
+    "map": "الخريطة",
+    "profile": "الملف الشخصي"
+  },
+  "common": {
+    "photo": "صورة: {{name}}"
+  },
+  "cover": {
+    "photo": "صورة: حقل قمح",
+    "tagline": "دورة زراعية ذكية من أجل غدٍ مستدام.",
+    "start": "ابدأ",
+    "signIn": "تسجيل الدخول"
+  },
+  "notFound": {
+    "message": "الصفحة غير موجودة.",
+    "backHome": "العودة إلى الصفحة الرئيسية"
+  },
+  "farm": {
+    "title": "مزرعتك",
+    "mapPlaceholder": "خريطة: صورة القطعة الأرضية بالأقمار الصناعية",
+    "detailsTitle": "تفاصيل المزرعة",
+    "soilType": "نوع التربة",
+    "waterAvailability": "توفّر المياه",
+    "currentCrop": "المحصول الحالي",
+    "analyze": "حلِّل مزرعتي"
+  },
+  "overview": {
+    "title": "نظرة عامة على المزرعة",
+    "climateSummary": "ملخّص المناخ",
+    "avgTemp": "متوسط درجة الحرارة",
+    "totalRainfall": "مجموع التساقطات",
+    "tempValue": "{{value}} °م",
+    "rainValue": "{{value}} ملم",
+    "chartTitle": "درجة الحرارة والتساقطات",
+    "soilMoisture": "رطوبة التربة",
+    "healthIndex": "مؤشر الصحة",
+    "healthValue": "{{label}} · {{percent}}%",
+    "seeRecommendations": "عرض توصياتي"
+  },
+  "chart": {
+    "ariaLabel": "درجة الحرارة والتساقطات حسب الشهر. {{summary}}.",
+    "monthSummary": "{{month}}: {{temp}} °م، {{rainfall}} ملم",
+    "separator": "؛ ",
+    "legendTemp": "درجة الحرارة (°م)، خط",
+    "legendRain": "التساقطات (ملم)، أعمدة"
+  },
+  "recommendations": {
+    "title": "التوصيات",
+    "back": "العودة إلى نظرة عامة على المزرعة",
+    "bestCrop": "أفضل محصول لك",
+    "otherOptions": "خيارات جيدة أخرى",
+    "rotationPlan": "خطة الدورة الزراعية",
+    "year": "السنة {{year}}",
+    "learnMore": "اعرف المزيد"
+  },
+  "cropDetail": {
+    "title": "التفاصيل",
+    "back": "العودة إلى التوصيات",
+    "recommended": "موصى به",
+    "waterNeed": "الاحتياجات المائية",
+    "bestSeason": "أفضل موسم",
+    "expectedYield": "المردود المتوقع",
+    "why": "لماذا هذا الاختيار؟",
+    "save": "احفظ هذه الخطة",
+    "saved": "حُفظت الخطة لهذه الجلسة فقط (عرض تجريبي: لا يُحفظ أي شيء)."
+  },
+  "map": {
+    "title": "الخريطة",
+    "layerSwitcher": "طبقة البيانات",
+    "placeholder": "خريطة: طبقة {{layer}}",
+    "layers": {
+      "vegetation": "الغطاء النباتي",
+      "soilMoisture": "رطوبة التربة",
+      "rainfall": "التساقطات"
+    },
+    "units": {
+      "vegetation": "NDVI",
+      "soilMoisture": "%",
+      "rainfall": "ملم"
+    },
+    "legends": {
+      "vegetation": "منخفض (أصفر) ← مرتفع (أخضر داكن)",
+      "soilMoisture": "جافة (0%) ← مشبعة (100%)",
+      "rainfall": "منخفضة ← مرتفعة"
+    },
+    "descriptions": {
+      "vegetation": "يُظهر حالة الغطاء النباتي في قطعتك الأرضية.",
+      "soilMoisture": "يشير إلى مستوى رطوبة التربة السطحية.",
+      "rainfall": "مجموع التساقطات الأخيرة في المنطقة."
+    },
+    "legend": "مفتاح الألوان",
+    "unit": "الوحدة",
+    "lastUpdated": "آخر تحديث: {{date}}"
+  },
+  "profile": {
+    "title": "الملف الشخصي",
+    "memberSince": "عضو منذ {{year}}",
+    "settings": "الإعدادات",
+    "language": "اللغة",
+    "currentLanguage": "العربية",
+    "notifications": "الإشعارات",
+    "notificationsOn": "مفعّلة",
+    "notificationsOff": "معطّلة",
+    "units": "وحدات القياس",
+    "unitValues": {
+      "metric": "النظام المتري"
+    },
+    "unitsSoon": "ستتوفر وحدات أخرى قريبًا.",
+    "signOut": "تسجيل الخروج"
+  }
+}

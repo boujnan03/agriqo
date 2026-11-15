@@ -2,22 +2,34 @@ import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
+import cropLegumineuses from "../../src/assets/illustrations/crop-legumineuses.svg";
+import cropOrge from "../../src/assets/illustrations/crop-orge.svg";
+import cropWheat from "../../src/assets/illustrations/crop-wheat.svg";
 import { cropDetails } from "../../src/mocks/cropDetails";
-import { TAB_BAR_LABEL } from "../../src/router/tabs";
 import type { CropId } from "../../src/types/crop";
 import type { CropDetailsById } from "../../src/types/cropDetail";
-import { renderRoute } from "../utils";
+import { inLanguage, renderRoute, tabBarLabel } from "../utils";
 
 const CROPS = (Object.keys(cropDetails) as CropId[]).map((id) => ({
   id,
   ...cropDetails[id],
 }));
 
+/** The illustration file each crop's banner must use (same file as its thumbnail). */
+const BANNER: Record<CropId, string> = {
+  ble: cropWheat,
+  orge: cropOrge,
+  legumineuses: cropLegumineuses,
+};
+
 /** The value (<dd>) of the fact row whose label (<dt>) is `label`. */
 const factValue = (label: string) =>
   screen.getByText(label, { selector: "dt" }).nextElementSibling;
 
 describe("Crop detail page (design.md §7.5)", () => {
+  // French copy asserted below: render in French (the app default is Arabic).
+  inLanguage("fr");
+
   it("the mock lookup covers every CropId with a CropDetail", () => {
     // Type-level check (Record<CropId, …>): enforced by `npm run typecheck`.
     expectTypeOf(cropDetails).toEqualTypeOf<CropDetailsById>();
@@ -36,6 +48,11 @@ describe("Crop detail page (design.md §7.5)", () => {
       screen.getByRole("heading", { level: 2, name: crop.name }),
     ).toBeInTheDocument();
     expect(screen.getByText(crop.description)).toBeInTheDocument();
+    expect(
+      screen.getByRole("img", {
+        name: `Photo : ${crop.name.toLocaleLowerCase("fr")}`,
+      }),
+    ).toHaveAttribute("src", BANNER[crop.id]);
     // Each value checked against its own row (values can repeat, e.g. "Moyen" twice).
     expect(factValue("Besoin en eau")).toHaveTextContent(crop.waterNeed);
     expect(factValue("Meilleure saison")).toHaveTextContent(crop.bestSeason);
@@ -53,7 +70,7 @@ describe("Crop detail page (design.md §7.5)", () => {
       screen.getByRole("link", { name: "Retour aux recommandations" }),
     ).toHaveAttribute("href", "/recommendations");
     expect(
-      screen.queryByRole("navigation", { name: TAB_BAR_LABEL }),
+      screen.queryByRole("navigation", { name: tabBarLabel() }),
     ).not.toBeInTheDocument();
   });
 
@@ -79,6 +96,9 @@ describe("Crop detail page (design.md §7.5)", () => {
 });
 
 describe("full mocked click-through", () => {
+  // French copy asserted below: render in French (the app default is Arabic).
+  inLanguage("fr");
+
   it("Cover → Farm → Overview → Recommendations → Crop detail, and back", async () => {
     const user = userEvent.setup();
     renderRoute("/");

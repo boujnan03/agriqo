@@ -1,0 +1,117 @@
+/* design.md §7 template 8 Profile / Settings: summary card, setting rows, sign-out link. */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-gap);
+}
+
+/* Profile summary: avatar circle at the start, name + details beside it. */
+.summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+}
+
+.avatar {
+  display: inline-flex;
+  flex-shrink: 0;
+  padding: var(--space-12);
+  border-radius: var(--radius-pill);
+  background: var(--green-tint);
+  color: var(--green-900);
+}
+
+.summaryText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.name {
+  margin: 0;
+  font-size: var(--font-size-screen-title);
+  font-weight: var(--font-weight-heading);
+  color: var(--text-900);
+}
+
+.muted {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  color: var(--text-600);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-heading);
+  color: var(--text-900);
+}
+
+/* Setting rows: the FactList row look (icon circle · label · value, hairline between rows),
+   made tappable. */
+.rows {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rows li + li {
+  border-top: var(--border-width-hairline) solid var(--border);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  width: 100%;
+  min-height: var(--touch-target);
+  padding: var(--space-12) 0;
+  background: none;
+  border: none;
+  color: var(--text-900);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-body);
+  text-align: start;
+  cursor: pointer;
+}
+
+.rowIcon {
+  display: inline-flex;
+  flex-shrink: 0;
+  padding: var(--space-8);
+  border-radius: var(--radius-pill);
+  border: var(--border-width-hairline) solid var(--border);
+  background: var(--white);
+  color: var(--green-700); /* §2: settings are not soil/water/crop facts */
+}
+
+.rowLabel {
+  flex: 1;
+  color: var(--text-600);
+}
+
+.rowValue {
+  font-weight: var(--font-weight-label);
+  color: var(--text-900);
+}
+
+.chevron {
+  display: inline-flex;
+  color: var(--text-600);
+}
+
+.status {
+  margin: 0;
+  text-align: center;
+  color: var(--text-600);
+}

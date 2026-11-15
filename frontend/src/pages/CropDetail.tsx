@@ -1,7 +1,9 @@
 import { CalendarDays, Droplets, Wheat } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 
+import { cropIllustrations, photo } from "../assets/images";
 import { Badge } from "../components/Badge";
 import { Button } from "../components/Button";
 import { Card } from "../components/Card";
@@ -9,7 +11,7 @@ import { type Fact, FactList } from "../components/FactList";
 import { Header } from "../components/Header";
 import { PhotoFrame } from "../components/PhotoFrame";
 import { Screen } from "../components/Screen";
-import { findCropDetail } from "../mocks/cropDetails";
+import { findCropDetail, isCropId } from "../mocks/cropDetails";
 import { PATHS } from "../router/paths";
 import type { CropDetail as CropDetailData } from "../types/cropDetail";
 import styles from "./CropDetail.module.css";
@@ -25,27 +27,41 @@ export function CropDetail() {
   const crop = findCropDetail(id);
   if (!crop) return <NotFound />;
   // Keyed by id so the "saved" confirmation resets when moving to another crop.
-  return <CropDetailScreen key={id} crop={crop} />;
+  return (
+    <CropDetailScreen
+      key={id}
+      crop={crop}
+      illustration={isCropId(id) ? cropIllustrations[id] : undefined}
+    />
+  );
 }
 
-function CropDetailScreen({ crop }: { crop: CropDetailData }) {
+function CropDetailScreen({
+  crop,
+  illustration,
+}: {
+  crop: CropDetailData;
+  /** Banner image; undefined falls back to the §8 placeholder. */
+  illustration: string | undefined;
+}) {
+  const { t } = useTranslation();
   const [saved, setSaved] = useState(false);
 
   const facts: Fact[] = [
     {
-      label: "Besoin en eau",
+      label: t("cropDetail.waterNeed"),
       value: crop.waterNeed,
       icon: Droplets,
       tone: "water",
     },
     {
-      label: "Meilleure saison",
+      label: t("cropDetail.bestSeason"),
       value: crop.bestSeason,
       icon: CalendarDays,
       tone: "neutral",
     },
     {
-      label: "Rendement attendu",
+      label: t("cropDetail.expectedYield"),
       value: crop.expectedYield,
       icon: Wheat,
       tone: "plant",
@@ -57,9 +73,9 @@ function CropDetailScreen({ crop }: { crop: CropDetailData }) {
       header={
         <Header
           variant="drill-in"
-          title="Détails"
+          title={t("cropDetail.title")}
           backTo={PATHS.recommendations}
-          backLabel="Retour aux recommandations"
+          backLabel={t("cropDetail.back")}
         />
       }
     >
@@ -67,12 +83,20 @@ function CropDetailScreen({ crop }: { crop: CropDetailData }) {
         <div className={styles.banner}>
           <PhotoFrame
             slot="detail"
-            placeholderLabel={`Photo : ${crop.name.toLocaleLowerCase("fr")}`}
+            {...photo(
+              illustration,
+              t("common.photo", {
+                // Crop names are French fixture data, hence the "fr" lower-casing.
+                name: crop.name.toLocaleLowerCase("fr"),
+              }),
+            )}
             className={styles.photo}
           />
           <div className={styles.bannerText}>
             <h2 className={styles.cropName}>{crop.name}</h2>
-            {crop.recommended ? <Badge>Recommandé</Badge> : null}
+            {crop.recommended ? (
+              <Badge>{t("cropDetail.recommended")}</Badge>
+            ) : null}
           </div>
         </div>
 
@@ -85,7 +109,7 @@ function CropDetailScreen({ crop }: { crop: CropDetailData }) {
         <Card variant="featured">
           <section className={styles.why} aria-labelledby="why-this-choice">
             <h3 id="why-this-choice" className={styles.whyTitle}>
-              Pourquoi ce choix ?
+              {t("cropDetail.why")}
             </h3>
             <p className={styles.whyText}>{crop.whyThisChoice}</p>
           </section>
@@ -93,12 +117,10 @@ function CropDetailScreen({ crop }: { crop: CropDetailData }) {
 
         {/* No persistence yet: the button only shows a local confirmation. */}
         <Button withArrow onClick={() => setSaved(true)}>
-          Enregistrer ce plan
+          {t("cropDetail.save")}
         </Button>
         <p className={styles.status} role="status">
-          {saved
-            ? "Plan enregistré pour cette session (démo : rien n'est sauvegardé)."
-            : ""}
+          {saved ? t("cropDetail.saved") : ""}
         </p>
       </div>
     </Screen>

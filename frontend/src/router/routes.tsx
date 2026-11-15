@@ -4,8 +4,10 @@ import { BuildSmoke } from "../pages/BuildSmoke";
 import { Cover } from "../pages/Cover";
 import { CropDetail } from "../pages/CropDetail";
 import { Farm } from "../pages/Farm";
+import { MapPage } from "../pages/Map";
 import { NotFound } from "../pages/NotFound";
 import { Overview } from "../pages/Overview";
+import { Profile } from "../pages/Profile";
 import { Recommendations } from "../pages/Recommendations";
 import { PATHS } from "./paths";
 
@@ -16,6 +18,8 @@ export const routes: RouteObject[] = [
   { path: PATHS.overview, element: <Overview /> },
   { path: PATHS.recommendations, element: <Recommendations /> },
   { path: PATHS.crop, element: <CropDetail /> },
+  { path: PATHS.map, element: <MapPage /> },
+  { path: PATHS.profile, element: <Profile /> },
   { path: PATHS.smoke, element: <BuildSmoke /> },
   { path: PATHS.notFound, element: <NotFound /> },
 ];

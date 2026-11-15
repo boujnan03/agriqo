@@ -1,0 +1,37 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Épis de blé mûrs dans un champ">
+  <rect width="400" height="400" fill="#F6E9C9"/>
+  <rect x="0" y="260" width="400" height="140" fill="#D9B35E"/>
+  <g stroke="#B9873A" stroke-width="3" stroke-linecap="round">
+    <line x1="60" y1="400" x2="80" y2="180"/>
+    <line x1="120" y1="400" x2="135" y2="150"/>
+    <line x1="180" y1="400" x2="190" y2="170"/>
+    <line x1="240" y1="400" x2="245" y2="140"/>
+    <line x1="300" y1="400" x2="305" y2="165"/>
+    <line x1="350" y1="400" x2="345" y2="185"/>
+  </g>
+  <g fill="#C99A3E">
+    <ellipse cx="80" cy="170" rx="10" ry="26"/>
+    <ellipse cx="135" cy="140" rx="11" ry="30"/>
+    <ellipse cx="190" cy="160" rx="10" ry="27"/>
+    <ellipse cx="245" cy="130" rx="12" ry="32"/>
+    <ellipse cx="305" cy="155" rx="10" ry="28"/>
+    <ellipse cx="345" cy="175" rx="9" ry="24"/>
+  </g>
+  <g stroke="#8C661F" stroke-width="1.5">
+    <line x1="72" y1="150" x2="88" y2="150"/>
+    <line x1="70" y1="165" x2="90" y2="165"/>
+    <line x1="70" y1="180" x2="90" y2="180"/>
+    <line x1="126" y1="118" x2="144" y2="118"/>
+    <line x1="124" y1="135" x2="146" y2="135"/>
+    <line x1="124" y1="152" x2="146" y2="152"/>
+    <line x1="180" y1="140" x2="200" y2="140"/>
+    <line x1="179" y1="156" x2="201" y2="156"/>
+    <line x1="179" y1="172" x2="201" y2="172"/>
+    <line x1="235" y1="108" x2="255" y2="108"/>
+    <line x1="233" y1="126" x2="257" y2="126"/>
+    <line x1="233" y1="144" x2="257" y2="144"/>
+    <line x1="295" y1="134" x2="315" y2="134"/>
+    <line x1="294" y1="150" x2="316" y2="150"/>
+    <line x1="294" y1="166" x2="316" y2="166"/>
+  </g>
+</svg>

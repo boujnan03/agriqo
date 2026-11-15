@@ -2,13 +2,13 @@ import type { OverviewData } from "../types/overview";
 
 /**
  * Mock dashboard data for the "Aperçu de la ferme" screen until the backend (NASA POWER
- * pipeline) exists. Illustrative values only, NOT real NASA data. Note: avgTemp and
- * totalRainfall are given values, not computed from `monthly`.
+ * pipeline) exists. Illustrative values only, NOT real NASA data. avgTemp and totalRainfall
+ * are the mean (20.7 → 21) and sum (171) of `monthly`, so the summary matches the chart.
  */
 export const overviewData: OverviewData = {
   location: "Béni Mellal",
-  avgTemp: 24, // °C
-  totalRainfall: 280, // mm
+  avgTemp: 21, // °C
+  totalRainfall: 171, // mm
   monthly: [
     { month: "Jan", temp: 14, rainfall: 42 },
     { month: "Fév", temp: 16, rainfall: 38 },

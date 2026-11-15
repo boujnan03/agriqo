@@ -39,6 +39,10 @@ export const fontFamily = {
   // §3: headings "Inter or Poppins", body/buttons/captions Inter → Inter everywhere.
   // Fallbacks (system-ui, sans-serif) are not in design.md: generic safety net only.
   base: "'Inter', system-ui, sans-serif",
+  // §9a: Arabic needs its own face (Inter has no Arabic glyphs). Noto Sans Arabic is loaded with
+  // its Arabic unicode-range only, so Latin text inside an Arabic screen still falls to Inter.
+  // Applied only while Arabic is active (global.css, <html lang="ar">).
+  arabic: "'Noto Sans Arabic', 'Inter', system-ui, sans-serif",
 } as const;
 
 export const fontSize = {

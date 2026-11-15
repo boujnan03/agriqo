@@ -1,6 +1,8 @@
-import { ChevronRight, RefreshCw } from "lucide-react";
+import { ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
+import { cropIllustrations, photo } from "../assets/images";
 import { Badge } from "../components/Badge";
 import { Button } from "../components/Button";
 import { Card } from "../components/Card";
@@ -8,13 +10,10 @@ import { Header } from "../components/Header";
 import { Icon } from "../components/Icon";
 import { PhotoFrame } from "../components/PhotoFrame";
 import { Screen } from "../components/Screen";
+import { useDirection } from "../i18n/useDirection";
 import { recommendationsData } from "../mocks/recommendations";
 import { cropPath, PATHS } from "../router/paths";
 import styles from "./Recommendations.module.css";
-
-/** design.md §8 placeholder label for a crop photo, e.g. "Photo : blé". */
-const photoLabel = (cropName: string): string =>
-  `Photo : ${cropName.toLocaleLowerCase("fr")}`;
 
 /**
  * Route "/recommendations" · design.md §7.4 Recommendation list: one featured card, a row of
@@ -23,16 +22,22 @@ const photoLabel = (cropName: string): string =>
  * dashboard, NO tab bar. Every card / step is a real link to its crop's detail page (§9).
  */
 export function Recommendations() {
+  const { t } = useTranslation();
+  // Each step's chevron points forward in the reading direction (design.md §9a).
+  const StepChevron = useDirection() === "rtl" ? ChevronLeft : ChevronRight;
   const { featured, otherOptions, rotationPlan } = recommendationsData;
+  /** design.md §8 placeholder label for a crop photo. Crop names are French fixture data. */
+  const photoLabel = (cropName: string): string =>
+    t("common.photo", { name: cropName.toLocaleLowerCase("fr") });
 
   return (
     <Screen
       header={
         <Header
           variant="drill-in"
-          title="Recommandations"
+          title={t("recommendations.title")}
           backTo={PATHS.overview}
-          backLabel="Retour à l'aperçu de la ferme"
+          backLabel={t("recommendations.back")}
         />
       }
     >
@@ -45,7 +50,7 @@ export function Recommendations() {
           <Card variant="featured" className={styles.featured}>
             <div className={styles.featuredText}>
               <span id="featured-label" className={styles.eyebrow}>
-                Meilleure culture pour vous
+                {t("recommendations.bestCrop")}
               </span>
               <span id="featured-name" className={styles.featuredName}>
                 {featured.name}
@@ -54,7 +59,10 @@ export function Recommendations() {
             </div>
             <PhotoFrame
               slot="thumbnail"
-              placeholderLabel={photoLabel(featured.name)}
+              {...photo(
+                cropIllustrations[featured.id],
+                photoLabel(featured.name),
+              )}
               className={styles.featuredPhoto}
             />
           </Card>
@@ -62,7 +70,7 @@ export function Recommendations() {
 
         <section className={styles.section} aria-labelledby="other-options">
           <h2 id="other-options" className={styles.sectionTitle}>
-            Autres bonnes options
+            {t("recommendations.otherOptions")}
           </h2>
           <ul className={styles.options}>
             {otherOptions.map((option) => (
@@ -75,7 +83,10 @@ export function Recommendations() {
                   <Card className={styles.option}>
                     <PhotoFrame
                       slot="thumbnail"
-                      placeholderLabel={photoLabel(option.name)}
+                      {...photo(
+                        cropIllustrations[option.id],
+                        photoLabel(option.name),
+                      )}
                     />
                     <span
                       id={`option-${option.id}-name`}
@@ -98,7 +109,7 @@ export function Recommendations() {
             <span className={styles.cycleIcon}>
               <Icon icon={RefreshCw} />
             </span>
-            Plan de rotation des cultures
+            {t("recommendations.rotationPlan")}
           </h2>
           <Card>
             <ol className={styles.steps} aria-labelledby="rotation-plan">
@@ -109,11 +120,13 @@ export function Recommendations() {
                       {step.year}
                     </span>
                     <span className={styles.stepText}>
-                      <span className={styles.muted}>Année {step.year}</span>{" "}
+                      <span className={styles.muted}>
+                        {t("recommendations.year", { year: step.year })}
+                      </span>{" "}
                       <span className={styles.stepCrop}>{step.cropName}</span>
                     </span>
                     <span className={styles.chevron}>
-                      <Icon icon={ChevronRight} />
+                      <Icon icon={StepChevron} />
                     </span>
                   </Link>
                 </li>
@@ -122,9 +135,9 @@ export function Recommendations() {
           </Card>
         </section>
 
-        {/* No further destination exists yet: "En savoir plus" opens the featured crop. */}
+        {/* No further destination exists yet: "Learn more" opens the featured crop. */}
         <Button to={cropPath(featured.id)} withArrow>
-          En savoir plus
+          {t("recommendations.learnMore")}
         </Button>
       </div>
     </Screen>
