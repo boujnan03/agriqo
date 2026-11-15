@@ -57,8 +57,11 @@
     "chartTitle": "Température et précipitations",
     "soilMoisture": "Humidité du sol",
     "healthIndex": "Indice de santé",
-    "healthValue": "{{label}} · {{percent}}%",
-    "seeRecommendations": "Voir mes recommandations"
+    "seeRecommendations": "Voir mes recommandations",
+    "minTemp": "Minimale moyenne",
+    "maxTemp": "Maximale moyenne",
+    "frostDays": "Jours de gel",
+    "healthSoon": "Bientôt disponible (NDVI)"
   },
   "chart": {
     "ariaLabel": "Température et précipitations par mois. {{summary}}.",

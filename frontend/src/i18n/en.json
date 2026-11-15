@@ -57,8 +57,11 @@
     "chartTitle": "Temperature and rainfall",
     "soilMoisture": "Soil moisture",
     "healthIndex": "Health index",
-    "healthValue": "{{label}} · {{percent}}%",
-    "seeRecommendations": "See my recommendations"
+    "seeRecommendations": "See my recommendations",
+    "minTemp": "Average low",
+    "maxTemp": "Average high",
+    "frostDays": "Frost days",
+    "healthSoon": "Coming soon (NDVI)"
   },
   "chart": {
     "ariaLabel": "Temperature and rainfall by month. {{summary}}.",

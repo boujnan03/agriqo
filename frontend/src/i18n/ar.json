@@ -57,8 +57,11 @@
     "chartTitle": "درجة الحرارة والتساقطات",
     "soilMoisture": "رطوبة التربة",
     "healthIndex": "مؤشر الصحة",
-    "healthValue": "{{label}} · {{percent}}%",
-    "seeRecommendations": "عرض توصياتي"
+    "seeRecommendations": "عرض توصياتي",
+    "minTemp": "متوسط الحرارة الدنيا",
+    "maxTemp": "متوسط الحرارة القصوى",
+    "frostDays": "أيام الصقيع",
+    "healthSoon": "قريبًا (NDVI)"
   },
   "chart": {
     "ariaLabel": "درجة الحرارة والتساقطات حسب الشهر. {{summary}}.",
