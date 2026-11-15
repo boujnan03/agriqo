@@ -5,6 +5,7 @@ import type {
   DiagnosticBlockKey,
   DiagnosticResponse,
 } from "../types/diagnostic";
+import { readStoredWater, storeWater } from "./farmStorage";
 import {
   type BlockRetryState,
   type Parcel,
@@ -15,8 +16,6 @@ import {
   SessionContext,
   type SessionState,
 } from "./session";
-
-const INITIAL: SessionState = { parcel: null };
 
 const FETCHERS: {
   [K in RemoteKind]: (parcel: Parcel) => Promise<RemoteData[K]>;
@@ -47,10 +46,11 @@ export function SessionProvider({
   initialState,
   children,
 }: SessionProviderProps) {
-  const [state, setState] = useState<SessionState>({
-    ...INITIAL,
+  const [state, setState] = useState<SessionState>(() => ({
+    parcel: null,
+    water: readStoredWater(),
     ...initialState,
-  });
+  }));
   // The cache is read synchronously by `load` (a ref), and mirrored into state to re-render.
   // Without the ref, StrictMode's double effects would start the same request twice.
   const cacheRef = useRef<Cache>({});
@@ -144,6 +144,10 @@ export function SessionProvider({
     return {
       ...state,
       pickParcel: (parcel) => setState((s) => ({ ...s, parcel })),
+      setWater: (water) => {
+        storeWater(water);
+        setState((s) => ({ ...s, water }));
+      },
       remote,
       load,
       retryDiagnosticBlock,
