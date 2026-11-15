@@ -1,0 +1,92 @@
+/* design.md §7.8 Weather: today summary (a Data card), then a row of 7 day cards. */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-gap);
+}
+
+.place {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin: 0;
+  color: var(--text-600);
+}
+
+/* Today: condition icon · current temperature · condition text. */
+.now {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-12);
+}
+
+.nowIcon {
+  display: inline-flex;
+  color: var(
+    --green-700
+  ); /* §2 secondary accent: weather is not a soil/water/crop fact */
+}
+
+.nowTemp {
+  font-size: var(--font-size-hero-title);
+  font-weight: var(--font-weight-heading);
+  color: var(--text-900);
+}
+
+.condition {
+  color: var(--text-600);
+}
+
+.week {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-heading);
+  color: var(--text-900);
+}
+
+/* 7 day cards in one row: share the width when they fit, scroll sideways when they don't.
+   Mirrors with dir (the row starts at the reading start). */
+.days {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(min-content, 1fr);
+  gap: var(--space-8);
+  margin: 0;
+  padding: 0;
+  padding-block-end: var(--space-4);
+  list-style: none;
+  overflow-x: auto;
+}
+
+/* Two-class selector so the compact padding beats Card.module.css regardless of CSS order. */
+.days .day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  height: 100%;
+  padding: var(--space-12) var(--space-8);
+  color: var(--green-700);
+  text-align: center;
+}
+
+.dayName {
+  font-weight: var(--font-weight-label);
+  color: var(--text-900);
+}
+
+.high {
+  font-weight: var(--font-weight-bold);
+  color: var(--text-900);
+}
+
+.low {
+  color: var(--text-600);
+}

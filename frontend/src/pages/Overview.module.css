@@ -20,6 +20,9 @@
 }
 
 .sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
   margin: 0;
   font-size: var(--font-size-label);
   font-weight: var(--font-weight-heading);
@@ -65,4 +68,15 @@
   font-size: var(--font-size-screen-title);
   font-weight: var(--font-weight-heading);
   color: var(--text-900);
+}
+
+/* A card holding one stat (frost days). */
+.single {
+  margin: 0;
+}
+
+/* Health Index placeholder (design.md §7.4): plain muted text, never a score. */
+.placeholder {
+  margin: 0;
+  color: var(--text-600);
 }

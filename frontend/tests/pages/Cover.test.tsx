@@ -1,4 +1,5 @@
 import { screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
 import coverField from "../../src/assets/illustrations/cover-field.jpg";
@@ -40,16 +41,41 @@ describe("Cover page (design.md §7.1)", () => {
     expect(container.textContent).not.toContain("FieldShift");
   });
 
-  it("'Commencer' leads to the farm screen; 'Se connecter' is present", () => {
+  it("'Commencer' leads to the home screen; 'Se connecter' is present", () => {
     renderWithRouter(<Cover />);
     // A navigation action, so a real <a href> (design.md §9), styled as the primary button.
     expect(screen.getByRole("link", { name: "Commencer" })).toHaveAttribute(
       "href",
-      "/farm",
+      "/home",
     );
     expect(
       screen.getByRole("link", { name: "Se connecter" }),
     ).toBeInTheDocument();
+  });
+
+  it("'Commencer' opens Home directly (no authentication)", async () => {
+    const user = userEvent.setup();
+    renderRoute("/");
+    await user.click(screen.getByRole("link", { name: "Commencer" }));
+    expect(
+      await screen.findByRole("heading", { level: 1, name: "Accueil" }),
+    ).toBeInTheDocument();
+  });
+
+  it("'Se connecter' is present but does nothing: the Cover screen stays", async () => {
+    const user = userEvent.setup();
+    renderRoute("/");
+    await user.click(screen.getByRole("link", { name: "Se connecter" }));
+    expect(screen.getByRole("link", { name: "Commencer" })).toBeInTheDocument();
+    expect(screen.queryByRole("heading")).not.toBeInTheDocument();
+    expect(screen.queryByRole("banner")).not.toBeInTheDocument();
+  });
+
+  it("has no login form: no form, no text or password field", () => {
+    const { container } = renderWithRouter(<Cover />);
+    expect(screen.queryByRole("form")).not.toBeInTheDocument();
+    expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+    expect(container.querySelector("input")).toBeNull();
   });
 
   it("is served at / with no header and no tab bar", () => {

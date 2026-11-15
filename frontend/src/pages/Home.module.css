@@ -1,0 +1,72 @@
+/* design.md §7.2 Home: map banner (tap to pick), light summary card, one primary CTA. */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-gap);
+}
+
+.intro {
+  margin: 0;
+  color: var(--text-600);
+}
+
+/* Map banner: in-card PhotoFrame (rounded, 4:3) with the pin + location chip overlaid. */
+.map {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+/* Before the pick, the whole banner is one real <button> (§9); reset its native chrome. */
+.pickButton {
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-photo);
+  background: none;
+  cursor: pointer;
+}
+
+.location {
+  position: absolute;
+  inset-inline-start: var(--space-12);
+  bottom: var(--space-12);
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.pin {
+  display: inline-flex;
+  padding: var(--space-8);
+  border-radius: var(--radius-pill);
+  background: var(--white);
+  color: var(--green-700); /* §2 secondary green accent (not an action) */
+}
+
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.summaryTitle {
+  margin: 0;
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-heading);
+  color: var(--text-900);
+}
+
+.place {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  color: var(--text-600);
+}
+
+/* §6 Data card source caption: §3 factual caption size, --text-600. */
+.source {
+  margin: 0;
+  font-size: var(--font-size-caption-factual);
+  font-weight: var(--font-weight-caption);
+  color: var(--text-600);
+}

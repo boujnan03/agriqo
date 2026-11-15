@@ -8,13 +8,12 @@ import cropOrge from "./illustrations/crop-orge.svg";
 import cropWheat from "./illustrations/crop-wheat.svg";
 import coverField from "./illustrations/cover-field.jpg";
 import farmMap from "./illustrations/farm-map.svg";
-import mapLayerRainfall from "./illustrations/map-layer-rainfall.svg";
-import mapLayerSoilMoisture from "./illustrations/map-layer-soil-moisture.svg";
-import mapLayerVegetation from "./illustrations/map-layer-vegetation.svg";
 import logoFull from "./logo/logo-full.png";
 import logoMark from "./logo/logo-mark.png";
 import type { CropId } from "../types/crop";
-import type { MapLayerId } from "../types/map";
+
+// Not imported on purpose: map-layer-*.svg belonged to the retired Map / Data layers template
+// (design.md §7 "Retired"). The files stay in illustrations/ in case they are wanted later.
 
 /** AGRIQO logo: icon only (compact Header) and icon + wordmark (Cover). */
 export const logo = { mark: logoMark, full: logoFull } as const;
@@ -22,7 +21,7 @@ export const logo = { mark: logoMark, full: logoFull } as const;
 /** Single-slot illustrations. */
 export const illustrations = {
   cover: coverField, // Cover full-bleed photo
-  farm: farmMap, // Farm map banner
+  farm: farmMap, // Home's map/picker banner (design.md §7.2)
 } as const;
 
 /** One illustration per crop: same file for thumbnails and the wide Detail banner. */
@@ -30,13 +29,6 @@ export const cropIllustrations: Record<CropId, string> = {
   ble: cropWheat,
   orge: cropOrge,
   legumineuses: cropLegumineuses,
-};
-
-/** One illustration per Map page data layer. */
-export const mapLayerIllustrations: Record<MapLayerId, string> = {
-  vegetation: mapLayerVegetation,
-  soilMoisture: mapLayerSoilMoisture,
-  rainfall: mapLayerRainfall,
 };
 
 /** What a PhotoFrame shows: an image (with alt text) or the design.md §8 labelled placeholder. */

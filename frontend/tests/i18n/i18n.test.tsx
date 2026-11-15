@@ -117,45 +117,56 @@ describe("Arabic default + RTL", () => {
   });
 });
 
-/** Every product screen: the 5 pages of the brief + Not found. */
+/** Every product screen (design.md §7) + Not found, on a fresh session (no parcel picked). */
 const SCREENS = [
   "/",
+  "/home",
   "/farm",
   "/overview",
   "/recommendations",
   "/crop/ble",
+  "/weather",
+  "/profile",
   "/nope",
-];
+].map((path) => ({ path, parcelPicked: false }));
+
+/** The screens whose content changes once a parcel is picked on Home. */
+const PICKED_SCREENS = ["/home", "/farm", "/weather", "/profile"].map(
+  (path) => ({ path, parcelPicked: true }),
+);
 
 describe.each(LANGUAGES)("smoke: every screen renders in %s", (lng) => {
-  it.each(SCREENS)("%s", async (path) => {
-    await i18n.changeLanguage(lng);
-    const { container } = renderRoute(path);
+  it.each([...SCREENS, ...PICKED_SCREENS])(
+    "$path (parcel picked: $parcelPicked)",
+    async ({ path, parcelPicked }) => {
+      await i18n.changeLanguage(lng);
+      const { container } = renderRoute(path, { parcelPicked });
 
-    expect(document.documentElement).toHaveAttribute(
-      "dir",
-      lng === "ar" ? "rtl" : "ltr",
-    );
-    // A real title (except Cover: its name is the logo baked into the photo, no heading),
-    // and the language switcher reachable on every screen (§9a).
-    if (path === "/") {
-      expect(screen.queryByRole("heading")).not.toBeInTheDocument();
-    } else {
-      expect(
-        screen.getByRole("heading", { level: 1 }),
-      ).not.toBeEmptyDOMElement();
-    }
-    const switcher = screen.getByRole("group", {
-      name: i18n.t("language.label"),
-    });
-    expect(within(switcher).getAllByRole("button")).toHaveLength(3);
+      expect(document.documentElement).toHaveAttribute(
+        "dir",
+        lng === "ar" ? "rtl" : "ltr",
+      );
+      // A real title (except Cover: its name is the logo baked into the photo, no heading),
+      // and the language switcher reachable on every screen (§9a).
+      if (path === "/") {
+        expect(screen.queryByRole("heading")).not.toBeInTheDocument();
+      } else {
+        expect(
+          screen.getByRole("heading", { level: 1 }),
+        ).not.toBeEmptyDOMElement();
+      }
+      const switcher = screen.getByRole("group", {
+        name: i18n.t("language.label"),
+      });
+      expect(within(switcher).getAllByRole("button")).toHaveLength(3);
 
-    // No untranslated key leaked into the text or the accessible names.
-    const labels = [...container.querySelectorAll("[aria-label]")].map(
-      (el) => el.getAttribute("aria-label") ?? "",
-    );
-    const shown = [container.textContent ?? "", ...labels].join("\n");
-    for (const key of KEYS) expect(shown).not.toContain(key);
-    expect(shown).not.toMatch(/\{\{|\}\}/);
-  });
+      // No untranslated key leaked into the text or the accessible names.
+      const labels = [...container.querySelectorAll("[aria-label]")].map(
+        (el) => el.getAttribute("aria-label") ?? "",
+      );
+      const shown = [container.textContent ?? "", ...labels].join("\n");
+      for (const key of KEYS) expect(shown).not.toContain(key);
+      expect(shown).not.toMatch(/\{\{|\}\}/);
+    },
+  );
 });

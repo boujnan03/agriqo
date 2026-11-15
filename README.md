@@ -102,10 +102,11 @@ frontend/                       React + TypeScript + Vite (+ Dockerfile, nginx.c
   design.md                     design system: source of truth
   src/theme/                    design tokens (tokens.ts → generated tokens.css)
   src/components/               shared components (Button, Card, Badge, TabBar, Header, …)
-  src/router/  src/pages/       routes + one placeholder page per design.md §7 template
+  src/router/  src/pages/       routes + tab config; one page per design.md §7 template
   src/services/                 api.ts: placeholder backend client (GET /health), not used yet
-  src/mocks/                    page fixture data, one file per screen (farm, overview, map,
+  src/mocks/                    page fixture data (farmDiagnostic, home, weather, overview,
                                 profile, recommendations, cropDetails); illustrative, not NASA
+  src/state/                    in-memory session (the parcel picked on Home)
   tests/                        Vitest + React Testing Library
 ```
 
@@ -179,6 +180,8 @@ agriqo
 │  │  │  ├─ Button.tsx
 │  │  │  ├─ Card.module.css
 │  │  │  ├─ Card.tsx
+│  │  │  ├─ DataCard.module.css
+│  │  │  ├─ DataCard.tsx
 │  │  │  ├─ FactList.module.css
 │  │  │  ├─ FactList.tsx
 │  │  │  ├─ Header.module.css
@@ -200,17 +203,19 @@ agriqo
 │  │  ├─ i18n
 │  │  │  ├─ ar.json
 │  │  │  ├─ en.json
+│  │  │  ├─ format.ts
 │  │  │  ├─ fr.json
 │  │  │  ├─ index.ts
 │  │  │  └─ useDirection.ts
 │  │  ├─ main.tsx
 │  │  ├─ mocks
 │  │  │  ├─ cropDetails.ts
-│  │  │  ├─ farm.ts
-│  │  │  ├─ map.ts
+│  │  │  ├─ farmDiagnostic.ts
+│  │  │  ├─ home.ts
 │  │  │  ├─ overview.ts
 │  │  │  ├─ profile.ts
-│  │  │  └─ recommendations.ts
+│  │  │  ├─ recommendations.ts
+│  │  │  └─ weather.ts
 │  │  ├─ pages
 │  │  │  ├─ BuildSmoke.tsx
 │  │  │  ├─ Cover.module.css
@@ -219,8 +224,8 @@ agriqo
 │  │  │  ├─ CropDetail.tsx
 │  │  │  ├─ Farm.module.css
 │  │  │  ├─ Farm.tsx
-│  │  │  ├─ Map.module.css
-│  │  │  ├─ Map.tsx
+│  │  │  ├─ Home.module.css
+│  │  │  ├─ Home.tsx
 │  │  │  ├─ NotFound.module.css
 │  │  │  ├─ NotFound.tsx
 │  │  │  ├─ overview
@@ -228,14 +233,19 @@ agriqo
 │  │  │  │  └─ ClimateChart.tsx
 │  │  │  ├─ Overview.module.css
 │  │  │  ├─ Overview.tsx
+│  │  │  ├─ parcel
+│  │  │  │  ├─ NoParcel.module.css
+│  │  │  │  └─ NoParcel.tsx
 │  │  │  ├─ placeholder
-│  │  │  │  ├─ placeholder.module.css
-│  │  │  │  └─ PlaceholderNotice.tsx
+│  │  │  │  └─ placeholder.module.css
 │  │  │  ├─ Profile.module.css
 │  │  │  ├─ Profile.tsx
 │  │  │  ├─ Recommendations.module.css
-│  │  │  └─ Recommendations.tsx
+│  │  │  ├─ Recommendations.tsx
+│  │  │  ├─ Weather.module.css
+│  │  │  └─ Weather.tsx
 │  │  ├─ router
+│  │  │  ├─ AppLayout.tsx
 │  │  │  ├─ AppTabBar.tsx
 │  │  │  ├─ paths.ts
 │  │  │  ├─ router.ts
@@ -243,6 +253,9 @@ agriqo
 │  │  │  └─ tabs.ts
 │  │  ├─ services
 │  │  │  └─ api.ts
+│  │  ├─ state
+│  │  │  ├─ session.ts
+│  │  │  └─ SessionProvider.tsx
 │  │  ├─ theme
 │  │  │  ├─ cssVariables.ts
 │  │  │  ├─ global.css
@@ -251,11 +264,11 @@ agriqo
 │  │  ├─ types
 │  │  │  ├─ crop.ts
 │  │  │  ├─ cropDetail.ts
-│  │  │  ├─ farm.ts
-│  │  │  ├─ map.ts
+│  │  │  ├─ diagnostic.ts
 │  │  │  ├─ overview.ts
 │  │  │  ├─ profile.ts
-│  │  │  └─ recommendations.ts
+│  │  │  ├─ recommendations.ts
+│  │  │  └─ weather.ts
 │  │  └─ vite-env.d.ts
 │  ├─ tests
 │  │  ├─ assets
@@ -264,10 +277,12 @@ agriqo
 │  │  │  ├─ Badge.test.tsx
 │  │  │  ├─ Button.test.tsx
 │  │  │  ├─ Card.test.tsx
+│  │  │  ├─ DataCard.test.tsx
 │  │  │  ├─ Header.test.tsx
 │  │  │  ├─ Icon.test.tsx
 │  │  │  ├─ PhotoFrame.test.tsx
 │  │  │  ├─ ProgressBar.test.tsx
+│  │  │  ├─ SegmentedControl.test.tsx
 │  │  │  └─ TabBar.test.tsx
 │  │  ├─ i18n
 │  │  │  └─ i18n.test.tsx
@@ -276,12 +291,14 @@ agriqo
 │  │  │  ├─ Cover.test.tsx
 │  │  │  ├─ CropDetail.test.tsx
 │  │  │  ├─ Farm.test.tsx
-│  │  │  ├─ Map.test.tsx
+│  │  │  ├─ Home.test.tsx
 │  │  │  ├─ NotFound.test.tsx
 │  │  │  ├─ Overview.test.tsx
 │  │  │  ├─ Profile.test.tsx
 │  │  │  ├─ Recommendations.test.tsx
-│  │  │  └─ routes.test.tsx
+│  │  │  ├─ routes.test.tsx
+│  │  │  ├─ Weather.test.tsx
+│  │  │  └─ WeatherUnavailable.test.tsx
 │  │  ├─ setup.ts
 │  │  ├─ theme
 │  │  │  ├─ rtl.test.ts

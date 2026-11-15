@@ -1,0 +1,28 @@
+/* Empty state: no parcel picked yet (design.md §7.3 / §7.8). */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-12);
+  text-align: center;
+}
+
+.icon {
+  display: inline-flex;
+  padding: var(--space-12);
+  border-radius: var(--radius-pill);
+  background: var(--green-tint);
+  color: var(--green-900);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-heading);
+  color: var(--text-900);
+}
+
+.text {
+  margin: 0;
+  color: var(--text-600);
+}
