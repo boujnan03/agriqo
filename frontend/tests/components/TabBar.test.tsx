@@ -30,7 +30,6 @@ describe("TabBar (as filled by AppTabBar)", () => {
 
   it("renders a destination without a route as a disabled button", () => {
     renderWithRouter(<AppTabBar />, "/overview");
-    expect(screen.getByRole("button", { name: "Map" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "Profile" })).toBeDisabled();
   });
 });

@@ -17,4 +17,9 @@ export {
 export { PhotoFrame, type PhotoFrameProps } from "./PhotoFrame";
 export { ProgressBar, type ProgressBarProps } from "./ProgressBar";
 export { Screen, type ScreenProps } from "./Screen";
+export {
+  SegmentedControl,
+  type SegmentedControlProps,
+  type SegmentedOption,
+} from "./SegmentedControl";
 export { TabBar, type TabBarProps, type TabItem } from "./TabBar";

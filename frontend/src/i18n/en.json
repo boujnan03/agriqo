@@ -76,5 +76,33 @@
     "why": "Why this choice?",
     "save": "Save this plan",
     "saved": "Plan saved for this session (demo: nothing is actually stored)."
+  },
+  "map": {
+    "title": "Map",
+    "layerSwitcher": "Data layer",
+    "placeholder": "Map: {{layer}} layer",
+    "layers": {
+      "vegetation": "Vegetation",
+      "soilMoisture": "Soil moisture",
+      "rainfall": "Rainfall"
+    },
+    "units": {
+      "vegetation": "NDVI",
+      "soilMoisture": "%",
+      "rainfall": "mm"
+    },
+    "legends": {
+      "vegetation": "Low (yellow) → High (dark green)",
+      "soilMoisture": "Dry (0%) → Saturated (100%)",
+      "rainfall": "Low → High"
+    },
+    "descriptions": {
+      "vegetation": "Shows how healthy the vegetation on your plot is.",
+      "soilMoisture": "Shows how wet the surface soil is.",
+      "rainfall": "Total recent rainfall over the area."
+    },
+    "legend": "Legend",
+    "unit": "Unit",
+    "lastUpdated": "Last updated: {{date}}"
   }
 }

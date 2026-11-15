@@ -11,7 +11,7 @@ export interface AppTab extends Omit<TabItem, "label"> {
 /**
  * The 4 bottom-tab destinations of design.md §6, in order: Home · Insights · Map · Profile.
  * Tab → route mapping per design.md §6 "Tab-to-route mapping": Home → /farm,
- * Insights → /overview. Map and Profile have no page yet, so they have no `to` and render disabled.
+ * Insights → /overview, Map → /map. Profile has no page yet, so it has no `to` and renders disabled.
  */
 export const TAB_ITEMS: readonly AppTab[] = [
   { id: "home", labelKey: "tabs.home", icon: House, to: PATHS.farm },
@@ -21,7 +21,7 @@ export const TAB_ITEMS: readonly AppTab[] = [
     icon: ChartColumn,
     to: PATHS.overview,
   },
-  { id: "map", labelKey: "tabs.map", icon: MapIcon },
+  { id: "map", labelKey: "tabs.map", icon: MapIcon, to: PATHS.map },
   { id: "profile", labelKey: "tabs.profile", icon: User },
 ];
 
