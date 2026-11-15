@@ -117,7 +117,20 @@
     "seeDiagnostic": "See the full diagnostic"
   },
   "weather": {
-    "title": "Weather"
+    "title": "Weather",
+    "today": "Today",
+    "next7": "Next 7 days",
+    "precipitation": "Chance of rain",
+    "humidity": "Humidity",
+    "wind": "Wind",
+    "degrees": "{{value}}°",
+    "conditions": {
+      "sunny": "Sunny",
+      "partlyCloudy": "Partly cloudy",
+      "cloudy": "Cloudy",
+      "showers": "Showers",
+      "rain": "Rain"
+    }
   },
   "dataCard": {
     "source": "Data: {{source}}",
@@ -133,7 +146,8 @@
     "celsius": "{{value}} °C",
     "percent": "{{value}}%",
     "gPerKg": "{{value}} g/kg",
-    "meters": "{{value}} m"
+    "meters": "{{value}} m",
+    "kmh": "{{value}} km/h"
   },
   "data": {
     "texture": {

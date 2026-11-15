@@ -117,7 +117,20 @@
     "seeDiagnostic": "عرض التشخيص الكامل"
   },
   "weather": {
-    "title": "الطقس"
+    "title": "الطقس",
+    "today": "اليوم",
+    "next7": "الأيام السبعة القادمة",
+    "precipitation": "احتمال التساقطات",
+    "humidity": "رطوبة الهواء",
+    "wind": "الرياح",
+    "degrees": "{{value}}°",
+    "conditions": {
+      "sunny": "مشمس",
+      "partlyCloudy": "غائم جزئيًا",
+      "cloudy": "غائم",
+      "showers": "زخات مطرية",
+      "rain": "أمطار"
+    }
   },
   "dataCard": {
     "source": "المصدر: {{source}}",
@@ -133,7 +146,8 @@
     "celsius": "{{value}} °م",
     "percent": "{{value}}%",
     "gPerKg": "{{value}} غ/كغ",
-    "meters": "{{value}} م"
+    "meters": "{{value}} م",
+    "kmh": "{{value}} كم/س"
   },
   "data": {
     "texture": {
