@@ -104,7 +104,9 @@
       "metric": "Metric"
     },
     "unitsSoon": "Other units are coming soon.",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "parcels": "My plots",
+    "parcelsDiagnosed": "Plots diagnosed"
   },
   "home": {
     "title": "Home",

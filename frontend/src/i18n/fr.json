@@ -104,7 +104,9 @@
       "metric": "Métrique"
     },
     "unitsSoon": "D'autres unités seront bientôt disponibles.",
-    "signOut": "Se déconnecter"
+    "signOut": "Se déconnecter",
+    "parcels": "Mes parcelles",
+    "parcelsDiagnosed": "Parcelles diagnostiquées"
   },
   "home": {
     "title": "Accueil",
