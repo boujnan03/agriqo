@@ -10,30 +10,36 @@ describe("TabBar (as filled by AppTabBar)", () => {
   // design.md names the tabs in English: assert them in English.
   inLanguage("en");
 
-  it("shows the 4 design.md destinations, in order", () => {
+  it("shows the 5 design.md destinations, in order", () => {
     renderWithRouter(<AppTabBar />, "/overview");
     const nav = screen.getByRole("navigation", { name: tabBarLabel() });
     const labels = within(nav)
       .getAllByRole("listitem")
       .map((li) => li.textContent);
-    expect(labels).toEqual(["Home", "Insights", "Map", "Profile"]);
+    expect(labels).toEqual(["Home", "Farm", "Insights", "Weather", "Profile"]);
   });
 
   it("marks the tab of the current route as active", () => {
     renderWithRouter(<AppTabBar />, "/farm");
-    expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Farm" })).toHaveAttribute(
       "aria-current",
       "page",
     );
-    expect(screen.getByRole("link", { name: "Insights" })).not.toHaveAttribute(
-      "aria-current",
-    );
+    for (const name of ["Home", "Insights", "Weather", "Profile"]) {
+      expect(screen.getByRole("link", { name })).not.toHaveAttribute(
+        "aria-current",
+      );
+    }
   });
 
-  it("all 4 destinations have a page now: every tab is an enabled link", () => {
+  it("all 5 destinations have a page: every tab is an enabled link to its route", () => {
     renderWithRouter(<AppTabBar />, "/overview");
     const nav = screen.getByRole("navigation", { name: tabBarLabel() });
-    expect(within(nav).getAllByRole("link")).toHaveLength(4);
+    expect(
+      within(nav)
+        .getAllByRole("link")
+        .map((a) => a.getAttribute("href")),
+    ).toEqual(["/home", "/farm", "/overview", "/weather", "/profile"]);
     expect(within(nav).queryByRole("button")).not.toBeInTheDocument();
   });
 
