@@ -64,7 +64,6 @@
     "climateSummary": "Climate summary",
     "avgTemp": "Average temperature",
     "tempValue": "{{value}} °C",
-    "chartTitle": "Temperature and rainfall",
     "soilMoisture": "Soil moisture",
     "healthIndex": "Health index",
     "seeRecommendations": "See my recommendations",
@@ -72,7 +71,6 @@
     "frostDays": "Frost days",
     "healthSoon": "Coming soon (NDVI)",
     "annualRainfall": "Annual rainfall",
-    "chartUnavailable": "Not available yet: the server doesn't send monthly values yet.",
     "climatePeriod": "{{period}} averages",
     "frostPeriod": "From {{start}} to {{end}}",
     "surfaceWetness": "Surface soil moisture"
@@ -129,13 +127,6 @@
     "outsideTitle": "Outside the covered area",
     "outsideText": "Your parcel is outside the covered area (Morocco, north of 29.5° N). Nearest cell ~{{km}} km away.",
     "outsideAction": "Choose another parcel"
-  },
-  "chart": {
-    "ariaLabel": "Temperature and rainfall by month. {{summary}}.",
-    "monthSummary": "{{month}}: {{temp}} °C, {{rainfall}} mm",
-    "separator": "; ",
-    "legendTemp": "Temperature (°C), line",
-    "legendRain": "Rainfall (mm), bars"
   },
   "recommendations": {
     "title": "Recommendations",

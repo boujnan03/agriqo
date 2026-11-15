@@ -64,7 +64,6 @@
     "climateSummary": "ملخّص المناخ",
     "avgTemp": "متوسط درجة الحرارة",
     "tempValue": "{{value}} °م",
-    "chartTitle": "درجة الحرارة والتساقطات",
     "soilMoisture": "رطوبة التربة",
     "healthIndex": "مؤشر الصحة",
     "seeRecommendations": "عرض توصياتي",
@@ -72,7 +71,6 @@
     "frostDays": "أيام الصقيع",
     "healthSoon": "قريبًا (NDVI)",
     "annualRainfall": "التساقطات السنوية",
-    "chartUnavailable": "غير متوفر بعد: الخادم لا يرسل القيم الشهرية حاليًا.",
     "climatePeriod": "متوسطات الفترة {{period}}",
     "frostPeriod": "من {{start}} إلى {{end}}",
     "surfaceWetness": "رطوبة التربة السطحية"
@@ -129,13 +127,6 @@
     "outsideTitle": "خارج المنطقة المغطاة",
     "outsideText": "قطعتك خارج المنطقة المغطاة (المغرب، شمال خط العرض 29.5° شمالًا). أقرب خلية على بعد ~{{km}} كم.",
     "outsideAction": "اختر قطعة أخرى"
-  },
-  "chart": {
-    "ariaLabel": "درجة الحرارة والتساقطات حسب الشهر. {{summary}}.",
-    "monthSummary": "{{month}}: {{temp}} °م، {{rainfall}} ملم",
-    "separator": "؛ ",
-    "legendTemp": "درجة الحرارة (°م)، خط",
-    "legendRain": "التساقطات (ملم)، أعمدة"
   },
   "recommendations": {
     "title": "التوصيات",

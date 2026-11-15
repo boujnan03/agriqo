@@ -1,6 +1,5 @@
 import type { LucideIcon } from "lucide-react";
 import {
-  CalendarRange,
   CloudRain,
   Droplets,
   Leaf,
@@ -18,12 +17,14 @@ import { Icon } from "../components/Icon";
 import { ProgressBar } from "../components/ProgressBar";
 import { RequestStatus } from "../components/RequestStatus";
 import { Screen } from "../components/Screen";
+import { useSeasonZone } from "../hooks/useSeasonZone";
 import { useFormat } from "../i18n/useFormat";
 import { AppTabBar } from "../router/AppTabBar";
 import { PATHS } from "../router/paths";
 import { useSession } from "../state/session";
 import { useParcelData } from "../state/useParcelData";
 import styles from "./Overview.module.css";
+import { SeasonSection } from "./overview/SeasonSection";
 import { NoParcel } from "./parcel/NoParcel";
 import { ParcelCoords } from "./parcel/ParcelCoords";
 
@@ -53,23 +54,26 @@ function Stats({ stats }: { stats: Stat[] }) {
 }
 
 /**
- * Route "/overview" · design.md §7.4 Insights (the Insights tab), for the parcel picked on Home.
- * It reuses the SAME diagnostic response as Farm and Home (one request, shared by the session):
- * climate summary (mean temperature, typical high, annual rainfall), frost days, soil moisture,
- * each as a Data card with its own source and status.
+ * Route "/overview" · design.md §7 template 4 Insights (the Insights tab), for the parcel
+ * picked on Home. Two independent requests, each with its own states (§6 Request states):
+ * - the season types of the parcel's NASA POWER cell (`GET /api/seasons/zone`, SeasonSection):
+ *   latest available season, rain of the last 10 seasons vs the normal (this replaces the old
+ *   "monthly chart not available" placeholder: the backend has no monthly values), the list of
+ *   those seasons, the Field Shift message, root-zone moisture;
+ * - the SAME diagnostic response as Farm and Home (one request, shared by the session): climate
+ *   summary (mean temperature, typical high, annual rainfall), frost days, surface soil
+ *   moisture, each as a Data card with its own source and status.
  *
- * Not shown, because the backend does not send them (never filled with made-up values):
- * - the monthly chart: POWER's monthly climatology is fetched by the backend but not returned
- *   yet, so the chart card says "not available yet" (ClimateChart is kept for when it is);
- * - a minimum temperature: the response has no typical low.
- * The Health Index stays an explicit placeholder (no NDVI source). Then one CTA into
- * Recommendations. Root header + tab bar.
+ * Not shown, because the backend does not send it: a minimum temperature. The Health Index
+ * stays an explicit placeholder (no NDVI source). Then one CTA into Recommendations. Root
+ * header + tab bar.
  */
 export function Overview() {
   const { t } = useTranslation();
   const { maybe } = useFormat();
   const { parcel } = useSession();
   const { result, retry } = useParcelData("diagnostic");
+  const season = useSeasonZone();
 
   const placeholderCard = (
     id: string,
@@ -92,14 +96,25 @@ export function Overview() {
 
   const data = () => {
     if (!parcel || !result) return <NoParcel />;
+    return (
+      <>
+        <ParcelCoords parcel={parcel} />
+        {season.result ? (
+          <SeasonSection result={season.result} retry={season.retry} />
+        ) : null}
+        {diagnostic()}
+      </>
+    );
+  };
+
+  const diagnostic = () => {
+    if (!result) return null;
     if (result.state !== "success") {
       return <RequestStatus state={result.state} onRetry={retry} />;
     }
     const { climate, soil_moisture } = result.data;
     return (
       <>
-        <ParcelCoords parcel={parcel} />
-
         <DataCard
           title={t("overview.climateSummary")}
           icon={Thermometer}
@@ -142,13 +157,6 @@ export function Overview() {
             />
           )}
         </DataCard>
-
-        {placeholderCard(
-          "climate-chart",
-          t("overview.chartTitle"),
-          CalendarRange,
-          t("overview.chartUnavailable"),
-        )}
 
         <DataCard
           title={t("overview.frostDays")}
