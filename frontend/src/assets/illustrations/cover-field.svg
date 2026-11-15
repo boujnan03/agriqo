@@ -1,0 +1,27 @@
+<svg viewBox="0 0 390 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Champ cultivé vu depuis le ciel, avec un satellite">
+  <rect width="390" height="600" fill="#EAF2E7"/>
+  <circle cx="300" cy="90" r="30" fill="#F6E2A0"/>
+  <circle cx="300" cy="90" r="42" fill="none" stroke="#F6E2A0" stroke-width="1.5" opacity="0.5"/>
+  <g stroke="#1E5631" stroke-width="2.4" fill="none" stroke-linecap="round">
+    <path d="M60 150c20-14 46-14 66 2"/>
+    <circle cx="132" cy="150" r="7" fill="#2E6B47" stroke="none"/>
+  </g>
+  <ellipse cx="80" cy="60" rx="34" ry="15" fill="#FFFFFF"/>
+  <ellipse cx="112" cy="50" rx="24" ry="12" fill="#FFFFFF"/>
+  <path d="M0 230c90-26 160 34 260-6 50-20 90 4 130-10V600H0Z" fill="#BFE0C2"/>
+  <path d="M0 300c100-30 170 30 270-8 48-18 80 6 120-6V600H0Z" fill="#9FCB9F"/>
+  <path d="M0 380c90-22 160 24 260-4 50-14 90 6 130-4V600H0Z" fill="#5E9C6A"/>
+  <g stroke="#1E5631" stroke-width="3" stroke-linecap="round" fill="none">
+    <path d="M40 430q-7-18 0-28M40 430q7-18 0-28"/>
+    <path d="M90 450q-7-18 0-28M90 450q7-18 0-28"/>
+    <path d="M150 470q-7-18 0-28M150 470q7-18 0-28"/>
+    <path d="M210 460q-7-18 0-28M210 460q7-18 0-28"/>
+    <path d="M270 480q-7-18 0-28M270 480q7-18 0-28"/>
+    <path d="M330 470q-7-18 0-28M330 470q7-18 0-28"/>
+    <path d="M60 520q-7-18 0-28M60 520q7-18 0-28"/>
+    <path d="M130 535q-7-18 0-28M130 535q7-18 0-28"/>
+    <path d="M200 525q-7-18 0-28M200 525q7-18 0-28"/>
+    <path d="M280 540q-7-18 0-28M280 540q7-18 0-28"/>
+    <path d="M345 525q-7-18 0-28M345 525q7-18 0-28"/>
+  </g>
+</svg>

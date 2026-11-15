@@ -1,6 +1,7 @@
 import { screen } from "@testing-library/react";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
+import farmMap from "../../src/assets/illustrations/farm-map.svg";
 import { farmData } from "../../src/mocks/farm";
 import type { FarmData } from "../../src/types/farm";
 import { inLanguage, renderRoute, tabBarLabel } from "../utils";
@@ -21,7 +22,7 @@ describe("Farm page (design.md §7.2)", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole("img", { name: "Carte : vue satellite de la parcelle" }),
-    ).toBeInTheDocument();
+    ).toHaveAttribute("src", farmMap);
     expect(screen.getByText(farmData.location)).toBeInTheDocument();
     expect(screen.getByText(farmData.soilType)).toBeInTheDocument();
     expect(screen.getByText(farmData.waterAvailability)).toBeInTheDocument();

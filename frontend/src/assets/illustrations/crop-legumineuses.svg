@@ -1,0 +1,32 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Plants de légumineuses en fleurs dans un champ">
+  <rect width="400" height="400" fill="#E9F0DD"/>
+  <rect x="0" y="280" width="400" height="120" fill="#A9CB7E"/>
+  <g stroke="#3F8350" stroke-width="3" stroke-linecap="round" fill="none">
+    <path d="M70 400c-6-70 10-120 30-170"/>
+    <path d="M150 400c4-80 30-130 20-190"/>
+    <path d="M230 400c-8-75 20-120 10-180"/>
+    <path d="M310 400c6-70 -14-125 6-175"/>
+  </g>
+  <g fill="#5E9C6A">
+    <ellipse cx="88" cy="210" rx="16" ry="9" transform="rotate(-30 88 210)"/>
+    <ellipse cx="108" cy="190" rx="16" ry="9" transform="rotate(20 108 190)"/>
+    <ellipse cx="160" cy="195" rx="16" ry="9" transform="rotate(-25 160 195)"/>
+    <ellipse cx="180" cy="175" rx="16" ry="9" transform="rotate(25 180 175)"/>
+    <ellipse cx="232" cy="205" rx="16" ry="9" transform="rotate(-20 232 205)"/>
+    <ellipse cx="250" cy="185" rx="16" ry="9" transform="rotate(30 250 185)"/>
+    <ellipse cx="304" cy="210" rx="16" ry="9" transform="rotate(-28 304 210)"/>
+    <ellipse cx="322" cy="190" rx="16" ry="9" transform="rotate(18 322 190)"/>
+  </g>
+  <g fill="#C97A9E">
+    <circle cx="100" cy="165" r="12"/>
+    <circle cx="172" cy="150" r="12"/>
+    <circle cx="246" cy="160" r="12"/>
+    <circle cx="316" cy="155" r="12"/>
+  </g>
+  <g fill="#E8C9DA">
+    <circle cx="100" cy="165" r="5"/>
+    <circle cx="172" cy="150" r="5"/>
+    <circle cx="246" cy="160" r="5"/>
+    <circle cx="316" cy="155" r="5"/>
+  </g>
+</svg>

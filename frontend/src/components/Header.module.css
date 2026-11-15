@@ -8,6 +8,14 @@
   background: var(--white);
 }
 
+/* AGRIQO mark (square image), sized like a large icon: no logo size in design.md, so the
+   nearest spacing step is used. */
+.logo {
+  flex-shrink: 0;
+  width: var(--space-32);
+  height: var(--space-32);
+}
+
 /* min-width: 0 lets a long title shrink (ellipsis) instead of pushing the switcher off-screen. */
 .title {
   flex: 1;

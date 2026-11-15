@@ -2,6 +2,9 @@ import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
+import cropLegumineuses from "../../src/assets/illustrations/crop-legumineuses.svg";
+import cropOrge from "../../src/assets/illustrations/crop-orge.svg";
+import cropWheat from "../../src/assets/illustrations/crop-wheat.svg";
 import { recommendationsData } from "../../src/mocks/recommendations";
 import type { RecommendationsData } from "../../src/types/recommendations";
 import { inLanguage, renderRoute, tabBarLabel } from "../utils";
@@ -35,6 +38,15 @@ describe("Recommendations page (design.md §7.4)", () => {
         }),
       ).toBeInTheDocument();
     }
+  });
+
+  it("shows each crop's illustration on the featured card and the option cards", () => {
+    renderRoute("/recommendations");
+    const src = (name: string) =>
+      screen.getByRole("img", { name }).getAttribute("src");
+    expect(src("Photo : blé")).toBe(cropWheat); // featured: ble
+    expect(src("Photo : orge")).toBe(cropOrge);
+    expect(src("Photo : légumineuses")).toBe(cropLegumineuses);
   });
 
   it("shows the 3 rotation steps in order", () => {

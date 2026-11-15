@@ -42,12 +42,20 @@
   gap: var(--space-8);
 }
 
+/* White backing keeps the dark-green logo readable over the photo. Card radius (not a pill):
+   the full lockup is wider than tall. */
 .logo {
   display: inline-flex;
   padding: var(--space-12);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-card);
   background: var(--white);
-  color: var(--green-900);
+}
+
+/* Full lockup (3:2 image): height from the spacing scale, width follows the image. */
+.logoImage {
+  display: block;
+  height: calc(var(--space-32) * 3);
+  width: auto;
 }
 
 .title {

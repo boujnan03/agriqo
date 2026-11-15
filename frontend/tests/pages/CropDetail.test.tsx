@@ -2,6 +2,9 @@ import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
+import cropLegumineuses from "../../src/assets/illustrations/crop-legumineuses.svg";
+import cropOrge from "../../src/assets/illustrations/crop-orge.svg";
+import cropWheat from "../../src/assets/illustrations/crop-wheat.svg";
 import { cropDetails } from "../../src/mocks/cropDetails";
 import type { CropId } from "../../src/types/crop";
 import type { CropDetailsById } from "../../src/types/cropDetail";
@@ -11,6 +14,13 @@ const CROPS = (Object.keys(cropDetails) as CropId[]).map((id) => ({
   id,
   ...cropDetails[id],
 }));
+
+/** The illustration file each crop's banner must use (same file as its thumbnail). */
+const BANNER: Record<CropId, string> = {
+  ble: cropWheat,
+  orge: cropOrge,
+  legumineuses: cropLegumineuses,
+};
 
 /** The value (<dd>) of the fact row whose label (<dt>) is `label`. */
 const factValue = (label: string) =>
@@ -38,6 +48,11 @@ describe("Crop detail page (design.md §7.5)", () => {
       screen.getByRole("heading", { level: 2, name: crop.name }),
     ).toBeInTheDocument();
     expect(screen.getByText(crop.description)).toBeInTheDocument();
+    expect(
+      screen.getByRole("img", {
+        name: `Photo : ${crop.name.toLocaleLowerCase("fr")}`,
+      }),
+    ).toHaveAttribute("src", BANNER[crop.id]);
     // Each value checked against its own row (values can repeat, e.g. "Moyen" twice).
     expect(factValue("Besoin en eau")).toHaveTextContent(crop.waterNeed);
     expect(factValue("Meilleure saison")).toHaveTextContent(crop.bestSeason);
