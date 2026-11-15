@@ -9,8 +9,9 @@
     "navLabel": "التنقل الرئيسي",
     "home": "الرئيسية",
     "insights": "التحليلات",
-    "map": "الخريطة",
-    "profile": "الملف الشخصي"
+    "profile": "الملف الشخصي",
+    "farm": "المزرعة",
+    "weather": "الطقس"
   },
   "common": {
     "photo": "صورة: {{name}}"
@@ -27,12 +28,21 @@
   },
   "farm": {
     "title": "مزرعتك",
-    "mapPlaceholder": "خريطة: صورة القطعة الأرضية بالأقمار الصناعية",
-    "detailsTitle": "تفاصيل المزرعة",
-    "soilType": "نوع التربة",
-    "waterAvailability": "توفّر المياه",
-    "currentCrop": "المحصول الحالي",
-    "analyze": "حلِّل مزرعتي"
+    "soil": "التربة",
+    "climate": "المناخ",
+    "humidity": "الرطوبة",
+    "relief": "التضاريس",
+    "texture": "القوام",
+    "ph": "درجة الحموضة (pH)",
+    "organicCarbon": "الكربون العضوي",
+    "tempMean": "متوسط درجة الحرارة",
+    "tempMax": "متوسط الحرارة القصوى",
+    "rainYear": "التساقطات السنوية",
+    "frostDays": "أيام الصقيع في السنة",
+    "surfaceWetness": "رطوبة التربة السطحية",
+    "level": "المستوى",
+    "altitude": "الارتفاع",
+    "slope": "الانحدار"
   },
   "overview": {
     "title": "نظرة عامة على المزرعة",
@@ -44,8 +54,11 @@
     "chartTitle": "درجة الحرارة والتساقطات",
     "soilMoisture": "رطوبة التربة",
     "healthIndex": "مؤشر الصحة",
-    "healthValue": "{{label}} · {{percent}}%",
-    "seeRecommendations": "عرض توصياتي"
+    "seeRecommendations": "عرض توصياتي",
+    "minTemp": "متوسط الحرارة الدنيا",
+    "maxTemp": "متوسط الحرارة القصوى",
+    "frostDays": "أيام الصقيع",
+    "healthSoon": "قريبًا (NDVI)"
   },
   "chart": {
     "ariaLabel": "درجة الحرارة والتساقطات حسب الشهر. {{summary}}.",
@@ -74,34 +87,6 @@
     "save": "احفظ هذه الخطة",
     "saved": "حُفظت الخطة لهذه الجلسة فقط (عرض تجريبي: لا يُحفظ أي شيء)."
   },
-  "map": {
-    "title": "الخريطة",
-    "layerSwitcher": "طبقة البيانات",
-    "placeholder": "خريطة: طبقة {{layer}}",
-    "layers": {
-      "vegetation": "الغطاء النباتي",
-      "soilMoisture": "رطوبة التربة",
-      "rainfall": "التساقطات"
-    },
-    "units": {
-      "vegetation": "NDVI",
-      "soilMoisture": "%",
-      "rainfall": "ملم"
-    },
-    "legends": {
-      "vegetation": "منخفض (أصفر) ← مرتفع (أخضر داكن)",
-      "soilMoisture": "جافة (0%) ← مشبعة (100%)",
-      "rainfall": "منخفضة ← مرتفعة"
-    },
-    "descriptions": {
-      "vegetation": "يُظهر حالة الغطاء النباتي في قطعتك الأرضية.",
-      "soilMoisture": "يشير إلى مستوى رطوبة التربة السطحية.",
-      "rainfall": "مجموع التساقطات الأخيرة في المنطقة."
-    },
-    "legend": "مفتاح الألوان",
-    "unit": "الوحدة",
-    "lastUpdated": "آخر تحديث: {{date}}"
-  },
   "profile": {
     "title": "الملف الشخصي",
     "memberSince": "عضو منذ {{year}}",
@@ -116,6 +101,77 @@
       "metric": "النظام المتري"
     },
     "unitsSoon": "ستتوفر وحدات أخرى قريبًا.",
-    "signOut": "تسجيل الخروج"
+    "signOut": "تسجيل الخروج",
+    "parcels": "قطعي الأرضية",
+    "parcelsDiagnosed": "القطع الأرضية المشخَّصة"
+  },
+  "home": {
+    "title": "الرئيسية",
+    "intro": "المس الخريطة لاختيار قطعتك الأرضية.",
+    "pick": "اختر قطعتك الأرضية على الخريطة",
+    "mapAlt": "خريطة: صورة القطعة الأرضية بالأقمار الصناعية",
+    "selected": "القطعة الأرضية المختارة",
+    "soilTexture": "قوام التربة",
+    "annualRain": "التساقطات السنوية",
+    "seeDiagnostic": "عرض التشخيص الكامل"
+  },
+  "weather": {
+    "title": "الطقس",
+    "today": "اليوم",
+    "next7": "الأيام السبعة القادمة",
+    "precipitation": "احتمال التساقطات",
+    "humidity": "رطوبة الهواء",
+    "wind": "الرياح",
+    "degrees": "{{value}}°",
+    "conditions": {
+      "sunny": "مشمس",
+      "partlyCloudy": "غائم جزئيًا",
+      "cloudy": "غائم",
+      "showers": "زخات مطرية",
+      "rain": "أمطار"
+    }
+  },
+  "dataCard": {
+    "source": "المصدر: {{source}}",
+    "unavailable": "البيانات غير متوفرة",
+    "noDataShort": "لا توجد بيانات",
+    "noData": {
+      "outsideCoverage": "لا توجد بيانات لهذه النقطة: إنها خارج المنطقة التي يغطيها هذا المصدر.",
+      "waterBody": "لا توجد بيانات لهذه النقطة: إنها تقع على مسطح مائي."
+    }
+  },
+  "units": {
+    "mmPerYear": "{{value}} ملم/سنة",
+    "celsius": "{{value}} °م",
+    "percent": "{{value}}%",
+    "gPerKg": "{{value}} غ/كغ",
+    "meters": "{{value}} م",
+    "kmh": "{{value}} كم/س"
+  },
+  "data": {
+    "texture": {
+      "clay": "طينية",
+      "silty_clay": "طينية غرينية",
+      "sandy_clay": "طينية رملية",
+      "clay_loam": "طميية طينية",
+      "silty_clay_loam": "طميية طينية غرينية",
+      "sandy_clay_loam": "طميية طينية رملية",
+      "loam": "طميية",
+      "silt_loam": "طميية غرينية",
+      "sandy_loam": "طميية رملية",
+      "silt": "غرينية",
+      "loamy_sand": "رملية طميية",
+      "sand": "رملية"
+    },
+    "humidityLevel": {
+      "sec": "جافة",
+      "moyen": "متوسطة",
+      "humide": "رطبة"
+    }
+  },
+  "parcel": {
+    "noneTitle": "لم يتم اختيار أي قطعة أرضية بعد",
+    "noneText": "اختر أولًا قطعتك الأرضية على خريطة الصفحة الرئيسية.",
+    "choose": "اختيار قطعتي الأرضية"
   }
 }

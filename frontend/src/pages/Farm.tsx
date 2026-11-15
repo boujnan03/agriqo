@@ -1,77 +1,141 @@
-import { Droplets, Layers, MapPin, Wheat } from "lucide-react";
+import { Droplets, Layers, MapPin, Mountain, Thermometer } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-import { illustrations, photo } from "../assets/images";
-import { Badge } from "../components/Badge";
-import { Button } from "../components/Button";
-import { Card } from "../components/Card";
-import { type Fact, FactList } from "../components/FactList";
+import { DataCard } from "../components/DataCard";
+import { FactList } from "../components/FactList";
 import { Header } from "../components/Header";
 import { Icon } from "../components/Icon";
-import { PhotoFrame } from "../components/PhotoFrame";
 import { Screen } from "../components/Screen";
-import { farmData } from "../mocks/farm";
+import { formatNumber } from "../i18n/format";
+import { farmDiagnostic } from "../mocks/farmDiagnostic";
 import { AppTabBar } from "../router/AppTabBar";
-import { PATHS } from "../router/paths";
+import { useSession } from "../state/session";
 import styles from "./Farm.module.css";
+import { NoParcel } from "./parcel/NoParcel";
 
 /**
- * Route "/farm" · design.md §7.2 Map/Data-entry: map banner, icon-labeled fact rows, one
- * primary CTA. Root header (title only) + tab bar. Data comes from the mock fixture for now.
+ * Route "/farm" · design.md §7.3 Farm (the Farm tab, the full diagnostic): four Data cards
+ * (§6), Sol · Climat · Humidité · Relief, for the parcel picked on Home. Data only, no photo
+ * banner. Root header + tab bar (Farm active). Before any pick: the short empty state that
+ * points back to Home. Data comes from the mock fixture for now; each card shows its source
+ * and its own status, so a failed source never borrows a value from anywhere.
  */
 export function Farm() {
-  const { t } = useTranslation();
-  const facts: Fact[] = [
-    {
-      label: t("farm.soilType"),
-      value: farmData.soilType,
-      icon: Layers,
-      tone: "soil",
-    },
-    {
-      label: t("farm.waterAvailability"),
-      value: farmData.waterAvailability,
-      icon: Droplets,
-      tone: "water",
-    },
-    {
-      label: t("farm.currentCrop"),
-      value: farmData.currentCrop,
-      icon: Wheat,
-      tone: "plant",
-    },
-  ];
+  const { t, i18n } = useTranslation();
+  const { parcelPicked } = useSession();
+  const { location, soil, climate, humidity, relief } = farmDiagnostic;
+  const num = (value: number) => formatNumber(value, i18n.language);
 
   return (
     <Screen header={<Header title={t("farm.title")} />} tabBar={<AppTabBar />}>
-      <div className={styles.stack}>
-        {/* Pin + chip are real UI: they stay on top of the real map image later (§8). */}
-        <div className={styles.map}>
-          <PhotoFrame
-            slot="farm"
-            {...photo(illustrations.farm, t("farm.mapPlaceholder"))}
-          />
-          <div className={styles.location}>
-            <span className={styles.pin}>
-              <Icon icon={MapPin} />
-            </span>
-            <Badge>{farmData.location}</Badge>
-          </div>
+      {parcelPicked ? (
+        <div className={styles.stack}>
+          <p className={styles.place}>
+            <Icon icon={MapPin} />
+            {location.name}
+          </p>
+
+          <DataCard
+            title={t("farm.soil")}
+            icon={Layers}
+            tone="soil"
+            result={soil}
+          >
+            {(s) => (
+              <FactList
+                facts={[
+                  {
+                    label: t("farm.texture"),
+                    value: t(`data.texture.${s.texture_class}`),
+                  },
+                  { label: t("farm.ph"), value: num(s.ph) },
+                  {
+                    label: t("farm.organicCarbon"),
+                    value: t("units.gPerKg", {
+                      value: num(s.organic_carbon_g_kg),
+                    }),
+                  },
+                ]}
+              />
+            )}
+          </DataCard>
+
+          <DataCard
+            title={t("farm.climate")}
+            icon={Thermometer}
+            tone="neutral"
+            result={climate}
+          >
+            {(c) => (
+              <FactList
+                facts={[
+                  {
+                    label: t("farm.tempMean"),
+                    value: t("units.celsius", { value: num(c.temp_mean_c) }),
+                  },
+                  {
+                    label: t("farm.tempMax"),
+                    value: t("units.celsius", { value: num(c.temp_max_c) }),
+                  },
+                  {
+                    label: t("farm.rainYear"),
+                    value: t("units.mmPerYear", {
+                      value: num(c.rain_mm_year),
+                    }),
+                  },
+                  { label: t("farm.frostDays"), value: num(c.frost_days) },
+                ]}
+              />
+            )}
+          </DataCard>
+
+          <DataCard
+            title={t("farm.humidity")}
+            icon={Droplets}
+            tone="water"
+            result={humidity}
+          >
+            {(h) => (
+              <FactList
+                facts={[
+                  {
+                    label: t("farm.surfaceWetness"),
+                    value: t("units.percent", { value: num(h.value_pct) }),
+                  },
+                  {
+                    label: t("farm.level"),
+                    value: t(`data.humidityLevel.${h.level}`),
+                  },
+                ]}
+              />
+            )}
+          </DataCard>
+
+          <DataCard
+            title={t("farm.relief")}
+            icon={Mountain}
+            tone="neutral"
+            result={relief}
+          >
+            {(r) => (
+              <FactList
+                facts={[
+                  {
+                    label: t("farm.altitude"),
+                    value: t("units.meters", { value: num(r.altitude_m) }),
+                  },
+                  {
+                    label: t("farm.slope"),
+                    value: t("units.percent", { value: num(r.slope_pct) }),
+                  },
+                ]}
+              />
+            )}
+          </DataCard>
         </div>
-
-        <section className={styles.section} aria-labelledby="farm-details">
-          <h2 id="farm-details" className={styles.sectionTitle}>
-            {t("farm.detailsTitle")}
-          </h2>
-          <Card>
-            <FactList facts={facts} />
-          </Card>
-        </section>
-
-        <Button to={PATHS.overview} withArrow>
-          {t("farm.analyze")}
-        </Button>
-      </div>
+      ) : (
+        <NoParcel />
+      )}
     </Screen>
   );
 }

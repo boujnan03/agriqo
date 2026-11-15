@@ -1,0 +1,52 @@
+/* design.md §6 Data card: standard card + source caption + ok / indisponible / pas de données. */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  margin: 0;
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-heading);
+  color: var(--text-900);
+}
+
+.icon {
+  display: inline-flex;
+}
+
+/* §2: the --icon-* colors only for soil / water / crop data; anything else is --green-700. */
+.soil {
+  color: var(--icon-soil);
+}
+
+.water {
+  color: var(--icon-water);
+}
+
+.plant {
+  color: var(--icon-plant);
+}
+
+.neutral {
+  color: var(--green-700);
+}
+
+/* indisponible / pas de données: plain muted text, never a blank or a zero. */
+.missing {
+  margin: 0;
+  padding-block: var(--space-8);
+  color: var(--text-600);
+}
+
+/* Source caption: §3 factual caption size (the farmer may rely on it), --text-600. */
+.source {
+  margin: 0;
+  font-size: var(--font-size-caption-factual);
+  font-weight: var(--font-weight-caption);
+  color: var(--text-600);
+}
