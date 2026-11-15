@@ -31,12 +31,21 @@
   },
   "farm": {
     "title": "مزرعتك",
-    "mapPlaceholder": "خريطة: صورة القطعة الأرضية بالأقمار الصناعية",
-    "detailsTitle": "تفاصيل المزرعة",
-    "soilType": "نوع التربة",
-    "waterAvailability": "توفّر المياه",
-    "currentCrop": "المحصول الحالي",
-    "analyze": "حلِّل مزرعتي"
+    "soil": "التربة",
+    "climate": "المناخ",
+    "humidity": "الرطوبة",
+    "relief": "التضاريس",
+    "texture": "القوام",
+    "ph": "درجة الحموضة (pH)",
+    "organicCarbon": "الكربون العضوي",
+    "tempMean": "متوسط درجة الحرارة",
+    "tempMax": "متوسط الحرارة القصوى",
+    "rainYear": "التساقطات السنوية",
+    "frostDays": "أيام الصقيع في السنة",
+    "surfaceWetness": "رطوبة التربة السطحية",
+    "level": "المستوى",
+    "altitude": "الارتفاع",
+    "slope": "الانحدار"
   },
   "overview": {
     "title": "نظرة عامة على المزرعة",
@@ -110,10 +119,18 @@
   "dataCard": {
     "source": "المصدر: {{source}}",
     "unavailable": "البيانات غير متوفرة",
-    "noDataShort": "لا توجد بيانات"
+    "noDataShort": "لا توجد بيانات",
+    "noData": {
+      "outsideCoverage": "لا توجد بيانات لهذه النقطة: إنها خارج المنطقة التي يغطيها هذا المصدر.",
+      "waterBody": "لا توجد بيانات لهذه النقطة: إنها تقع على مسطح مائي."
+    }
   },
   "units": {
-    "mmPerYear": "{{value}} ملم/سنة"
+    "mmPerYear": "{{value}} ملم/سنة",
+    "celsius": "{{value}} °م",
+    "percent": "{{value}}%",
+    "gPerKg": "{{value}} غ/كغ",
+    "meters": "{{value}} م"
   },
   "data": {
     "texture": {
@@ -129,6 +146,16 @@
       "silt": "غرينية",
       "loamy_sand": "رملية طميية",
       "sand": "رملية"
+    },
+    "humidityLevel": {
+      "sec": "جافة",
+      "moyen": "متوسطة",
+      "humide": "رطبة"
     }
+  },
+  "parcel": {
+    "noneTitle": "لم يتم اختيار أي قطعة أرضية بعد",
+    "noneText": "اختر أولًا قطعتك الأرضية على خريطة الصفحة الرئيسية.",
+    "choose": "اختيار قطعتي الأرضية"
   }
 }
