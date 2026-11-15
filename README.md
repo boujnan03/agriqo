@@ -128,16 +128,19 @@ curl -X POST http://localhost:8000/api/parcel/diagnostic \
 curl "http://localhost:8000/api/weather/forecast?lat=32.40&lon=-6.45"
 ```
 A real response from that call is saved in
-[`docs/example_diagnostic_response.json`](docs/example_diagnostic_response.json).
+[`docs/example_diagnostic_response.json`](docs/example_diagnostic_response.json). It was
+captured without a working OpenTopography key, so `terrain` shows the real `indisponible`
+answer. With a key set, `terrain` returns `altitude` and `slope_pct`.
 
 > The city centre (32.34, -6.36), the spec's own "Tadla" example, returns **no soil data**:
 > SoilGrids masks urban areas. Use a point in the fields around it.
 
 **Known data caveats** (also in each block's `note`):
 - SoilGrids values are ~250 m model estimates, not a lab analysis.
-- POWER is ~50 km. `temp_max_c` is the highest hourly temperature over the 2001–2025
-  climatology period, not a typical summer high. `frost_days` counts the days with
-  T2M_MIN < 0 °C over the last 12 months of daily data.
+- POWER is ~50 km. `temp_max_c` is a typical maximum, not a record: the mean of the 12
+  monthly `T2M_MAX_AVG` values (average daily high per month, 2001–2025). POWER's
+  `T2M_MAX` would give the hottest single hour of the whole period. `frost_days` counts
+  the days with T2M_MIN < 0 °C over the last 12 months of daily data.
 - The soil-moisture labels (`sec` < 0.30 ≤ `moyen` < 0.60 ≤ `humide`, on GWETTOP) are a
   project choice that needs validation.
 - SoilGrids can be slow: responses from 6 s to 40 s were seen on 2026-11-15, so it may show

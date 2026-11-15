@@ -18,9 +18,9 @@
   "climate": {
     "status": "ok",
     "source": "NASA POWER",
-    "note": "Résolution ~50 km : deux parcelles proches ont le même climat. temp_max_c = température horaire la plus élevée sur la période de climatologie ; frost_days = jours avec T2M_MIN < 0 °C sur les 12 derniers mois (données journalières).",
+    "note": "Résolution ~50 km : deux parcelles proches ont le même climat. temp_max_c = moyenne des 12 mois de la température maximale journalière moyenne (T2M_MAX_AVG) sur la période de climatologie : un maximum habituel, pas un record ; frost_days = jours avec T2M_MIN < 0 °C sur les 12 derniers mois (données journalières).",
     "temp_mean_c": 17.9,
-    "temp_max_c": 44.1,
+    "temp_max_c": 31.5,
     "rain_mm_year": 526,
     "frost_days": 4,
     "climatology_period": "2001-2025",
@@ -39,10 +39,8 @@
     "date": "2026-11-12"
   },
   "terrain": {
-    "status": "ok",
+    "status": "indisponible",
     "source": "OpenTopography",
-    "note": "SRTM GL1 (~30 m). Pente moyenne sur ~500 m autour du point.",
-    "altitude": 459,
-    "slope_pct": 3.3
+    "error": "http_401"
   }
 }

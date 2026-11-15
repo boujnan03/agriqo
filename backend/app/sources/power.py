@@ -5,8 +5,11 @@ Verified 2026-11-15 against https://power.larc.nasa.gov/docs/services/api/ and l
   daily keys are YYYYMMDD; header.fill_value is -999 (= missing).
 - PRECTOTCORR is in mm/day (climatology too: ANN is the mean daily rate).
 - climatology T2M_MAX / T2M_MIN are, per POWER's parameter manager, "the maximum / minimum
-  HOURLY air temperature ... in the period of interest", i.e. extremes over the whole
-  climatology period (currently 2001-2025), NOT a typical annual high/low.
+  HOURLY air temperature ... in the period of interest": RECORDS over the whole climatology
+  period (currently 2001-2025), monthly values included (JUL = hottest hour of any July).
+  T2M_MAX_AVG is "the average of the daily maximum ... in the period of interest": the
+  typical daily high of each month. Its ANN is NOT the mean of its months (42.5 vs 31.5
+  at 32.4,-6.45), so the annual figure is computed here with `mean_of_months`.
 - daily data lags real time by a few days (trailing days come back as -999).
 Resolution ~0.5° x 0.625° (~50 km): neighbouring parcels share the same values.
 """
@@ -20,7 +23,15 @@ import httpx
 
 from app import config
 
-CLIMATOLOGY_PARAMS = ["T2M", "T2M_MAX", "T2M_MIN", "PRECTOTCORR", "RH2M", "ALLSKY_SFC_SW_DWN"]
+CLIMATOLOGY_PARAMS = [
+    "T2M",
+    "T2M_MAX",
+    "T2M_MAX_AVG",
+    "T2M_MIN",
+    "PRECTOTCORR",
+    "RH2M",
+    "ALLSKY_SFC_SW_DWN",
+]
 DAILY_PARAMS = ["GWETTOP", "GWETROOT", "T2M_MAX", "T2M_MIN", "PRECTOTCORR"]
 MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
 
@@ -48,6 +59,19 @@ class Climatology:
     # chart; not part of the diagnostic response yet (only annual figures are).
     monthly: dict[str, dict[str, float | None]]
     period: str | None  # e.g. "2001-2025", from the response header
+
+
+def mean_of_months(clim: Climatology, param: str) -> float | None:
+    """Mean of the 12 monthly climatology values of `param`.
+
+    None unless all 12 months are present: a mean over fewer months would be biased toward
+    the seasons that happen to be available, so it is reported as missing instead.
+    """
+    months = clim.monthly.get(param, {})
+    values = [months.get(m) for m in MONTHS]
+    if any(v is None for v in values):
+        return None
+    return sum(values) / len(values)
 
 
 @dataclass(frozen=True)
