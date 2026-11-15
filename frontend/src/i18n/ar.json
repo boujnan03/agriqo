@@ -45,7 +45,19 @@
     "slope": "الانحدار",
     "soilCaveat": "تقدير (حوالي 250 م)، وليس تحليلًا مخبريًا.",
     "climateCaveat": "متوسطات إقليمية (حوالي 50 كم): القطع المتجاورة لها نفس المناخ.",
-    "moistureCaveat": "قيمة يوم {{date}} (تتأخر البيانات ببضعة أيام)."
+    "moistureCaveat": "قيمة يوم {{date}} (تتأخر البيانات ببضعة أيام).",
+    "waterTitle": "الماء والمنطقة المناخية",
+    "waterLabel": "السقي",
+    "water": {
+      "pluvial": "بعلية",
+      "irrigue": "مسقية"
+    },
+    "waterNote": "اختيار تُدخله أنت (ليس من بيانات NASA): يكيّف النصائح، لا البيانات.",
+    "zoneLabel": "المنطقة المناخية NASA POWER:",
+    "zoneDistance": "~{{km}} كم",
+    "zoneLoading": "جارٍ البحث عن المنطقة المناخية…",
+    "zoneError": "المنطقة المناخية غير متاحة حاليًا.",
+    "zoneOutside": "خارج المنطقة التي يغطيها نموذج المواسم."
   },
   "overview": {
     "title": "نظرة عامة على المزرعة",
@@ -64,6 +76,59 @@
     "climatePeriod": "متوسطات الفترة {{period}}",
     "frostPeriod": "من {{start}} إلى {{end}}",
     "surfaceWetness": "رطوبة التربة السطحية"
+  },
+  "seasons": {
+    "types": {
+      "dry_hot": {
+        "name": "جافة وحارة",
+        "short": "جافة",
+        "nameNoHeat": "جافة"
+      },
+      "normal_cool": {
+        "name": "عادية وباردة نسبيًا",
+        "short": "عادية باردة",
+        "nameNoHeat": "عادية"
+      },
+      "normal_hot": {
+        "name": "عادية وحارة",
+        "short": "عادية حارة",
+        "nameNoHeat": "عادية"
+      },
+      "very_wet_cool": {
+        "name": "ممطرة جدًا وباردة نسبيًا",
+        "short": "ممطرة جدًا",
+        "nameNoHeat": "ممطرة جدًا"
+      }
+    },
+    "lastTitle": "آخر موسم متاح: {{season}}",
+    "rain": "الأمطار",
+    "rainValue": "{{value}} مم · المعدل العادي {{normal}} مم",
+    "pctLabel": "الأمطار مقارنة بالمعدل العادي",
+    "hotDays": "أيام فوق 30 °م (مارس–ماي)",
+    "hotDaysValue": "{{value}} · المعدل العادي {{normal}}",
+    "borderline": "تصنيف حدّي: هذا الموسم قريب من نوعين.",
+    "nearby": "منطقة مجاورة",
+    "nearbyNote": "منطقة مجاورة: قطعتك خارج الخلايا المغطاة مباشرةً، وهذه بيانات أقرب خلية (~{{km}} كم).",
+    "chartTitle": "أمطار آخر 10 مواسم",
+    "chart": {
+      "ariaLabel": "الأمطار حسب الموسم: {{summary}}. المعدل العادي: {{normal}} مم.",
+      "item": "{{season}}: {{value}} مم",
+      "separator": "؛ ",
+      "legendBars": "أمطار الموسم (مم)، أعمدة",
+      "legendNormal": "المعدل العادي: {{value}} مم، خط"
+    },
+    "historyTitle": "آخر 10 مواسم في منطقتك",
+    "dryCount": "المواسم الجافة والحارة: {{dry}} من أصل {{total}}",
+    "historyValue": "{{type}} · {{pct}} %",
+    "historyBorderline": "{{type}} · {{pct}} % · حدّي",
+    "fieldShift": "مقارنةً بفترة {{refFrom}}–{{refTo}}: المواسم الجافة والحارة {{recent}} من أصل {{recentTotal}} منذ {{since}}، مقابل {{before}} من أصل {{beforeTotal}} من {{beforeFrom}} إلى {{beforeTo}}.",
+    "moistureTitle": "رطوبة منطقة الجذور (أكتوبر–ماي)",
+    "moistureLabel": "موسم {{season}}",
+    "moistureNormal": "المعدل العادي: {{value}} %",
+    "source": "المصدر: NASA POWER، المعدل العادي {{from}}–{{to}} لمنطقتك (~50 كم).",
+    "outsideTitle": "خارج المنطقة المغطاة",
+    "outsideText": "قطعتك خارج المنطقة المغطاة (المغرب، شمال خط العرض 29.5° شمالًا). أقرب خلية على بعد ~{{km}} كم.",
+    "outsideAction": "اختر قطعة أخرى"
   },
   "chart": {
     "ariaLabel": "درجة الحرارة والتساقطات حسب الشهر. {{summary}}.",

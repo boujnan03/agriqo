@@ -45,7 +45,19 @@
     "slope": "Pente",
     "soilCaveat": "Estimation (~250 m), pas une analyse de laboratoire.",
     "climateCaveat": "Moyennes régionales (~50 km) : des parcelles voisines ont le même climat.",
-    "moistureCaveat": "Valeur du {{date}} (les données ont quelques jours de retard)."
+    "moistureCaveat": "Valeur du {{date}} (les données ont quelques jours de retard).",
+    "waterTitle": "Eau et zone climatique",
+    "waterLabel": "Irrigation",
+    "water": {
+      "pluvial": "Pluviale",
+      "irrigue": "Irriguée"
+    },
+    "waterNote": "Choix renseigné par vous (pas une donnée NASA) : il adapte les conseils, pas les données.",
+    "zoneLabel": "Zone climatique NASA POWER :",
+    "zoneDistance": "~{{km}} km",
+    "zoneLoading": "Recherche de la zone climatique…",
+    "zoneError": "Zone climatique non disponible pour le moment.",
+    "zoneOutside": "Hors de la zone couverte par le modèle de saisons."
   },
   "overview": {
     "title": "Aperçu de la ferme",
@@ -64,6 +76,59 @@
     "climatePeriod": "Moyennes {{period}}",
     "frostPeriod": "Du {{start}} au {{end}}",
     "surfaceWetness": "Humidité du sol en surface"
+  },
+  "seasons": {
+    "types": {
+      "dry_hot": {
+        "name": "Sèche et chaude",
+        "short": "Sèche",
+        "nameNoHeat": "Sèche"
+      },
+      "normal_cool": {
+        "name": "Normale et fraîche",
+        "short": "Normale fraîche",
+        "nameNoHeat": "Normale"
+      },
+      "normal_hot": {
+        "name": "Normale et chaude",
+        "short": "Normale chaude",
+        "nameNoHeat": "Normale"
+      },
+      "very_wet_cool": {
+        "name": "Très humide et fraîche",
+        "short": "Très humide",
+        "nameNoHeat": "Très humide"
+      }
+    },
+    "lastTitle": "Dernière saison disponible : {{season}}",
+    "rain": "Pluie",
+    "rainValue": "{{value}} mm · normale {{normal}} mm",
+    "pctLabel": "Pluie par rapport à la normale",
+    "hotDays": "Jours > 30 °C (mars–mai)",
+    "hotDaysValue": "{{value}} · normale {{normal}}",
+    "borderline": "Classement limite : cette saison est proche de deux types.",
+    "nearby": "Zone voisine",
+    "nearbyNote": "Zone voisine : votre parcelle est juste hors des cellules couvertes ; ces données sont celles de la cellule la plus proche (~{{km}} km).",
+    "chartTitle": "Pluie des 10 dernières saisons",
+    "chart": {
+      "ariaLabel": "Pluie par saison : {{summary}}. Normale : {{normal}} mm.",
+      "item": "{{season}} : {{value}} mm",
+      "separator": " ; ",
+      "legendBars": "Pluie de la saison (mm), barres",
+      "legendNormal": "Normale : {{value}} mm, ligne"
+    },
+    "historyTitle": "Vos 10 dernières saisons",
+    "dryCount": "Saisons sèches et chaudes : {{dry}} sur {{total}}",
+    "historyValue": "{{type}} · {{pct}} %",
+    "historyBorderline": "{{type}} · {{pct}} % · limite",
+    "fieldShift": "Par rapport à {{refFrom}}–{{refTo}} : saisons sèches et chaudes {{recent}} sur {{recentTotal}} depuis {{since}}, contre {{before}} sur {{beforeTotal}} de {{beforeFrom}} à {{beforeTo}}.",
+    "moistureTitle": "Humidité de la zone racinaire (oct.–mai)",
+    "moistureLabel": "Saison {{season}}",
+    "moistureNormal": "Normale : {{value}} %",
+    "source": "Source : NASA POWER, normale {{from}}–{{to}} de votre zone (~50 km).",
+    "outsideTitle": "Hors de la zone couverte",
+    "outsideText": "Votre parcelle est hors de la zone couverte (Maroc, au nord de 29,5° N). Cellule la plus proche à ~{{km}} km.",
+    "outsideAction": "Choisir une autre parcelle"
   },
   "chart": {
     "ariaLabel": "Température et précipitations par mois. {{summary}}.",

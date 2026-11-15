@@ -1,0 +1,49 @@
+/* Farm's water-regime + climate-zone card (design.md §7 template 3): same section rhythm as a
+   Data card. General data: icons in --green-700, never the --icon-* data colors. */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  margin: 0;
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-heading);
+  color: var(--text-900);
+}
+
+.icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--green-700);
+}
+
+/* "Entered by you, not NASA data": a factual caption (§3 factual caption size, --text-600). */
+.note {
+  margin: 0;
+  color: var(--text-600);
+  font-size: var(--font-size-caption-factual);
+}
+
+.line {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  margin: 0;
+  color: var(--text-600);
+}
+
+.zone {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.muted {
+  color: var(--text-600);
+}

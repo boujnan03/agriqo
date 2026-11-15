@@ -45,7 +45,19 @@
     "slope": "Slope",
     "soilCaveat": "Estimate (~250 m), not a lab analysis.",
     "climateCaveat": "Regional averages (~50 km): nearby plots share the same climate.",
-    "moistureCaveat": "Value from {{date}} (data lags a few days)."
+    "moistureCaveat": "Value from {{date}} (data lags a few days).",
+    "waterTitle": "Water and climate zone",
+    "waterLabel": "Irrigation",
+    "water": {
+      "pluvial": "Rain-fed",
+      "irrigue": "Irrigated"
+    },
+    "waterNote": "Entered by you (not NASA data): it only changes the advice.",
+    "zoneLabel": "NASA POWER climate zone:",
+    "zoneDistance": "~{{km}} km",
+    "zoneLoading": "Finding the climate zone…",
+    "zoneError": "Climate zone not available right now.",
+    "zoneOutside": "Outside the area covered by the season model."
   },
   "overview": {
     "title": "Farm overview",
@@ -64,6 +76,59 @@
     "climatePeriod": "{{period}} averages",
     "frostPeriod": "From {{start}} to {{end}}",
     "surfaceWetness": "Surface soil moisture"
+  },
+  "seasons": {
+    "types": {
+      "dry_hot": {
+        "name": "Dry and hot",
+        "short": "Dry",
+        "nameNoHeat": "Dry"
+      },
+      "normal_cool": {
+        "name": "Normal and cool",
+        "short": "Normal, cool",
+        "nameNoHeat": "Normal"
+      },
+      "normal_hot": {
+        "name": "Normal and warm",
+        "short": "Normal, warm",
+        "nameNoHeat": "Normal"
+      },
+      "very_wet_cool": {
+        "name": "Very wet and cool",
+        "short": "Very wet",
+        "nameNoHeat": "Very wet"
+      }
+    },
+    "lastTitle": "Latest available season: {{season}}",
+    "rain": "Rainfall",
+    "rainValue": "{{value}} mm · normal {{normal}} mm",
+    "pctLabel": "Rainfall vs normal",
+    "hotDays": "Days > 30 °C (Mar–May)",
+    "hotDaysValue": "{{value}} · normal {{normal}}",
+    "borderline": "Borderline classification: this season is close to two types.",
+    "nearby": "Nearby area",
+    "nearbyNote": "Nearby area: your parcel is just outside the covered cells; these are the nearest cell's data (~{{km}} km).",
+    "chartTitle": "Rainfall of the last 10 seasons",
+    "chart": {
+      "ariaLabel": "Rainfall by season: {{summary}}. Normal: {{normal}} mm.",
+      "item": "{{season}}: {{value}} mm",
+      "separator": "; ",
+      "legendBars": "Season rainfall (mm), bars",
+      "legendNormal": "Normal: {{value}} mm, line"
+    },
+    "historyTitle": "Your last 10 seasons",
+    "dryCount": "Dry and hot seasons: {{dry}} of {{total}}",
+    "historyValue": "{{type}} · {{pct}} %",
+    "historyBorderline": "{{type}} · {{pct}} % · borderline",
+    "fieldShift": "Compared with {{refFrom}}–{{refTo}}: dry and hot seasons {{recent}} of {{recentTotal}} since {{since}}, versus {{before}} of {{beforeTotal}} from {{beforeFrom}} to {{beforeTo}}.",
+    "moistureTitle": "Root-zone soil moisture (Oct–May)",
+    "moistureLabel": "Season {{season}}",
+    "moistureNormal": "Normal: {{value}} %",
+    "source": "Source: NASA POWER, {{from}}–{{to}} normal for your area (~50 km).",
+    "outsideTitle": "Outside the covered area",
+    "outsideText": "Your parcel is outside the covered area (Morocco, north of 29.5° N). Nearest cell ~{{km}} km away.",
+    "outsideAction": "Choose another parcel"
   },
   "chart": {
     "ariaLabel": "Temperature and rainfall by month. {{summary}}.",
