@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import coverField from "../../src/assets/illustrations/cover-field.jpg";
 import logoFull from "../../src/assets/logo/logo-full.png";
+import i18n, { LANGUAGES } from "../../src/i18n";
 import { Cover } from "../../src/pages/Cover";
 import {
   inLanguage,
@@ -15,26 +16,28 @@ describe("Cover page (design.md §7.1)", () => {
   // French copy asserted below: render in French (the app default is Arabic).
   inLanguage("fr");
 
-  it("renders the app name, tagline and cover photo, with no separate logo", () => {
+  it("renders the tagline and cover photo, with no separate logo or name", () => {
     const { container } = renderWithRouter(<Cover />);
-    expect(
-      screen.getByRole("heading", { level: 1, name: "FieldShift AI" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        "Rotation de cultures intelligente pour un avenir durable.",
-      ),
-    ).toBeInTheDocument();
+    const tagline = screen.getByText(
+      "Rotation de cultures intelligente pour un avenir durable.",
+    );
     // Real asset, not the old labelled placeholder: the label is now the image's alt text.
     expect(
       screen.getByRole("img", { name: "Photo : champ de blé" }),
     ).toHaveAttribute("src", coverField);
     // The logo is baked into the photo: no separate logo image (or its white backing),
-    // so the photo is the only image and the heading is the brand block's first child.
+    // and no "FieldShift AI" heading, so the photo is the only image and the tagline is
+    // the brand block's only child (nothing above it).
     expect(container.querySelector(`img[src="${logoFull}"]`)).toBeNull();
     expect(container.querySelectorAll("img")).toHaveLength(1);
-    const heading = screen.getByRole("heading", { level: 1 });
-    expect(heading.parentElement?.firstElementChild).toBe(heading);
+    expect(screen.queryByRole("heading")).not.toBeInTheDocument();
+    expect(tagline.parentElement?.children).toHaveLength(1);
+  });
+
+  it.each(LANGUAGES)("shows no 'FieldShift AI' text in %s", async (lng) => {
+    await i18n.changeLanguage(lng);
+    const { container } = renderWithRouter(<Cover />);
+    expect(container.textContent).not.toContain("FieldShift");
   });
 
   it("'Commencer' leads to the farm screen; 'Se connecter' is present", () => {
@@ -51,9 +54,7 @@ describe("Cover page (design.md §7.1)", () => {
 
   it("is served at / with no header and no tab bar", () => {
     renderRoute("/");
-    expect(
-      screen.getByRole("heading", { level: 1, name: "FieldShift AI" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Commencer" })).toBeInTheDocument();
     expect(screen.queryByRole("banner")).not.toBeInTheDocument();
     expect(
       screen.queryByRole("navigation", { name: tabBarLabel() }),

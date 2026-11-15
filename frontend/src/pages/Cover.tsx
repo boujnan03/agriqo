@@ -9,8 +9,8 @@ import styles from "./Cover.module.css";
 
 /**
  * Route "/" · design.md §7.1 Cover (Welcome/onboarding): full-bleed photo (no radius, §6
- * bottom gradient), title + tagline, primary button + secondary link near the bottom.
- * The AGRIQO logo is part of the photo itself (in the sky), so no separate logo element here.
+ * bottom gradient), tagline, primary button + secondary link near the bottom.
+ * The AGRIQO logo is part of the photo itself (in the sky), so no separate logo or name here.
  * No header, no tab bar, so the §9a language switcher sits on the photo's top end corner.
  */
 export function Cover() {
@@ -24,7 +24,6 @@ export function Cover() {
       />
       <div className={styles.content}>
         <div className={styles.brand}>
-          <h1 className={styles.title}>{t("app.name")}</h1>
           <p className={styles.tagline}>{t("cover.tagline")}</p>
         </div>
         <div className={styles.actions}>

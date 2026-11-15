@@ -42,12 +42,6 @@
   gap: var(--space-8);
 }
 
-.title {
-  margin: 0;
-  font-size: var(--font-size-hero-title);
-  font-weight: var(--font-weight-heading);
-}
-
 .tagline {
   margin: 0;
 }
