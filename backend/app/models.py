@@ -22,7 +22,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_serializer, model_valid
 Status = Literal["ok", "indisponible", "pas_de_donnees"]
 
 # Fields that are dropped whenever they are null, whatever the status.
-_META_FIELDS = frozenset({"error", "message", "note"})
+_META_FIELDS = frozenset({"error", "message", "note", "retry_pending"})
 
 
 class SourcedBlock(BaseModel):
@@ -145,6 +145,9 @@ class SoilBlock(SourcedBlock):
     organic_carbon_g_kg: float | None = None
     # Soil layer the values describe (depth-weighted mean of SoilGrids' 0-5/5-15/15-30 cm).
     depth: str | None = None
+    # indisponible only: true while a background re-fetch is still trying (app/background.py),
+    # so asking again shortly may return real data. Absent otherwise.
+    retry_pending: bool | None = None
 
 
 class DateRange(BaseModel):

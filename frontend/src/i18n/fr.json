@@ -167,7 +167,10 @@
       "terrain": "Pas de données d'altitude pour ce point.",
       "forecast": "Pas de prévision météo pour ce point."
     },
-    "valueMissing": "Non disponible"
+    "valueMissing": "Non disponible",
+    "retrying": "Nouvelle tentative…",
+    "retryPending": "Le serveur continue d'essayer d'obtenir ces données. Réessayez dans un instant.",
+    "retryFailed": "La nouvelle tentative n'a pas pu joindre le serveur."
   },
   "units": {
     "mmPerYear": "{{value}} mm/an",

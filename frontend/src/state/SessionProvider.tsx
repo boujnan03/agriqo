@@ -1,7 +1,12 @@
 import { type ReactNode, useCallback, useMemo, useRef, useState } from "react";
 
 import { fetchDiagnostic, fetchForecast } from "../services/api";
+import type {
+  DiagnosticBlockKey,
+  DiagnosticResponse,
+} from "../types/diagnostic";
 import {
+  type BlockRetryState,
   type Parcel,
   type Remote,
   type RemoteData,
@@ -51,6 +56,12 @@ export function SessionProvider({
   const cacheRef = useRef<Cache>({});
   const [cache, setCache] = useState<Cache>({});
 
+  // Block retries, tagged with the parcel they were for (a new parcel hides old ones).
+  const [blockRetry, setBlockRetry] = useState<{
+    key: string;
+    blocks: Partial<Record<DiagnosticBlockKey, BlockRetryState>>;
+  }>({ key: "", blocks: {} });
+
   const commit = useCallback((kind: RemoteKind, entry: Entry) => {
     cacheRef.current = { ...cacheRef.current, [kind]: entry };
     setCache(cacheRef.current);
@@ -84,6 +95,42 @@ export function SessionProvider({
     [commit, state.parcel],
   );
 
+  const retryDiagnosticBlock = useCallback<Session["retryDiagnosticBlock"]>(
+    (block) => {
+      const parcel = state.parcel;
+      if (!parcel) return;
+      const key = keyOf(parcel);
+      const current = cacheRef.current.diagnostic;
+      if (current?.key !== key || current.result.state !== "success") return;
+      const mark = (value: BlockRetryState | undefined) =>
+        setBlockRetry((r) => ({
+          key,
+          blocks: { ...(r.key === key ? r.blocks : {}), [block]: value },
+        }));
+      mark("retrying");
+      fetchDiagnostic(parcel).then(
+        (fresh) => {
+          const latest = cacheRef.current.diagnostic;
+          // Another parcel was picked meanwhile, or the answer is gone: drop this one.
+          if (latest?.key !== key || latest.result.state !== "success") return;
+          commit("diagnostic", {
+            key,
+            result: {
+              state: "success",
+              data: {
+                ...(latest.result.data as DiagnosticResponse),
+                [block]: fresh[block],
+              },
+            },
+          });
+          mark(undefined);
+        },
+        () => mark("failed"),
+      );
+    },
+    [commit, state.parcel],
+  );
+
   const session = useMemo<Session>(() => {
     const key = state.parcel ? keyOf(state.parcel) : null;
     // Only answers about the current parcel are visible; older ones are as good as absent.
@@ -99,8 +146,10 @@ export function SessionProvider({
       pickParcel: (parcel) => setState((s) => ({ ...s, parcel })),
       remote,
       load,
+      retryDiagnosticBlock,
+      blockRetry: blockRetry.key === key ? blockRetry.blocks : {},
     };
-  }, [state, cache, load]);
+  }, [state, cache, load, retryDiagnosticBlock, blockRetry]);
 
   return (
     <SessionContext.Provider value={session}>

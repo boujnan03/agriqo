@@ -9,6 +9,7 @@ import asyncio
 
 import httpx
 
+from app import background, config
 from app.cache import round_coord
 from app.models import (
     ClimateBlock,
@@ -56,9 +57,15 @@ def _r1(v: float | None) -> float | None:
     return None if v is None else round(v, 1)
 
 
-def soil_block(o: Outcome) -> SoilBlock:
+def soil_block(o: Outcome, retry_pending: bool = False) -> SoilBlock:
     if o.status == "indisponible":
-        return SoilBlock(status="indisponible", source=SRC_SOIL, error=o.error)
+        return SoilBlock(
+            status="indisponible",
+            source=SRC_SOIL,
+            error=o.error,
+            # A background re-fetch is still trying: asking again later may get real data.
+            retry_pending=True if retry_pending else None,
+        )
     if o.status == "pas_de_donnees":
         return SoilBlock(status="pas_de_donnees", source=SRC_SOIL, message=MSG_NO_SOIL)
     s: soilgrids.Soil = o.data
@@ -147,6 +154,40 @@ def terrain_block(o: Outcome, polygon: bool = False) -> TerrainBlock:
     )
 
 
+async def soil_outcome(
+    client: httpx.AsyncClient, lat: float, lon: float
+) -> tuple[Outcome, bool]:
+    """SoilGrids for the request path, with a background re-fetch after a timeout.
+
+    Returns (outcome, retry_pending). Never waits longer than the usual per-call limit:
+    - a background re-fetch already running for this point → wait for IT (no second
+      SoilGrids call), at most EXTERNAL_TIMEOUT_S, then answer with whatever it has;
+    - otherwise one normal call; if it times out, start the background re-fetch and answer
+      `indisponible` now. Its result lands in the cache for the next request.
+    """
+    running = background.pending("soilgrids", lat, lon)
+    if running is not None:
+        try:
+            async with asyncio.timeout(config.EXTERNAL_TIMEOUT_S):
+                outcome = await asyncio.shield(running)
+        except TimeoutError:
+            return Outcome("indisponible", error="timeout"), True
+        return outcome, False
+
+    outcome = await run_source(
+        "soilgrids", lat, lon, lambda: soilgrids.fetch(client, lat, lon)
+    )
+    if outcome.status == "indisponible" and outcome.error == "timeout":
+        background.ensure_refetch(
+            "soilgrids",
+            lat,
+            lon,
+            lambda timeout_s: soilgrids.fetch(client, lat, lon, timeout_s),
+        )
+        return outcome, True
+    return outcome, False
+
+
 async def build_diagnostic(client: httpx.AsyncClient, req: DiagnosticRequest) -> DiagnosticResponse:
     # Point-based sources (POWER, SoilGrids) get the point only: the polygon's centroid when
     # a parcel was drawn. Query with the same rounded point the cache is keyed on.
@@ -159,7 +200,7 @@ async def build_diagnostic(client: httpx.AsyncClient, req: DiagnosticRequest) ->
     clim, daily, soil, terrain = await asyncio.gather(
         run_source("power_climatology", lat, lon, lambda: power.fetch_climatology(client, lat, lon)),
         run_source("power_daily", lat, lon, lambda: power.fetch_daily(client, lat, lon)),
-        run_source("soilgrids", lat, lon, lambda: soilgrids.fetch(client, lat, lon)),
+        soil_outcome(client, lat, lon),
         run_source(
             "opentopography",
             lat,
@@ -175,7 +216,7 @@ async def build_diagnostic(client: httpx.AsyncClient, req: DiagnosticRequest) ->
     # accepted on the request for that forward compatibility but deliberately unused now.
     return DiagnosticResponse(
         location=Location(lat=req.lat, lon=req.lon),
-        soil=soil_block(soil),
+        soil=soil_block(*soil),
         climate=climate_block(clim, daily),
         soil_moisture=soil_moisture_block(daily),
         terrain=terrain_block(terrain, polygon=ring is not None),
