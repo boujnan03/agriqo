@@ -1,4 +1,4 @@
-# Field Shift: frontend (React/Vite static build served by nginx) + backend (FastAPI placeholder).
+# Field Shift: frontend (React/Vite static build served by nginx) + backend (FastAPI).
 # Run: docker compose up --build    -> UI http://localhost:8080, backend http://localhost:8000/health
 # See ARCHITECTURE.md.
 
@@ -10,6 +10,9 @@ services:
     build: ./backend
     ports:
       - "8000:8000"
+    environment:
+      # From the repo-root .env (see .env.example). Empty -> relief block "indisponible".
+      OPENTOPO_API_KEY: ${OPENTOPO_API_KEY:-}
     networks: [fieldshift]
     restart: unless-stopped
     healthcheck:

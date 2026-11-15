@@ -7,6 +7,11 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
+# rasterio's wheel bundles GDAL but links against the system libexpat, absent from -slim.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libexpat1 \
+    && rm -rf /var/lib/apt/lists/*
+
 # Dependencies first, so code changes don't invalidate this layer.
 COPY requirements.txt .
 RUN pip install -r requirements.txt
