@@ -19,11 +19,8 @@
   "cover": {
     "photo": "Photo: wheat field",
     "tagline": "Smart crop rotation for a sustainable tomorrow.",
-    "signIn": "Sign in",
-    "loginForm": "Sign in",
-    "username": "Username",
-    "password": "Password",
-    "loginError": "Incorrect username or password."
+    "start": "Get started",
+    "signIn": "Sign in"
   },
   "notFound": {
     "message": "Page not found.",

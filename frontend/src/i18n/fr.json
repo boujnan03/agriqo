@@ -19,11 +19,8 @@
   "cover": {
     "photo": "Photo : champ de blé",
     "tagline": "Rotation de cultures intelligente pour un avenir durable.",
-    "signIn": "Se connecter",
-    "loginForm": "Connexion",
-    "username": "Nom d'utilisateur",
-    "password": "Mot de passe",
-    "loginError": "Nom d'utilisateur ou mot de passe incorrect."
+    "start": "Commencer",
+    "signIn": "Se connecter"
   },
   "notFound": {
     "message": "Page introuvable.",
@@ -52,8 +49,8 @@
     "climateSummary": "Résumé climatique",
     "avgTemp": "Température moyenne",
     "totalRainfall": "Précipitations totales",
-    "tempValue": "{{value}}\u00a0°C",
-    "rainValue": "{{value}}\u00a0mm",
+    "tempValue": "{{value}} °C",
+    "rainValue": "{{value}} mm",
     "chartTitle": "Température et précipitations",
     "soilMoisture": "Humidité du sol",
     "healthIndex": "Indice de santé",
@@ -144,12 +141,12 @@
     }
   },
   "units": {
-    "mmPerYear": "{{value}}\u00a0mm/an",
-    "celsius": "{{value}}\u00a0°C",
-    "percent": "{{value}}\u00a0%",
-    "gPerKg": "{{value}}\u00a0g/kg",
-    "meters": "{{value}}\u00a0m",
-    "kmh": "{{value}}\u00a0km/h"
+    "mmPerYear": "{{value}} mm/an",
+    "celsius": "{{value}} °C",
+    "percent": "{{value}} %",
+    "gPerKg": "{{value}} g/kg",
+    "meters": "{{value}} m",
+    "kmh": "{{value}} km/h"
   },
   "data": {
     "texture": {

@@ -1,6 +1,6 @@
 /** One route per screen template in design.md §7 (+ the build smoke page). */
 export const PATHS = {
-  cover: "/", // §7.1 Cover (Welcome/onboarding + login gate)
+  cover: "/", // §7.1 Cover (Welcome/onboarding)
   home: "/home", // §7.2 Home: parcel picker + light summary (the Home tab)
   farm: "/farm", // §7.3 Farm: the full 4-card diagnostic (the Farm tab)
   overview: "/overview", // §7.4 Insights dashboard (the Insights tab)
