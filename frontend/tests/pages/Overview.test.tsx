@@ -37,15 +37,13 @@ describe("Insights page (design.md §7.4) with the real diagnostic", () => {
     ).toBeInTheDocument();
   });
 
-  it("the monthly chart is honestly 'not available yet': no chart, no made-up months", async () => {
+  it("no monthly chart (the backend has no monthly values): the real season rain chart replaces the placeholder", async () => {
     const { container } = renderRoute("/overview", picked);
-    const chart = await section("Température et précipitations");
+    await section("Pluie des 10 dernières saisons");
+    expect(screen.queryByText(/valeurs mensuelles/)).toBeNull();
     expect(
-      within(chart).getByText(
-        "Pas encore disponible : le serveur n'envoie pas encore les valeurs mensuelles.",
-      ),
-    ).toBeInTheDocument();
-    expect(chart.textContent).not.toMatch(/\d/);
+      screen.queryByRole("heading", { name: "Température et précipitations" }),
+    ).toBeNull();
     expect(container.querySelector("polyline")).toBeNull();
   });
 
@@ -54,7 +52,7 @@ describe("Insights page (design.md §7.4) with the real diagnostic", () => {
     const frost = await section("Jours de gel");
     expect(frost).toHaveTextContent("4");
     expect(
-      within(frost).getByText("Du 2025-11-15 au 2026-11-12"),
+      within(frost).getByText("Du 15 novembre 2025 au 12 novembre 2026"),
     ).toBeInTheDocument();
     const moisture = screen.getByRole("progressbar", {
       name: "Humidité du sol en surface",
@@ -76,6 +74,9 @@ describe("Insights page (design.md §7.4) with the real diagnostic", () => {
   it("loading and backend-error states, like Farm", async () => {
     fakeBackend.respond("diagnostic", pending);
     const { unmount } = renderRoute("/overview", picked);
+    // The season section has its own request: once it has answered, the remaining status is
+    // the diagnostic's.
+    await section("Dernière saison disponible : 2024–2025");
     expect(screen.getByRole("status")).toHaveTextContent(
       "Chargement des données de votre parcelle…",
     );
@@ -106,7 +107,17 @@ describe("Insights page (design.md §7.4) with the real diagnostic", () => {
     ).toBeInTheDocument();
     expect(health.textContent).not.toMatch(/\d|%/);
     await section("Jours de gel");
-    expect(screen.getAllByRole("progressbar")).toHaveLength(1); // soil moisture only
+    await section("Dernière saison disponible : 2024–2025");
+    // Every bar on the page is real data: none belongs to the Health Index.
+    expect(
+      screen
+        .getAllByRole("progressbar")
+        .map((bar) => bar.getAttribute("aria-label")),
+    ).toEqual([
+      "Pluie par rapport à la normale",
+      "Saison 2024–2025",
+      "Humidité du sol en surface",
+    ]);
   });
 
   it("is a tab-bar root with its tab active", () => {

@@ -1,4 +1,5 @@
 // Shared components (design.md §6). Build pages from these; never copy-and-tweak them (§10).
+export { AdviceCard, type AdviceCardProps } from "./AdviceCard";
 export { Badge, type BadgeProps } from "./Badge";
 export { Button, type ButtonProps, type ButtonVariant } from "./Button";
 export { Card, type CardProps, type CardVariant } from "./Card";

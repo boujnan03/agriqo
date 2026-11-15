@@ -11,6 +11,7 @@
  */
 import { type Parcel, toGeoJson } from "../state/parcelGeometry";
 import type { DiagnosticResponse } from "../types/diagnostic";
+import type { WaterRegime, ZoneResponse } from "../types/seasons";
 import type { ForecastResponse } from "../types/weather";
 
 /** Set at build time (docker-compose build arg / .env). Browser-side URL, not the Docker one. */
@@ -96,4 +97,22 @@ export function fetchForecast(
   return request<ForecastResponse>(`/api/weather/forecast?${query}`, {
     signal,
   });
+}
+
+/**
+ * `GET /api/seasons/zone`: past season types of the NASA POWER cell around a point (the
+ * parcel's centroid), plus rule-based advice for the farmer's water regime. A point outside
+ * the covered cells is a normal answer (`status: "hors_zone"`, HTTP 200), not an error; a 503
+ * (the season model failed to load on the server) throws like any other HTTP error.
+ */
+export function fetchSeasonZone(
+  params: { lat: number; lon: number; water: WaterRegime },
+  signal?: AbortSignal,
+): Promise<ZoneResponse> {
+  const query = new URLSearchParams({
+    lat: String(params.lat),
+    lon: String(params.lon),
+    water: params.water,
+  });
+  return request<ZoneResponse>(`/api/seasons/zone?${query}`, { signal });
 }

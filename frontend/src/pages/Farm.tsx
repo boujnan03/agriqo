@@ -6,11 +6,13 @@ import { FactList } from "../components/FactList";
 import { Header } from "../components/Header";
 import { RequestStatus } from "../components/RequestStatus";
 import { Screen } from "../components/Screen";
+import { formatDate } from "../i18n/format";
 import { useFormat } from "../i18n/useFormat";
 import { AppTabBar } from "../router/AppTabBar";
 import { useSession } from "../state/session";
 import { useParcelData } from "../state/useParcelData";
 import styles from "./Farm.module.css";
+import { WaterZoneCard } from "./farm/WaterZoneCard";
 import { NoParcel } from "./parcel/NoParcel";
 import { ParcelCoords } from "./parcel/ParcelCoords";
 
@@ -20,25 +22,46 @@ import { ParcelCoords } from "./parcel/ParcelCoords";
  * backend's `POST /api/parcel/diagnostic`. Each card takes its `status` and `source` from its
  * own block, so a failed source shows "unavailable" without borrowing a value from anywhere.
  *
+ * Above them, the farmer's water regime (rain-fed / irrigated, farmer-entered, not NASA data)
+ * and the NASA POWER climate zone of the season data (WaterZoneCard).
+ *
  * Page states (§6 Request states): no parcel → empty state pointing back to Home; request in
  * flight → loading; our backend unreachable → error + retry. Data only, no photo banner.
  */
 export function Farm() {
+  const { parcel } = useSession();
   const { t } = useTranslation();
+
+  return (
+    <Screen header={<Header title={t("farm.title")} />} tabBar={<AppTabBar />}>
+      {parcel ? (
+        <div className={styles.stack}>
+          <ParcelCoords parcel={parcel} />
+          <WaterZoneCard />
+          <Diagnostic />
+        </div>
+      ) : (
+        <NoParcel />
+      )}
+    </Screen>
+  );
+}
+
+/** The four diagnostic Data cards, or the diagnostic request's state. */
+function Diagnostic() {
+  const { t, i18n } = useTranslation();
   const { maybe } = useFormat();
-  const { parcel, retryDiagnosticBlock, blockRetry } = useSession();
+  const { retryDiagnosticBlock, blockRetry } = useSession();
   const { result, retry } = useParcelData("diagnostic");
 
   const body = () => {
-    if (!parcel || !result) return <NoParcel />;
+    if (!result) return null;
     if (result.state !== "success") {
       return <RequestStatus state={result.state} onRetry={retry} />;
     }
     const { soil, climate, soil_moisture, terrain } = result.data;
     return (
-      <div className={styles.stack}>
-        <ParcelCoords parcel={parcel} />
-
+      <>
         <DataCard
           title={t("farm.soil")}
           icon={Layers}
@@ -115,7 +138,9 @@ export function Farm() {
           noDataText={t("dataCard.noData.soil_moisture")}
           caveat={
             soil_moisture.status === "ok" && soil_moisture.date
-              ? t("farm.moistureCaveat", { date: soil_moisture.date })
+              ? t("farm.moistureCaveat", {
+                  date: formatDate(soil_moisture.date, i18n.language),
+                })
               : undefined
           }
         >
@@ -168,13 +193,9 @@ export function Farm() {
             />
           )}
         </DataCard>
-      </div>
+      </>
     );
   };
 
-  return (
-    <Screen header={<Header title={t("farm.title")} />} tabBar={<AppTabBar />}>
-      {body()}
-    </Screen>
-  );
+  return body();
 }
