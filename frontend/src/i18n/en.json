@@ -38,27 +38,32 @@
     "tempMean": "Mean temperature",
     "tempMax": "Average high",
     "rainYear": "Annual rainfall",
-    "frostDays": "Frost days per year",
+    "frostDays": "Frost days (last 12 months)",
     "surfaceWetness": "Surface soil moisture",
     "level": "Level",
     "altitude": "Altitude",
-    "slope": "Slope"
+    "slope": "Slope",
+    "soilCaveat": "Estimate (~250 m), not a lab analysis.",
+    "climateCaveat": "Regional averages (~50 km): nearby plots share the same climate.",
+    "moistureCaveat": "Value from {{date}} (data lags a few days)."
   },
   "overview": {
     "title": "Farm overview",
     "climateSummary": "Climate summary",
     "avgTemp": "Average temperature",
-    "totalRainfall": "Total rainfall",
     "tempValue": "{{value}} °C",
-    "rainValue": "{{value}} mm",
     "chartTitle": "Temperature and rainfall",
     "soilMoisture": "Soil moisture",
     "healthIndex": "Health index",
     "seeRecommendations": "See my recommendations",
-    "minTemp": "Average low",
-    "maxTemp": "Average high",
+    "maxTemp": "Typical high",
     "frostDays": "Frost days",
-    "healthSoon": "Coming soon (NDVI)"
+    "healthSoon": "Coming soon (NDVI)",
+    "annualRainfall": "Annual rainfall",
+    "chartUnavailable": "Not available yet: the server doesn't send monthly values yet.",
+    "climatePeriod": "{{period}} averages",
+    "frostPeriod": "From {{start}} to {{end}}",
+    "surfaceWetness": "Surface soil moisture"
   },
   "chart": {
     "ariaLabel": "Temperature and rainfall by month. {{summary}}.",
@@ -129,17 +134,32 @@
       "partlyCloudy": "Partly cloudy",
       "cloudy": "Cloudy",
       "showers": "Showers",
-      "rain": "Rain"
+      "rain": "Rain",
+      "fog": "Fog",
+      "drizzle": "Drizzle",
+      "snow": "Snow",
+      "thunderstorm": "Thunderstorm",
+      "unknown": "Unknown conditions"
     }
+  },
+  "request": {
+    "loading": "Loading your plot's data…",
+    "errorTitle": "Can't reach the server",
+    "errorText": "Check your connection, then try again. No data is shown until the server answers.",
+    "retry": "Try again"
   },
   "dataCard": {
     "source": "Data: {{source}}",
     "unavailable": "Data unavailable",
     "noDataShort": "No data",
     "noData": {
-      "outsideCoverage": "No data for this point: it is outside the area this source covers.",
-      "waterBody": "No data for this point: it lies on a body of water."
-    }
+      "soil": "No soil data here. Check that the point is on farmland.",
+      "climate": "No climate data for this point.",
+      "soil_moisture": "No recent soil moisture reading for this point.",
+      "terrain": "No elevation data for this point.",
+      "forecast": "No forecast for this point."
+    },
+    "valueMissing": "Not available"
   },
   "units": {
     "mmPerYear": "{{value}} mm/year",

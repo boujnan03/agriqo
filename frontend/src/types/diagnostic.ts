@@ -1,28 +1,42 @@
 /**
- * The per-parcel diagnostic behind Home's summary and Farm's 4 Data cards (design.md §6 Data
- * card, §7.2–7.3). Shaped after the backend response the real spec describes: one block per
- * data source, each carrying its own status. Field names inside a block (snake_case) follow the
- * API so the mock can later be swapped for the real response with no reshaping.
+ * The per-parcel diagnostic: the exact JSON shape of the backend's
+ * `POST /api/parcel/diagnostic` (backend/app/models.py, docs/SPEC_Diagnostic_Parcelle.md). The
+ * backend is the source of truth: these types follow it, never the other way round.
+ *
+ * Each block reports its own status (design.md §6 Data card):
+ * - ok: real values. A value the source lacks is an explicit `null` (shown as missing, never 0).
+ * - indisponible: the source failed / timed out / isn't configured (`error` says which); no
+ *   values at all.
+ * - pas_de_donnees: the source answered but has nothing here (water, city…); no values.
  */
 
-/** Plain-language reason shown when a source answered but has nothing for this point. */
-export type NoDataReason = "outsideCoverage" | "waterBody";
+export type DataStatus = "ok" | "indisponible" | "pas_de_donnees";
+
+/** Fields every block carries, whatever its status. */
+export interface BlockMeta {
+  status: DataStatus;
+  /** Who produced the values, e.g. "NASA POWER": shown on every card. */
+  source: string;
+  /** indisponible only: "timeout", "http_503", "missing_api_key", "network_error"… */
+  error?: string;
+  /** pas_de_donnees only: the backend's French explanation (the UI uses its own i18n text). */
+  message?: string;
+  /** The backend's French caveat (resolution, definitions); the UI uses its own i18n text. */
+  note?: string;
+}
 
 /**
- * One source's answer for the picked parcel, in the three states of design.md §6:
- * - ok: the real values
- * - indisponible: the source failed / timed out / is down (no values at all)
- * - pas_de_donnees: the source answered but has nothing for this location (+ why)
- * A missing value is a status, never a number standing in for it.
+ * A block as received: its values exist only when status is "ok" (the backend omits them
+ * otherwise). `Values` lists the block's own fields, each possibly null.
  */
-export type SourcedData<T> =
-  | { status: "ok"; source: string; data: T }
-  | { status: "indisponible"; source: string }
-  | { status: "pas_de_donnees"; source: string; reason: NoDataReason };
+export type Block<Values> =
+  | (BlockMeta & { status: "ok" } & Values)
+  | (BlockMeta & { status: "indisponible" | "pas_de_donnees" });
 
-export type DataStatus = SourcedData<unknown>["status"];
+/** The `ok` variant of a block: what a Data card renders. */
+export type OkBlock<B> = Extract<B, { status: "ok" }>;
 
-/** USDA soil texture classes (the classification SoilGrids texture data is usually mapped to). */
+/** USDA soil texture classes (backend app/soil_texture.py). */
 export type TextureClass =
   | "clay"
   | "silty_clay"
@@ -37,56 +51,56 @@ export type TextureClass =
   | "loamy_sand"
   | "sand";
 
-/** Sol: ISRIC SoilGrids, topsoil. */
-export interface SoilData {
-  texture_class: TextureClass;
-  ph: number;
-  organic_carbon_g_kg: number;
+/** Sol: ISRIC SoilGrids, topsoil 0–30 cm. */
+export type SoilBlock = Block<{
+  texture_class: TextureClass | null;
+  clay_pct: number | null;
+  sand_pct: number | null;
+  silt_pct: number | null;
+  ph: number | null;
+  organic_carbon_g_kg: number | null;
+  depth: string | null;
+}>;
+
+/** Climat: NASA POWER climatology (+ frost days over the last 12 months of daily data). */
+export type ClimateBlock = Block<{
+  temp_mean_c: number | null;
+  /** Typical daily high, averaged over the 12 months (not a record). */
+  temp_max_c: number | null;
+  rain_mm_year: number | null;
+  frost_days: number | null;
+  /** e.g. "2001-2025". */
+  climatology_period: string | null;
+  frost_days_period: { start: string; end: string } | null;
+}>;
+
+/** Soil-moisture label, classified by the backend (thresholds live there, not in the UI). */
+export type SoilMoistureLabel = "sec" | "moyen" | "humide";
+
+/** Humidité: NASA POWER surface (GWETTOP) and root-zone (GWETROOT) soil wetness, 0–1. */
+export type SoilMoistureBlock = Block<{
+  gwettop: number | null;
+  gwetroot: number | null;
+  label: SoilMoistureLabel | null;
+  /** ISO date of the value (POWER lags a few days behind today). */
+  date: string | null;
+}>;
+
+/** Relief: OpenTopography (SRTM GL1). */
+export type TerrainBlock = Block<{
+  /** Metres above sea level. */
+  altitude: number | null;
+  /** Mean slope over ~500 m around the point, percent. */
+  slope_pct: number | null;
+}>;
+
+export interface DiagnosticResponse {
+  location: { lat: number; lon: number };
+  soil: SoilBlock;
+  climate: ClimateBlock;
+  soil_moisture: SoilMoistureBlock;
+  terrain: TerrainBlock;
 }
 
-/** Climat: NASA POWER climatology for the parcel. */
-export interface ClimateData {
-  temp_mean_c: number;
-  temp_max_c: number;
-  rain_mm_year: number;
-  frost_days: number;
-}
-
-/** Soil-moisture level as classified by the backend (thresholds live there, not in the UI). */
-export type HumidityLevel = "sec" | "moyen" | "humide";
-
-/** Humidité: NASA POWER surface soil wetness, current value + its level. */
-export interface HumidityData {
-  value_pct: number;
-  level: HumidityLevel;
-}
-
-/** Relief: OpenTopography elevation model. */
-export interface ReliefData {
-  altitude_m: number;
-  slope_pct: number;
-}
-
-export interface ParcelLocation {
-  /** Place name shown to the farmer, e.g. "Béni Mellal". */
-  name: string;
-  lat: number;
-  lon: number;
-}
-
-export interface FarmDiagnostic {
-  location: ParcelLocation;
-  soil: SourcedData<SoilData>;
-  climate: SourcedData<ClimateData>;
-  humidity: SourcedData<HumidityData>;
-  relief: SourcedData<ReliefData>;
-}
-
-/** Home's light summary: the location + the 2 headline facts, taken from the same diagnostic. */
-export interface HomeSummary {
-  location: ParcelLocation;
-  /** Headline fact 1: soil texture. */
-  soil: SourcedData<Pick<SoilData, "texture_class">>;
-  /** Headline fact 2: annual rainfall. */
-  climate: SourcedData<Pick<ClimateData, "rain_mm_year">>;
-}
+/** The four diagnostic blocks, by response key. */
+export type DiagnosticBlockKey = Exclude<keyof DiagnosticResponse, "location">;

@@ -38,27 +38,32 @@
     "tempMean": "Température moyenne",
     "tempMax": "Température max. moyenne",
     "rainYear": "Pluie annuelle",
-    "frostDays": "Jours de gel par an",
+    "frostDays": "Jours de gel (12 derniers mois)",
     "surfaceWetness": "Humidité du sol en surface",
     "level": "Niveau",
     "altitude": "Altitude",
-    "slope": "Pente"
+    "slope": "Pente",
+    "soilCaveat": "Estimation (~250 m), pas une analyse de laboratoire.",
+    "climateCaveat": "Moyennes régionales (~50 km) : des parcelles voisines ont le même climat.",
+    "moistureCaveat": "Valeur du {{date}} (les données ont quelques jours de retard)."
   },
   "overview": {
     "title": "Aperçu de la ferme",
     "climateSummary": "Résumé climatique",
     "avgTemp": "Température moyenne",
-    "totalRainfall": "Précipitations totales",
     "tempValue": "{{value}} °C",
-    "rainValue": "{{value}} mm",
     "chartTitle": "Température et précipitations",
     "soilMoisture": "Humidité du sol",
     "healthIndex": "Indice de santé",
     "seeRecommendations": "Voir mes recommandations",
-    "minTemp": "Minimale moyenne",
-    "maxTemp": "Maximale moyenne",
+    "maxTemp": "Maximale habituelle",
     "frostDays": "Jours de gel",
-    "healthSoon": "Bientôt disponible (NDVI)"
+    "healthSoon": "Bientôt disponible (NDVI)",
+    "annualRainfall": "Pluie annuelle",
+    "chartUnavailable": "Pas encore disponible : le serveur n'envoie pas encore les valeurs mensuelles.",
+    "climatePeriod": "Moyennes {{period}}",
+    "frostPeriod": "Du {{start}} au {{end}}",
+    "surfaceWetness": "Humidité du sol en surface"
   },
   "chart": {
     "ariaLabel": "Température et précipitations par mois. {{summary}}.",
@@ -129,17 +134,32 @@
       "partlyCloudy": "Partiellement nuageux",
       "cloudy": "Nuageux",
       "showers": "Averses",
-      "rain": "Pluie"
+      "rain": "Pluie",
+      "fog": "Brouillard",
+      "drizzle": "Bruine",
+      "snow": "Neige",
+      "thunderstorm": "Orage",
+      "unknown": "Conditions inconnues"
     }
+  },
+  "request": {
+    "loading": "Chargement des données de votre parcelle…",
+    "errorTitle": "Serveur injoignable",
+    "errorText": "Vérifiez votre connexion puis réessayez. Aucune donnée n'est affichée tant que le serveur ne répond pas.",
+    "retry": "Réessayer"
   },
   "dataCard": {
     "source": "Données : {{source}}",
     "unavailable": "Donnée indisponible",
     "noDataShort": "Pas de données",
     "noData": {
-      "outsideCoverage": "Pas de données pour ce point : il est hors de la zone couverte par cette source.",
-      "waterBody": "Pas de données pour ce point : il se trouve sur une étendue d'eau."
-    }
+      "soil": "Pas de données de sol ici. Vérifiez que le point est sur une terre agricole.",
+      "climate": "Pas de données climatiques pour ce point.",
+      "soil_moisture": "Pas de mesure récente de l'humidité du sol pour ce point.",
+      "terrain": "Pas de données d'altitude pour ce point.",
+      "forecast": "Pas de prévision météo pour ce point."
+    },
+    "valueMissing": "Non disponible"
   },
   "units": {
     "mmPerYear": "{{value}} mm/an",

@@ -1,10 +1,25 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { overviewData } from "../../src/mocks/overview";
 import i18n from "../../src/i18n";
 import { ClimateChart } from "../../src/pages/overview/ClimateChart";
+import type { MonthlyClimate } from "../../src/types/overview";
 import { inLanguage } from "../utils";
+
+/**
+ * Chart-only test data. Illustrative values, NOT real data: the app never feeds these to a page
+ * (the backend doesn't send monthly values yet, so Insights shows the chart as unavailable).
+ */
+const overviewData: { monthly: MonthlyClimate[] } = {
+  monthly: [
+    { month: "Jan", temp: 14, rainfall: 42 },
+    { month: "Fév", temp: 16, rainfall: 38 },
+    { month: "Mar", temp: 19, rainfall: 35 },
+    { month: "Avr", temp: 21, rainfall: 30 },
+    { month: "Mai", temp: 25, rainfall: 18 },
+    { month: "Juin", temp: 29, rainfall: 8 },
+  ],
+};
 
 describe("ClimateChart", () => {
   // French copy asserted below: render in French (the app default is Arabic).

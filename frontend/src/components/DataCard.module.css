@@ -43,6 +43,13 @@
   color: var(--text-600);
 }
 
+/* Caveat (estimate, resolution, date of the value): factual, so §3's factual caption size. */
+.caveat {
+  margin: 0;
+  font-size: var(--font-size-caption-factual);
+  color: var(--text-600);
+}
+
 /* Source caption: §3 factual caption size (the farmer may rely on it), --text-600. */
 .source {
   margin: 0;

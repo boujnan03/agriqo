@@ -1,14 +1,6 @@
-/* design.md §7.3 Farm: the parcel's location, then four stacked Data cards. Data only. */
+/* design.md §7.3 Farm: the parcel's coordinates, then four stacked Data cards. Data only. */
 .stack {
   display: flex;
   flex-direction: column;
   gap: var(--card-gap);
-}
-
-.place {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-4);
-  margin: 0;
-  color: var(--text-600);
 }

@@ -4,17 +4,25 @@ import { describe, expect, it, vi } from "vitest";
 
 import { DataCard } from "../../src/components/DataCard";
 import i18n, { LANGUAGES } from "../../src/i18n";
-import type { SourcedData } from "../../src/types/diagnostic";
+import type { Block, OkBlock } from "../../src/types/diagnostic";
 import { inLanguage } from "../utils";
 
-interface Sample {
-  value: number;
-}
+/** A block shaped like the backend's: flat values, present only when ok. */
+type Sample = Block<{ value: number | null }>;
 
-const renderCard = (result: SourcedData<Sample>) => {
-  const values = vi.fn((data: Sample) => <p>{`Value ${data.value}`}</p>);
+const NO_DATA = "Pas de données de sol ici.";
+
+const renderCard = (block: Sample, caveat?: string) => {
+  const values = vi.fn((b: OkBlock<Sample>) => <p>{`Value ${b.value}`}</p>);
   const view = render(
-    <DataCard title="Sample" icon={Layers} tone="soil" result={result}>
+    <DataCard
+      title="Sample"
+      icon={Layers}
+      tone="soil"
+      block={block}
+      noDataText={NO_DATA}
+      caveat={caveat}
+    >
       {values}
     </DataCard>,
   );
@@ -24,56 +32,52 @@ const renderCard = (result: SourcedData<Sample>) => {
 describe("DataCard (design.md §6)", () => {
   inLanguage("fr");
 
-  it("ok: shows the real values and the source caption", () => {
-    const { values } = renderCard({
-      status: "ok",
-      source: "NASA POWER",
-      data: { value: 42 },
-    });
+  it("ok: shows the real values, the caveat and the source caption", () => {
+    const { values } = renderCard(
+      { status: "ok", source: "NASA POWER", value: 42 },
+      "Estimation (~250 m)",
+    );
     expect(
       screen.getByRole("heading", { level: 2, name: "Sample" }),
     ).toBeInTheDocument();
     expect(screen.getByText("Value 42")).toBeInTheDocument();
-    expect(values).toHaveBeenCalledWith({ value: 42 });
+    expect(values).toHaveBeenCalledWith(
+      expect.objectContaining({ status: "ok", value: 42 }),
+    );
+    expect(screen.getByText("Estimation (~250 m)")).toBeInTheDocument();
     expect(screen.getByText("Données : NASA POWER")).toBeInTheDocument();
     expect(screen.queryByText("Donnée indisponible")).not.toBeInTheDocument();
   });
 
-  it("indisponible: 'Donnée indisponible', source still named, values never rendered", () => {
-    const { container, values } = renderCard({
-      status: "indisponible",
-      source: "OpenTopography",
-    });
+  it("indisponible: 'Donnée indisponible', source still named, values and caveat never rendered", () => {
+    const { container, values } = renderCard(
+      { status: "indisponible", source: "OpenTopography", error: "timeout" },
+      "caveat",
+    );
     expect(screen.getByText("Donnée indisponible")).toBeInTheDocument();
     expect(screen.getByText("Données : OpenTopography")).toBeInTheDocument();
+    expect(screen.queryByText("caveat")).not.toBeInTheDocument();
     expect(values).not.toHaveBeenCalled();
     expect(container.textContent).not.toMatch(/\d/); // no zero or other stand-in number
+    expect(container.querySelector("section")).toHaveAttribute(
+      "data-error",
+      "timeout",
+    );
   });
 
-  it.each([
-    [
-      "outsideCoverage",
-      "Pas de données pour ce point : il est hors de la zone couverte par cette source.",
-    ],
-    [
-      "waterBody",
-      "Pas de données pour ce point : il se trouve sur une étendue d'eau.",
-    ],
-  ] as const)(
-    "pas de données (%s): the specific reason, not the generic message",
-    (reason, message) => {
-      const { container, values } = renderCard({
-        status: "pas_de_donnees",
-        source: "ISRIC SoilGrids",
-        reason,
-      });
-      expect(screen.getByText(message)).toBeInTheDocument();
-      expect(screen.queryByText("Donnée indisponible")).not.toBeInTheDocument();
-      expect(screen.getByText("Données : ISRIC SoilGrids")).toBeInTheDocument();
-      expect(values).not.toHaveBeenCalled();
-      expect(container.textContent).not.toMatch(/\d/);
-    },
-  );
+  it("pas de données: the card's specific reason (not the generic message, not the backend's French text)", () => {
+    const { container, values } = renderCard({
+      status: "pas_de_donnees",
+      source: "ISRIC SoilGrids",
+      message: "message du backend, en français",
+    });
+    expect(screen.getByText(NO_DATA)).toBeInTheDocument();
+    expect(screen.queryByText(/message du backend/)).not.toBeInTheDocument();
+    expect(screen.queryByText("Donnée indisponible")).not.toBeInTheDocument();
+    expect(screen.getByText("Données : ISRIC SoilGrids")).toBeInTheDocument();
+    expect(values).not.toHaveBeenCalled();
+    expect(container.textContent).not.toMatch(/\d/);
+  });
 
   it("exposes its status for styling/tests and can sit at heading level 3", () => {
     const { container } = render(
@@ -82,7 +86,8 @@ describe("DataCard (design.md §6)", () => {
         icon={Layers}
         tone="neutral"
         headingLevel={3}
-        result={{ status: "indisponible", source: "X" }}
+        block={{ status: "indisponible", source: "X" } as Sample}
+        noDataText="-"
       >
         {() => null}
       </DataCard>,
@@ -100,7 +105,7 @@ describe("DataCard (design.md §6)", () => {
 describe.each(LANGUAGES)("DataCard in %s", (lng) => {
   inLanguage(lng);
 
-  it("translates the caption and the fallback messages", () => {
+  it("translates the caption and the fallback message", () => {
     renderCard({ status: "indisponible", source: "NASA POWER" });
     expect(
       screen.getByText(i18n.t("dataCard.unavailable")),
