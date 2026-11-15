@@ -90,6 +90,16 @@ def client():
         yield c
 
 
+@pytest.fixture(scope="session")
+def season_store():
+    """The real season model from app/seasons/model_files/, loaded once (it is ~1 s)."""
+    from app.seasons.store import get_default_store
+
+    store = get_default_store()
+    assert store.status == "ok", store.error
+    return store
+
+
 @pytest.fixture
 def mock_api():
     """respx router: any request without a matching route raises (never hits the wire)."""
