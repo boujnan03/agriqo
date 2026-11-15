@@ -59,10 +59,9 @@ describe("Overview page (design.md §7.3)", () => {
   it("is a tab-bar root with its tab active", () => {
     renderRoute("/overview");
     const tabBar = screen.getByRole("navigation", { name: TAB_BAR_LABEL });
-    // Tab mapping (src/router/tabs.ts, team decision): /overview is the "Home" tab.
-    expect(within(tabBar).getByRole("link", { name: "Home" })).toHaveAttribute(
-      "aria-current",
-      "page",
-    );
+    // Tab mapping (design.md §6): /overview is the "Insights" tab.
+    expect(
+      within(tabBar).getByRole("link", { name: "Insights" }),
+    ).toHaveAttribute("aria-current", "page");
   });
 });
