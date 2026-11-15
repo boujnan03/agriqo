@@ -4,9 +4,10 @@ Endpoints:
 - GET  /health                  liveness probe (Docker healthcheck)
 - POST /api/parcel/diagnostic   soil + climate + soil moisture + relief for a point
 - GET  /api/weather/forecast    today + 7-day forecast for a point
+- GET  /api/seasons/zone        past season types + advice for a point (offline model,
+                                app/seasons/, spec docs/seasons/IMPLEMENTATION_SEASONS.md)
 
 Every data block reports its own `status` and `source`; missing data is never invented.
-Recommendations are out of scope here (a teammate's ML model, attached later).
 """
 from __future__ import annotations
 
@@ -24,6 +25,8 @@ from fastapi.responses import JSONResponse
 from app import background, config
 from app.diagnostic import build_diagnostic
 from app.models import DiagnosticRequest, DiagnosticResponse, WeatherResponse
+from app.seasons import store as seasons_store
+from app.seasons.router import router as seasons_router
 from app.weather import build_forecast
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
@@ -31,6 +34,9 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(messag
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    # Season model: loaded and checked once. Never raises: on failure the store carries the
+    # cause, /health still answers 200 and /api/seasons/* answers 503.
+    app.state.seasons_store = seasons_store.get_default_store()
     # One pooled client for every upstream call. Its own timeout is a per-operation
     # backstop; the real 15 s end-to-end limit is enforced per call in run_source.
     async with httpx.AsyncClient(
@@ -88,8 +94,13 @@ async def validation_error_to_400(_: Request, exc: RequestValidationError) -> JS
 
 
 @app.get("/health")
-def health() -> dict[str, str]:
-    return {"status": "ok"}
+def health(request: Request) -> dict[str, str]:
+    # Always 200 (the Docker healthcheck depends on it); the season model reports separately.
+    store = getattr(request.app.state, "seasons_store", None)
+    return {"status": "ok", "seasonsModel": store.status if store is not None else "error"}
+
+
+app.include_router(seasons_router)
 
 
 @app.post("/api/parcel/diagnostic", response_model=DiagnosticResponse)
