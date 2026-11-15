@@ -1,70 +1,93 @@
-/* design.md §6 Season rain chart: tokens only; §2 "chart lines" greens. */
+/* design.md §6 Season rain chart: horizontal bars, tokens only, logical properties only. */
 .chart {
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-8);
+  gap: var(--space-12);
 }
 
-/* Columns share the plot width equally (no gap) so bars and labels align.
-   Height: 5 × the largest spacing step (no chart height in design.md). */
+/* 3 columns: season label | bar | value. The label and value columns take their content's
+   width; the bar column takes the rest (min 0: it shrinks, nothing overflows at 360 px). */
 .plot {
-  position: relative;
   display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 1fr;
-  align-items: end;
-  height: calc(var(--space-32) * 5);
-  border-bottom: var(--border-width-hairline) solid var(--border);
+  grid-template-columns: max-content minmax(0, 1fr) max-content;
+  column-gap: var(--space-8);
 }
 
-.column {
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  height: 100%;
-}
-
-.bar {
-  width: 60%;
-  background: var(--green-700);
-  border-radius: var(--radius-bar) var(--radius-bar) 0 0;
-}
-
-/* The normal: one full-width horizontal line (no reading direction: never mirrored). */
-.normal {
-  position: absolute;
-  inset-inline: 0;
-  border-top: var(--border-width-outline) dashed var(--green-900);
-}
-
-.labels {
+/* The list and each row reuse the plot's columns (subgrid): every bar shares one column, so
+   one scale, and the normal line below sits exactly over it. */
+.rows {
+  grid-column: 1 / -1;
+  grid-row: 1;
   display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 1fr;
+  grid-template-columns: subgrid;
+  row-gap: var(--space-8);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.label {
-  display: flex;
-  flex-direction: column;
+.row {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
   align-items: center;
-  min-width: 0;
 }
 
+.season,
 .value {
-  color: var(--text-900);
   font-size: var(--font-size-caption-factual);
-  font-weight: var(--font-weight-label);
+  white-space: nowrap; /* "2015–2016" is never broken or shortened */
 }
 
 .season {
   color: var(--text-600);
-  font-size: var(--font-size-caption-factual);
   font-weight: var(--font-weight-caption);
-  line-height: 1.2;
+}
+
+.value {
+  color: var(--text-900);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The bar grows from the inline start: from the left in FR/EN, from the right in Arabic. */
+.track {
+  display: flex;
+  align-items: center;
+  block-size: var(--space-16);
+}
+
+.bar {
+  display: block;
+  block-size: var(--space-12);
+  background: var(--green-700);
+  border-start-end-radius: var(--radius-bar);
+  border-end-end-radius: var(--radius-bar);
+}
+
+/* The latest season: bold label and value (not color alone), darker bar. */
+.latest .season,
+.latest .value {
+  color: var(--text-900);
+  font-weight: var(--font-weight-bold);
+}
+
+.latest .bar {
+  background: var(--green-900);
+}
+
+/* Overlay on the bar column, across all rows (same grid cell as the list's bar column). */
+.normalColumn {
+  grid-column: 2;
+  grid-row: 1;
+  position: relative;
+  pointer-events: none;
+}
+
+.normal {
+  position: absolute;
+  inset-block: 0;
+  border-inline-start: var(--border-width-outline) dashed var(--green-900);
 }
 
 .legend {
@@ -82,13 +105,16 @@
 }
 
 .swatchBar {
-  width: var(--space-12);
-  height: var(--space-12);
-  border-radius: var(--radius-bar) var(--radius-bar) 0 0;
+  inline-size: var(--space-16);
+  block-size: var(--space-12);
   background: var(--green-700);
+  border-start-end-radius: var(--radius-bar);
+  border-end-end-radius: var(--radius-bar);
 }
 
+/* A short vertical dashed stroke, like the normal line. */
 .swatchLine {
-  width: var(--space-16);
-  border-top: var(--border-width-outline) dashed var(--green-900);
+  inline-size: 0;
+  block-size: var(--space-16);
+  border-inline-start: var(--border-width-outline) dashed var(--green-900);
 }

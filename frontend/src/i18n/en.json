@@ -110,11 +110,11 @@
     "nearbyNote": "Nearby area: your parcel is just outside the covered cells; these are the nearest cell's data (~{{km}} km).",
     "chartTitle": "Rainfall of the last 10 seasons",
     "chart": {
-      "ariaLabel": "Rainfall by season: {{summary}}. Normal: {{normal}} mm.",
-      "item": "{{season}}: {{value}} mm",
-      "separator": "; ",
+      "listLabel": "Rainfall of each season (mm)",
+      "row": "{{season}}: {{value}} mm (normal {{normal}} mm)",
+      "value": "{{value}} mm",
       "legendBars": "Season rainfall (mm), bars",
-      "legendNormal": "Normal: {{value}} mm, line"
+      "legendNormal": "{{from}}–{{to}} normal: {{value}} mm, dashed line"
     },
     "historyTitle": "Your last 10 seasons",
     "dryCount": "Dry and hot seasons: {{dry}} of {{total}}",

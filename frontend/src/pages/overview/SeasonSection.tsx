@@ -203,7 +203,11 @@ function CoveredZone({ zone }: { zone: ZoneCovered }) {
         icon={ChartColumn}
         source={source}
       >
-        <SeasonRainChart seasons={history} normalMm={normals.rainMm} />
+        <SeasonRainChart
+          seasons={history}
+          normalMm={normals.rainMm}
+          reference={reference}
+        />
       </SeasonCard>
 
       <SeasonCard
