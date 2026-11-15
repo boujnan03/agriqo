@@ -5,6 +5,19 @@
   gap: var(--space-12);
 }
 
+/* What to do next ("3 corners placed, close the outline…"), announced politely. */
+.status {
+  margin: 0;
+  color: var(--text-600);
+}
+
+/* Drawing controls: two per row, each a full real button (§9 touch targets). */
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-8);
+}
+
 .frame {
   position: relative;
   overflow: hidden;

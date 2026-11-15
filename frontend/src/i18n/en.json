@@ -112,14 +112,22 @@
   },
   "home": {
     "title": "Home",
-    "intro": "Tap the map where your plot is.",
     "selected": "Selected plot",
     "soilTexture": "Soil texture",
     "annualRain": "Annual rainfall",
     "seeDiagnostic": "See the full diagnostic",
-    "introPicked": "Tap elsewhere on the map to move the pin.",
     "mapLabel": "Map to pick your plot",
-    "pickCenter": "Pick the centre of the map"
+    "draw": {
+      "start": "Tap the map to place the first corner of your plot.",
+      "more": "Corners placed: {{count}}. At least 3 are needed.",
+      "ready": "Corners placed: {{count}}. Close the outline when the plot is complete.",
+      "flat": "These corners don't enclose any area: move one or add another.",
+      "closed": "Outline closed ({{count}} corners). Clear it to draw again.",
+      "addCenter": "Add a corner at the centre of the map",
+      "undo": "Undo the last corner",
+      "close": "Close the outline",
+      "clear": "Clear"
+    }
   },
   "weather": {
     "title": "Weather",
@@ -195,6 +203,8 @@
     "noneText": "First pick your plot on the Home map.",
     "choose": "Pick my plot",
     "lat": "Lat.",
-    "lon": "Long."
+    "lon": "Long.",
+    "centre": "Centre:",
+    "shape": "Area ≈ {{area}} ha · {{count}} corners"
   }
 }

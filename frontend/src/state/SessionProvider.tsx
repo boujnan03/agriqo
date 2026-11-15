@@ -2,7 +2,7 @@ import { type ReactNode, useCallback, useMemo, useRef, useState } from "react";
 
 import { fetchDiagnostic, fetchForecast } from "../services/api";
 import {
-  type ParcelLocation,
+  type Parcel,
   type Remote,
   type RemoteData,
   type RemoteKind,
@@ -14,14 +14,20 @@ import {
 const INITIAL: SessionState = { parcel: null };
 
 const FETCHERS: {
-  [K in RemoteKind]: (location: ParcelLocation) => Promise<RemoteData[K]>;
+  [K in RemoteKind]: (parcel: Parcel) => Promise<RemoteData[K]>;
 } = {
-  diagnostic: (location) => fetchDiagnostic(location),
-  forecast: (location) => fetchForecast(location),
+  // The diagnostic gets the drawn polygon too (terrain uses its extent)…
+  diagnostic: (parcel) => fetchDiagnostic(parcel),
+  // …the forecast is point-based: the centroid only.
+  forecast: (parcel) => fetchForecast({ lat: parcel.lat, lon: parcel.lon }),
 };
 
-/** Same rounding as the backend cache (3 decimals ≈ 110 m): one answer per point. */
-const keyOf = (p: ParcelLocation) => `${p.lat.toFixed(3)},${p.lon.toFixed(3)}`;
+/**
+ * One answer per drawn parcel: its corners at ~1 m (the centroid follows from them). Two
+ * parcels with the same centroid but different shapes don't share terrain data.
+ */
+const keyOf = (p: Parcel) =>
+  p.polygon.map((c) => `${c.lat.toFixed(5)},${c.lon.toFixed(5)}`).join(";");
 
 type Entry = { key: string; result: Remote<unknown> };
 type Cache = Partial<Record<RemoteKind, Entry>>;

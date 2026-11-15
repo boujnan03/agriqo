@@ -24,6 +24,8 @@ export interface FakeRequest {
   route: "diagnostic" | "forecast";
   lat: number;
   lon: number;
+  /** Diagnostic only: the GeoJSON polygon sent (the drawn parcel). */
+  polygon?: unknown;
 }
 
 /** How the fake backend answers one request. */
@@ -83,7 +85,11 @@ export async function fakeFetch(
     typeof input === "string" || input instanceof URL ? input : input.url,
   );
   if (url.pathname === "/api/parcel/diagnostic" && init?.method === "POST") {
-    const body = JSON.parse(String(init.body)) as { lat: number; lon: number };
+    const body = JSON.parse(String(init.body)) as {
+      lat: number;
+      lon: number;
+      polygon: unknown;
+    };
     const request: FakeRequest = { route: "diagnostic", ...body };
     state.calls.push(request);
     return state.diagnostic(request);
