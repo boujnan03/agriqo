@@ -105,6 +105,13 @@ per source:
 Failures are never cached. The cache is lost on restart, which is accepted for the MVP
 ([`backend/app/cache.py`](backend/app/cache.py)).
 
+**SoilGrids background re-fetch.** SoilGrids is often slower than the 15 s request limit. When it
+times out, the request still answers `indisponible` (`retry_pending: true`) within 15 s, and a
+background task keeps trying (3 attempts of up to 60 s each, 5 s / 15 s apart; one task per
+point, shared by concurrent requests). A real answer is written to the cache, so the Soil card's
+**Réessayer** (the same diagnostic request) then returns it. If every attempt fails, nothing is
+cached and soil stays `indisponible` ([`backend/app/background.py`](backend/app/background.py)).
+
 **OpenTopography key (relief block).** Free:
 1. Create an account at <https://portal.opentopography.org/newUser>.
 2. On the MyOpenTopo dashboard, click "Get an API Key".

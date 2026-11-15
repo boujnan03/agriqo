@@ -53,17 +53,21 @@ async def run_source(
     fetch: Callable[[], Awaitable[Any]],
     *,
     variant: str = "",
+    timeout_s: float | None = None,
 ) -> Outcome:
-    """`variant`: extra cache-key part for answers that depend on more than the point."""
+    """`variant`: extra cache-key part for answers that depend on more than the point.
+    `timeout_s`: end-to-end limit; the request path always uses EXTERNAL_TIMEOUT_S (15 s),
+    only the background re-fetch (app/background.py) passes its own budget."""
     cached = cache.get(namespace, lat, lon, variant)
     if cached is not None:
         return cached
 
+    limit = config.EXTERNAL_TIMEOUT_S if timeout_s is None else timeout_s
     try:
-        async with asyncio.timeout(config.EXTERNAL_TIMEOUT_S):
+        async with asyncio.timeout(limit):
             result = await fetch()
     except (TimeoutError, httpx.TimeoutException):
-        log.warning("%s: timed out after %ss", namespace, config.EXTERNAL_TIMEOUT_S)
+        log.warning("%s: timed out after %ss", namespace, limit)
         return Outcome("indisponible", error="timeout")
     except httpx.HTTPStatusError as exc:
         log.warning("%s: HTTP %s", namespace, exc.response.status_code)

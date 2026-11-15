@@ -45,6 +45,30 @@ export const json =
 export const unreachable: Responder = () =>
   Promise.reject(new TypeError("Failed to fetch"));
 
+/**
+ * A request the test answers by hand (a simulated delay): `responder` waits until
+ * `answer(body)` is called, so a test can check the in-flight state first.
+ */
+export function deferred(): {
+  responder: Responder;
+  answer: (body: unknown, status?: number) => void;
+} {
+  let release: ((r: Response) => void) | null = null;
+  const waiting = new Promise<Response>((resolve) => {
+    release = resolve;
+  });
+  return {
+    responder: () => waiting,
+    answer: (body, status = 200) =>
+      release?.(
+        new Response(JSON.stringify(body), {
+          status,
+          headers: { "Content-Type": "application/json" },
+        }),
+      ),
+  };
+}
+
 /** A request that never answers: the page stays in its loading state. */
 export const pending: Responder = () => new Promise<Response>(() => {});
 

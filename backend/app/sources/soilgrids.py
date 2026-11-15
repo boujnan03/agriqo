@@ -36,12 +36,19 @@ class Soil:
     organic_carbon_g_kg: float | None
 
 
-async def fetch(client: httpx.AsyncClient, lat: float, lon: float) -> Soil | NoData:
+async def fetch(
+    client: httpx.AsyncClient, lat: float, lon: float, timeout_s: float | None = None
+) -> Soil | NoData:
+    """`timeout_s` overrides the client's per-operation timeout (background re-fetch only)."""
     params: list[tuple[str, str | float]] = [("lon", lon), ("lat", lat)]
     params += [("property", p) for p in PROPERTIES]
     params += [("depth", d) for d in DEPTHS]
     params += [("value", "mean")]
-    resp = await client.get(config.SOILGRIDS_URL, params=params)
+    resp = await client.get(
+        config.SOILGRIDS_URL,
+        params=params,
+        timeout=httpx.USE_CLIENT_DEFAULT if timeout_s is None else httpx.Timeout(timeout_s),
+    )
     resp.raise_for_status()
     return parse(resp.json())
 

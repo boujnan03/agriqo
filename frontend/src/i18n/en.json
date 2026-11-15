@@ -167,7 +167,10 @@
       "terrain": "No elevation data for this point.",
       "forecast": "No forecast for this point."
     },
-    "valueMissing": "Not available"
+    "valueMissing": "Not available",
+    "retrying": "Trying again…",
+    "retryPending": "The server is still trying to get this data. Try again in a moment.",
+    "retryFailed": "The retry couldn't reach the server."
   },
   "units": {
     "mmPerYear": "{{value}} mm/year",

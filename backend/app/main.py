@@ -21,7 +21,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app import config
+from app import background, config
 from app.diagnostic import build_diagnostic
 from app.models import DiagnosticRequest, DiagnosticResponse, WeatherResponse
 from app.weather import build_forecast
@@ -40,6 +40,8 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     ) as client:
         app.state.http = client
         yield
+        # Stop background re-fetches before their HTTP client closes.
+        await background.cancel_all()
 
 
 app = FastAPI(title="Field Shift backend", version="0.1.0", lifespan=lifespan)

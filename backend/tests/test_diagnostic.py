@@ -244,7 +244,10 @@ def test_one_slow_api_times_out_others_return(client, mock_api, fast_timeout, so
 
     assert r.status_code == 200
     d = r.json()
-    assert d[block] == {"status": "indisponible", "source": d[block]["source"], "error": "timeout"}
+    expected = {"status": "indisponible", "source": d[block]["source"], "error": "timeout"}
+    if source == "soilgrids":
+        expected["retry_pending"] = True  # a background re-fetch was started (Part 2)
+    assert d[block] == expected
     _others_ok(d, block, source)
     assert elapsed < fast_timeout * 5  # bounded by the per-call timeout, not the slow API
 
