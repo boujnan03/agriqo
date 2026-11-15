@@ -1,28 +1,23 @@
 import { screen, within } from "@testing-library/react";
-import { describe, expect, expectTypeOf, it } from "vitest";
+import userEvent from "@testing-library/user-event";
+import { describe, expect, it } from "vitest";
 
-import { overviewData } from "../../src/mocks/overview";
-import type { OverviewData } from "../../src/types/overview";
-import { inLanguage, renderRoute, tabBarLabel } from "../utils";
+import i18n, { LANGUAGES } from "../../src/i18n";
+import { fakeBackend, pending, unreachable } from "../fakeBackend";
+import { inLanguage, picked, renderRoute, tabBarLabel } from "../utils";
 
-describe("Overview / Insights page (design.md §7.4)", () => {
-  // French copy asserted below: render in French (the app default is Arabic).
+/** The <section> under the h2 named `name`, once it is on screen. */
+const section = async (name: string) =>
+  (await screen.findByRole("heading", { level: 2, name })).closest(
+    "section",
+  ) as HTMLElement;
+
+describe("Insights page (design.md §7.4) with the real diagnostic", () => {
   inLanguage("fr");
 
-  it("the mock fixture matches the OverviewData type", () => {
-    // Type-level check: enforced by `npm run typecheck`.
-    expectTypeOf(overviewData).toEqualTypeOf<OverviewData>();
-  });
-
-  it("shows the climate summary: mean, min and max temperature + rainfall", () => {
-    renderRoute("/overview");
-    expect(
-      screen.getByRole("heading", { level: 1, name: "Aperçu de la ferme" }),
-    ).toBeInTheDocument();
-    expect(screen.getByText(overviewData.location)).toBeInTheDocument();
-    const summary = screen
-      .getByRole("heading", { level: 2, name: "Résumé climatique" })
-      .closest("section") as HTMLElement;
+  it("climate summary: the response's real mean, typical high and annual rainfall (no min: not sent)", async () => {
+    renderRoute("/overview", picked);
+    const summary = await section("Résumé climatique");
     const stats = Object.fromEntries(
       within(summary)
         .getAllByRole("term")
@@ -32,56 +27,86 @@ describe("Overview / Insights page (design.md §7.4)", () => {
         ]),
     );
     expect(stats).toEqual({
-      "Température moyenne": `${overviewData.avgTemp} °C`,
-      "Minimale moyenne": `${overviewData.minTemp} °C`,
-      "Maximale moyenne": `${overviewData.maxTemp} °C`,
-      "Précipitations totales": `${overviewData.totalRainfall} mm`,
+      "Température moyenne": "17,9 °C",
+      "Maximale habituelle": "31,5 °C",
+      "Pluie annuelle": "526 mm/an",
     });
-    expect(overviewData.minTemp).toBeLessThan(overviewData.avgTemp);
-    expect(overviewData.maxTemp).toBeGreaterThan(overviewData.avgTemp);
-  });
-
-  it("shows frost days as its own stat", () => {
-    renderRoute("/overview");
-    const frost = screen.getByText("Jours de gel");
-    expect(frost.nextElementSibling).toHaveTextContent(
-      String(overviewData.frostDays),
-    );
-  });
-
-  it("shows soil moisture as a bar with its number", () => {
-    renderRoute("/overview");
-    const soil = screen.getByRole("progressbar", { name: "Humidité du sol" });
-    expect(soil).toHaveAttribute(
-      "aria-valuenow",
-      String(overviewData.soilMoisturePercent),
-    );
+    expect(within(summary).getByText("Moyennes 2001-2025")).toBeInTheDocument();
     expect(
-      screen.getByText(`${overviewData.soilMoisturePercent}%`),
+      within(summary).getByText("Données : NASA POWER"),
     ).toBeInTheDocument();
   });
 
-  it("Health Index is an explicit 'not yet available' placeholder, with no score at all", () => {
-    renderRoute("/overview");
-    const health = screen
-      .getByRole("heading", { level: 2, name: "Indice de santé" })
-      .closest("section") as HTMLElement;
+  it("the monthly chart is honestly 'not available yet': no chart, no made-up months", async () => {
+    const { container } = renderRoute("/overview", picked);
+    const chart = await section("Température et précipitations");
     expect(
-      within(health).getByText("Bientôt disponible (NDVI)"),
+      within(chart).getByText(
+        "Pas encore disponible : le serveur n'envoie pas encore les valeurs mensuelles.",
+      ),
     ).toBeInTheDocument();
-    expect(
-      screen.queryByRole("progressbar", { name: "Indice de santé" }),
-    ).not.toBeInTheDocument();
-    expect(health.textContent).not.toMatch(/\d|%/);
-    expect(overviewData).not.toHaveProperty("healthIndex");
-    expect(screen.getAllByRole("progressbar")).toHaveLength(1); // soil moisture only
+    expect(chart.textContent).not.toMatch(/\d/);
+    expect(container.querySelector("polyline")).toBeNull();
   });
 
-  it("'Voir mes recommandations' leads to the recommendations screen", () => {
+  it("frost days and soil moisture come from the same response", async () => {
+    renderRoute("/overview", picked);
+    const frost = await section("Jours de gel");
+    expect(frost).toHaveTextContent("4");
+    expect(
+      within(frost).getByText("Du 2025-11-15 au 2026-11-12"),
+    ).toBeInTheDocument();
+    const moisture = screen.getByRole("progressbar", {
+      name: "Humidité du sol en surface",
+    });
+    expect(moisture).toHaveAttribute("aria-valuenow", "49");
+    expect(screen.getByText("49%")).toBeInTheDocument();
+  });
+
+  it("reuses Farm's diagnostic: Farm → Insights tab makes ONE request in total", async () => {
+    const user = userEvent.setup();
+    renderRoute("/farm", picked);
+    await section("Sol");
+    const tabBar = screen.getByRole("navigation", { name: tabBarLabel() });
+    await user.click(within(tabBar).getByRole("link", { name: "Analyses" }));
+    await section("Résumé climatique");
+    expect(fakeBackend.calls.map((c) => c.route)).toEqual(["diagnostic"]);
+  });
+
+  it("loading and backend-error states, like Farm", async () => {
+    fakeBackend.respond("diagnostic", pending);
+    const { unmount } = renderRoute("/overview", picked);
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Chargement des données de votre parcelle…",
+    );
+    unmount();
+    fakeBackend.respond("diagnostic", unreachable);
+    renderRoute("/overview", picked);
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Serveur injoignable",
+    );
+  });
+
+  it("before any pick: the empty state, no request; Health Index + CTA still there", () => {
     renderRoute("/overview");
+    expect(
+      screen.getByRole("heading", { name: "Aucune parcelle choisie" }),
+    ).toBeInTheDocument();
+    expect(fakeBackend.calls).toEqual([]);
     expect(
       screen.getByRole("link", { name: "Voir mes recommandations" }),
     ).toHaveAttribute("href", "/recommendations");
+  });
+
+  it("Health Index is an explicit 'not yet available' placeholder, with no score at all", async () => {
+    renderRoute("/overview", picked);
+    const health = await section("Indice de santé");
+    expect(
+      within(health).getByText("Bientôt disponible (NDVI)"),
+    ).toBeInTheDocument();
+    expect(health.textContent).not.toMatch(/\d|%/);
+    await section("Jours de gel");
+    expect(screen.getAllByRole("progressbar")).toHaveLength(1); // soil moisture only
   });
 
   it("is a tab-bar root with its tab active", () => {
@@ -91,5 +116,18 @@ describe("Overview / Insights page (design.md §7.4)", () => {
     expect(
       within(tabBar).getByRole("link", { name: "Analyses" }),
     ).toHaveAttribute("aria-current", "page");
+  });
+});
+
+describe.each(LANGUAGES)("Insights page in %s", (lng) => {
+  inLanguage(lng);
+
+  it("renders every string translated, with Western digits", async () => {
+    const { container } = renderRoute("/overview", picked);
+    await section(i18n.t("overview.climateSummary"));
+    const text = container.textContent ?? "";
+    expect(text).toContain("526");
+    expect(text).not.toMatch(/[٠-٩۰-۹]/);
+    expect(text).not.toMatch(/\b(overview|units|dataCard|request)\.|\{\{/);
   });
 });

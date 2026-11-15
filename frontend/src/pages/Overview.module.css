@@ -11,14 +11,6 @@
   gap: var(--space-12);
 }
 
-.sectionHead {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: var(--space-8);
-}
-
 .sectionTitle {
   display: flex;
   align-items: center;
@@ -27,13 +19,6 @@
   font-size: var(--font-size-label);
   font-weight: var(--font-weight-heading);
   color: var(--text-900);
-}
-
-.location {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-4);
-  color: var(--text-600);
 }
 
 /* Summary stats: two side-by-side labeled values. General (non soil/water/crop) data, so the
@@ -70,12 +55,8 @@
   color: var(--text-900);
 }
 
-/* A card holding one stat (frost days). */
-.single {
-  margin: 0;
-}
-
-/* Health Index placeholder (design.md §7.4): plain muted text, never a score. */
+/* "Not available yet" placeholders (monthly chart, Health Index, §7.4): plain muted text,
+   never a score or a made-up value. */
 .placeholder {
   margin: 0;
   color: var(--text-600);

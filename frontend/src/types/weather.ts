@@ -1,40 +1,54 @@
-import type { ParcelLocation, SourcedData } from "./diagnostic";
+import type { Block } from "./diagnostic";
 
-/** Weather conditions the app can name and draw (one icon + one translated label each). */
+/**
+ * The exact JSON shape of the backend's `GET /api/weather/forecast` (Open-Meteo behind it;
+ * backend/app/models.py). The backend maps WMO codes to these condition keys, so the frontend
+ * never deals with WMO codes itself.
+ */
 export type WeatherCondition =
-  "sunny" | "partlyCloudy" | "cloudy" | "showers" | "rain";
+  | "sunny"
+  | "partlyCloudy"
+  | "cloudy"
+  | "fog"
+  | "drizzle"
+  | "showers"
+  | "rain"
+  | "snow"
+  | "thunderstorm"
+  | "unknown";
 
-/** Current conditions, for the "today" summary. */
-export interface WeatherNow {
-  temp_c: number;
+/** Today: current conditions + today's daily figures. Any value can be null. */
+export interface WeatherToday {
+  date: string;
+  observed_at: string | null;
+  temp_c: number | null;
+  weather_code: number | null;
   condition: WeatherCondition;
-  /** Chance of precipitation today, 0–100. */
-  precip_probability_pct: number;
-  /** Relative air humidity, 0–100. */
-  humidity_pct: number;
-  wind_kmh: number;
+  /** lucide icon name chosen by the backend; the UI maps `condition` itself (typed). */
+  icon: string;
+  humidity_pct: number | null;
+  wind_kmh: number | null;
+  temp_max_c: number | null;
+  temp_min_c: number | null;
+  precip_probability_pct: number | null;
 }
 
 /** One day of the daily forecast. */
-export interface ForecastDay {
+export interface WeatherDay {
   /** ISO date "YYYY-MM-DD"; the weekday shown is derived from it per language. */
   date: string;
+  weather_code: number | null;
   condition: WeatherCondition;
-  temp_max_c: number;
-  temp_min_c: number;
+  icon: string;
+  temp_max_c: number | null;
+  temp_min_c: number | null;
+  precip_probability_pct: number | null;
 }
 
-export interface WeatherForecast {
-  today: WeatherNow;
-  /** Today first, then the following days: 7 in total. */
-  days: ForecastDay[];
-}
-
-/**
- * Data behind the Weather tab (design.md §7.8): the forecast for the parcel picked on Home.
- * One forecast API answers both the today summary and the 7 days, so they share one status.
- */
-export interface WeatherData {
-  location: ParcelLocation;
-  forecast: SourcedData<WeatherForecast>;
-}
+/** One forecast API answers both today and the 7 days, so they share one status. */
+export type ForecastResponse = Block<{
+  timezone: string | null;
+  today: WeatherToday;
+  /** Today first, then the following days (7 in total). */
+  days: WeatherDay[];
+}> & { location: { lat: number; lon: number } };

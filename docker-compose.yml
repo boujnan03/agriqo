@@ -32,8 +32,9 @@ services:
     ports:
       - "8080:80"
     networks: [fieldshift]
-    # Start order only. The frontend does not call the backend yet, so it does not
-    # wait for it to be healthy.
+    # Start order only. The BROWSER calls the backend (not this container), so the frontend
+    # doesn't wait for it to be healthy: pages show a "can't reach the server" + retry state
+    # until it answers.
     depends_on:
       - backend
     restart: unless-stopped

@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
 import i18n, { LANGUAGES } from "../../src/i18n";
+import { fakeBackend, unreachable } from "../fakeBackend";
 import { inLanguage, picked, renderRoute, tabBarLabel } from "../utils";
 
 /** The Leaflet map element inside Home's map region. */
@@ -94,6 +95,43 @@ describe("Home page (design.md §7.2)", () => {
     expect(summary).toHaveTextContent("Long. -6.450");
   });
 
+  it("after a pick: 2 headline facts from the REAL diagnostic for that point, with their sources", async () => {
+    const user = userEvent.setup();
+    renderRoute("/home");
+    await user.click(
+      screen.getByRole("button", { name: "Choisir le centre de la carte" }),
+    );
+    const summary = screen
+      .getByRole("heading", { level: 2, name: "Parcelle sélectionnée" })
+      .closest("section") as HTMLElement;
+    expect(
+      await within(summary).findByText("Franco-argileuse"),
+    ).toBeInTheDocument();
+    // jsdom's map centre is 32.4 / -6.45 up to float noise.
+    expect(fakeBackend.calls).toHaveLength(1);
+    expect(fakeBackend.calls[0].route).toBe("diagnostic");
+    expect(fakeBackend.calls[0].lat).toBeCloseTo(32.4, 6);
+    expect(fakeBackend.calls[0].lon).toBeCloseTo(-6.45, 6);
+    expect(
+      within(summary)
+        .getAllByRole("term")
+        .map((dt) => dt.textContent),
+    ).toEqual(["Texture du sol", "Pluie annuelle"]);
+    expect(summary.textContent?.replace(/\u00a0/g, " ")).toContain("526 mm/an");
+    expect(
+      within(summary).getByText("Données : ISRIC SoilGrids · NASA POWER"),
+    ).toBeInTheDocument();
+  });
+
+  it("backend unreachable after a pick: the request error state, coordinates still shown", async () => {
+    fakeBackend.respond("diagnostic", unreachable);
+    renderRoute("/home", picked);
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Serveur injoignable",
+    );
+    expect(screen.getByText("32.400")).toBeInTheDocument();
+  });
+
   it("'Voir le diagnostic complet' is the one CTA and opens Farm for the same parcel", async () => {
     const user = userEvent.setup();
     renderRoute("/home", picked);
@@ -105,6 +143,9 @@ describe("Home page (design.md §7.2)", () => {
     expect(
       await screen.findByRole("heading", { level: 1, name: "Votre ferme" }),
     ).toBeInTheDocument();
+    await screen.findByRole("heading", { level: 2, name: "Sol" });
+    // Home and Farm share one diagnostic request for the same point.
+    expect(fakeBackend.calls).toHaveLength(1);
   });
 
   it("is a tab-bar root: title-only header, Home tab active", () => {

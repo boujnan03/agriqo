@@ -116,7 +116,7 @@ describe("full mocked click-through", () => {
     );
     await h1("Votre ferme");
     expect(
-      screen.getByRole("heading", { level: 2, name: "Sol" }),
+      await screen.findByRole("heading", { level: 2, name: "Sol" }),
     ).toBeInTheDocument();
     await user.click(screen.getByRole("link", { name: "Analyses" }));
     await h1("Aperçu de la ferme");
