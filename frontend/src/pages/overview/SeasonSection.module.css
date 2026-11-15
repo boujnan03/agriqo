@@ -1,0 +1,95 @@
+/* design.md §7 template 4 (Insights) season-type cards: same section rhythm as the page's other
+   cards. General (non soil/water/crop) data: icons use --green-700, never the --icon-* colors. */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  margin: 0;
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-heading);
+  color: var(--text-900);
+}
+
+.icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--green-700);
+}
+
+/* Badge (short type) + full type name. */
+.type {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-8);
+  margin: 0;
+}
+
+.typeName {
+  font-size: var(--font-size-screen-title);
+  font-weight: var(--font-weight-heading);
+  color: var(--text-900);
+}
+
+.strong {
+  margin: 0;
+  font-weight: var(--font-weight-label);
+  color: var(--text-900);
+}
+
+.muted {
+  margin: 0;
+  color: var(--text-600);
+}
+
+/* Borderline / nearby-area notes: an icon + plain text, never color alone (§9). */
+.note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-8);
+  margin: 0;
+  color: var(--text-600);
+  font-size: var(--font-size-caption-factual);
+}
+
+/* The Field Shift message: a light-green box, like the §2 "why this choice" boxes. */
+.shift {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-8);
+  margin: 0;
+  padding: var(--space-12);
+  border-radius: var(--radius-chip);
+  background: var(--green-tint);
+  color: var(--text-900);
+}
+
+/* §6 Data card rule: every real-data card names its source (factual caption, --text-600). */
+.source {
+  margin: 0;
+  color: var(--text-600);
+  font-size: var(--font-size-caption-factual);
+}
+
+/* hors_zone: centered like the NoParcel empty state. */
+.outside {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-12);
+  text-align: center;
+}
+
+.outsideIcon {
+  display: inline-flex;
+  padding: var(--space-12);
+  border-radius: var(--radius-pill);
+  background: var(--green-tint);
+  color: var(--green-900);
+}

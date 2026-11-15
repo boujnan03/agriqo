@@ -1,3 +1,6 @@
+/** Known places (translation keys `places.<id>`). */
+export type PlaceId = "beniMellal";
+
 /** Unit systems the app can display. Metric only for now (no unit conversion exists). */
 export type UnitSystem = "metric";
 
@@ -5,8 +8,8 @@ export type UnitSystem = "metric";
 export interface ProfileData {
   /** Placeholder demo name, not a real person. */
   name: string;
-  /** Place name, e.g. "Béni Mellal". */
-  location: string;
+  /** Place id, shown through `places.<id>` (each language spells the name its own way). */
+  location: PlaceId;
   /** Placeholder demo address (reserved example.com domain), not a real inbox. */
   email: string;
   /** Placeholder demo number in the Moroccan format, not a real line. */

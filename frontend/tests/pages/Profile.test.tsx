@@ -27,7 +27,7 @@ describe("Profile page (design.md §7.9)", () => {
     expect(
       screen.getByRole("heading", { level: 2, name: profileData.name }),
     ).toBeInTheDocument();
-    expect(screen.getByText(profileData.location)).toBeInTheDocument();
+    expect(screen.getByText("Béni Mellal")).toBeInTheDocument(); // places.beniMellal (fr)
     expect(screen.getByText("Membre depuis 2026")).toBeInTheDocument();
   });
 

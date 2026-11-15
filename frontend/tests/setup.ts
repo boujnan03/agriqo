@@ -17,6 +17,12 @@ beforeEach(() => {
 afterEach(async () => {
   cleanup();
   vi.unstubAllGlobals();
+  // The water regime is remembered in localStorage: every test starts from the default.
+  try {
+    window.localStorage.clear();
+  } catch {
+    // no storage in this environment: nothing to reset
+  }
   expect(
     fakeBackend.unexpected,
     "the app made a request that isn't an API route",

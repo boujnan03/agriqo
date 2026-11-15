@@ -14,7 +14,8 @@
     "weather": "Weather"
   },
   "common": {
-    "photo": "Photo: {{name}}"
+    "photo": "Photo: {{name}}",
+    "example": "Example"
   },
   "cover": {
     "photo": "Photo: wheat field",
@@ -45,14 +46,25 @@
     "slope": "Slope",
     "soilCaveat": "Estimate (~250 m), not a lab analysis.",
     "climateCaveat": "Regional averages (~50 km): nearby plots share the same climate.",
-    "moistureCaveat": "Value from {{date}} (data lags a few days)."
+    "moistureCaveat": "Value from {{date}} (data lags a few days).",
+    "waterTitle": "Water and climate zone",
+    "waterLabel": "Irrigation",
+    "water": {
+      "pluvial": "Rain-fed",
+      "irrigue": "Irrigated"
+    },
+    "waterNote": "Entered by you (not NASA data): it only changes the advice.",
+    "zoneLabel": "NASA POWER climate zone:",
+    "zoneDistance": "~{{km}} km",
+    "zoneLoading": "Finding the climate zone…",
+    "zoneError": "Climate zone not available right now.",
+    "zoneOutside": "Outside the area covered by the season model."
   },
   "overview": {
     "title": "Farm overview",
     "climateSummary": "Climate summary",
     "avgTemp": "Average temperature",
     "tempValue": "{{value}} °C",
-    "chartTitle": "Temperature and rainfall",
     "soilMoisture": "Soil moisture",
     "healthIndex": "Health index",
     "seeRecommendations": "See my recommendations",
@@ -60,17 +72,108 @@
     "frostDays": "Frost days",
     "healthSoon": "Coming soon (NDVI)",
     "annualRainfall": "Annual rainfall",
-    "chartUnavailable": "Not available yet: the server doesn't send monthly values yet.",
     "climatePeriod": "{{period}} averages",
     "frostPeriod": "From {{start}} to {{end}}",
     "surfaceWetness": "Surface soil moisture"
   },
-  "chart": {
-    "ariaLabel": "Temperature and rainfall by month. {{summary}}.",
-    "monthSummary": "{{month}}: {{temp}} °C, {{rainfall}} mm",
-    "separator": "; ",
-    "legendTemp": "Temperature (°C), line",
-    "legendRain": "Rainfall (mm), bars"
+  "seasons": {
+    "types": {
+      "dry_hot": {
+        "name": "Dry and hot",
+        "short": "Dry",
+        "nameNoHeat": "Dry"
+      },
+      "normal_cool": {
+        "name": "Normal and cool",
+        "short": "Normal, cool",
+        "nameNoHeat": "Normal"
+      },
+      "normal_hot": {
+        "name": "Normal and warm",
+        "short": "Normal, warm",
+        "nameNoHeat": "Normal"
+      },
+      "very_wet_cool": {
+        "name": "Very wet and cool",
+        "short": "Very wet",
+        "nameNoHeat": "Very wet"
+      }
+    },
+    "lastTitle": "Latest available season: {{season}}",
+    "rain": "Rainfall",
+    "rainValue": "{{value}} mm · normal {{normal}} mm",
+    "pctLabel": "Rainfall vs normal",
+    "hotDays": "Days > 30 °C (Mar–May)",
+    "hotDaysValue": "{{value}} · normal {{normal}}",
+    "borderline": "Borderline classification: this season is close to two types.",
+    "nearby": "Nearby area",
+    "nearbyNote": "Nearby area: your parcel is just outside the covered cells; these are the nearest cell's data (~{{km}} km).",
+    "chartTitle": "Rainfall of the last 10 seasons",
+    "chart": {
+      "listLabel": "Rainfall of each season (mm)",
+      "row": "{{season}}: {{value}} mm (normal {{normal}} mm)",
+      "value": "{{value}} mm",
+      "legendBars": "Season rainfall (mm), bars",
+      "legendNormal": "{{from}}–{{to}} normal: {{value}} mm, dashed line"
+    },
+    "historyTitle": "Your last 10 seasons",
+    "dryCount": "Dry and hot seasons: {{dry}} of {{total}}",
+    "historyValue": "{{type}} · {{pct}} %",
+    "historyBorderline": "{{type}} · {{pct}} % · borderline",
+    "fieldShift": "Compared with {{refFrom}}–{{refTo}}: dry and hot seasons {{recent}} of {{recentTotal}} since {{since}}, versus {{before}} of {{beforeTotal}} from {{beforeFrom}} to {{beforeTo}}.",
+    "moistureTitle": "Root-zone soil moisture (Oct–May)",
+    "moistureLabel": "Season {{season}}",
+    "moistureNormal": "Normal: {{value}} %",
+    "source": "Source: NASA POWER, {{from}}–{{to}} normal for your area (~50 km).",
+    "outsideTitle": "Outside the covered area",
+    "outsideText": "Your parcel is outside the covered area (Morocco, north of 29.5° N). Nearest cell ~{{km}} km away.",
+    "outsideAction": "Choose another parcel"
+  },
+  "advice": {
+    "forWater": {
+      "pluvial": "Advice for a rain-fed parcel.",
+      "irrigue": "Advice for an irrigated parcel."
+    },
+    "changeWater": "Change it in Farm",
+    "why": "Why: {{reason}}",
+    "source": "Source: NASA POWER, {{from}}–{{to}} normal for your area.",
+    "validate": "To be validated by an agronomist",
+    "none": "No marked climate signal in your area from {{from}} to {{to}}.",
+    "cropClimate": "Your area's climate:",
+    "text": {
+      "drought_tolerant": {
+        "pluvial": "Favour drought-tolerant crops (barley, chickpea, lentil) and short-cycle varieties.",
+        "irrigue": "With irrigation, drought matters less, but plan for irrigation-water restrictions in dry years."
+      },
+      "dry_autumn": {
+        "pluvial": "Don't sow into dry soil: wait for the first useful rain.",
+        "irrigue": "Plan an establishment irrigation after sowing."
+      },
+      "hot_spring": {
+        "pluvial": "Sow early and choose early varieties, so grain filling ends before the heat.",
+        "irrigue": "Sow early and choose early varieties, so grain filling ends before the heat."
+      },
+      "dry_spring": {
+        "pluvial": "Choose early varieties that finish their cycle sooner.",
+        "irrigue": "Keep water back for an irrigation during grain filling."
+      },
+      "last_season_dry": {
+        "pluvial": "Soil water reserves are probably low: be careful with costly inputs.",
+        "irrigue": "Check your irrigation-water allocations before choosing your crops."
+      },
+      "wet_frequent": {
+        "pluvial": "Wheat is an option; watch for fungal diseases (rusts).",
+        "irrigue": "Wheat is an option; watch for fungal diseases (rusts)."
+      }
+    },
+    "reason": {
+      "drought_tolerant": "dry and hot seasons: {{n}} of {{total}} ({{from}} to {{to}}).",
+      "dry_autumn": "October–December rain below normal {{below}} times out of {{total}}; {{meanMm}} mm vs {{normalMm}} mm ({{pct}} %).",
+      "hot_spring": "days > 30 °C (Mar–May) above normal {{above}} times out of {{total}}; mean {{meanDays}}, normal {{normalDays}}.",
+      "dry_spring": "March–May rain below normal {{below}} times out of {{total}}; {{pct}} % of normal.",
+      "last_season_dry": "season {{season}}: {{rainMm}} mm, {{pct}} % of normal ({{normalMm}} mm).",
+      "wet_frequent": "very wet seasons: {{n}} of {{total}}."
+    }
   },
   "recommendations": {
     "title": "Recommendations",
@@ -79,7 +182,10 @@
     "otherOptions": "Other good options",
     "rotationPlan": "Crop rotation plan",
     "year": "Year {{year}}",
-    "learnMore": "Learn more"
+    "learnMore": "Learn more",
+    "climateTitle": "What your area's climate says",
+    "crops": "Crops",
+    "exampleNotice": "Example ranking: not yet computed from your data."
   },
   "cropDetail": {
     "title": "Details",
@@ -91,6 +197,34 @@
     "why": "Why this choice?",
     "save": "Save this plan",
     "saved": "Plan saved for this session (demo: nothing is actually stored)."
+  },
+  "crops": {
+    "ble": {
+      "name": "Wheat",
+      "description": "Ideal for the climate and soil type of Beni Mellal.",
+      "why": "Cool weather and moderate rain make wheat an excellent option."
+    },
+    "orge": {
+      "name": "Barley",
+      "description": "Good drought tolerance, suited to follow wheat in a rotation.",
+      "why": "Its low water demand makes it a good choice to spare the soil between two more demanding crops."
+    },
+    "legumineuses": {
+      "name": "Legumes",
+      "description": "Naturally enrich the soil with nitrogen, useful between two cereals.",
+      "why": "They improve soil health for the next crop rather than aiming for maximum yield."
+    },
+    "level": {
+      "low": "Low",
+      "low_medium": "Low to medium",
+      "medium": "Medium",
+      "medium_high": "Medium to high",
+      "high": "High"
+    },
+    "suitability": {
+      "high": "Highly suited to your conditions"
+    },
+    "monthRange": "{{from}} – {{to}}"
   },
   "profile": {
     "title": "Profile",
@@ -209,5 +343,8 @@
     "lon": "Long.",
     "centre": "Centre:",
     "shape": "Area ≈ {{area}} ha · {{count}} corners"
+  },
+  "places": {
+    "beniMellal": "Beni Mellal"
   }
 }
