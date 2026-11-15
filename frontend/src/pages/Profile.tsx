@@ -11,6 +11,7 @@ import {
 import type { ButtonHTMLAttributes } from "react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
 
 import { Button } from "../components/Button";
 import { Card } from "../components/Card";
@@ -22,6 +23,7 @@ import { useDirection } from "../i18n/useDirection";
 import { profileData } from "../mocks/profile";
 import { AppTabBar } from "../router/AppTabBar";
 import { PATHS } from "../router/paths";
+import { useSession } from "../state/session";
 import styles from "./Profile.module.css";
 
 interface SettingRowProps extends Omit<
@@ -66,7 +68,7 @@ function SettingRow({ icon, label, value, ...button }: SettingRowProps) {
  *   → EN, so both controls always agree.
  * - Notifications: local on/off state only, never persisted.
  * - Units: metric is the only option; tapping only says more are coming.
- * - Sign out: no auth exists; like Cover's "Sign in", it is a link back to the Cover screen.
+ * - Sign out: clears the in-memory session set by the Cover login gate, then returns to Cover.
  */
 export function Profile() {
   const { t, i18n } = useTranslation();
@@ -74,6 +76,8 @@ export function Profile() {
     profileData.notificationsEnabled,
   );
   const [unitsNotice, setUnitsNotice] = useState(false);
+  const { signOut } = useSession();
+  const navigate = useNavigate();
 
   const cycleLanguage = () => {
     const current = LANGUAGES.indexOf(i18n.language as Language);
@@ -145,8 +149,14 @@ export function Profile() {
           </p>
         </section>
 
-        {/* No auth flow yet: like Cover's "Sign in", this only leads back to the Cover screen. */}
-        <Button variant="secondary" to={PATHS.cover}>
+        {/* No real auth: only the in-memory demo session is cleared. */}
+        <Button
+          variant="secondary"
+          onClick={() => {
+            signOut();
+            void navigate(PATHS.cover);
+          }}
+        >
           {t("profile.signOut")}
         </Button>
       </div>
