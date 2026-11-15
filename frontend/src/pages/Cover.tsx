@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 
-import { illustrations, logo, photo } from "../assets/images";
+import { illustrations, photo } from "../assets/images";
 import { Button } from "../components/Button";
 import { LanguageSwitcher } from "../components/LanguageSwitcher";
 import { PhotoFrame } from "../components/PhotoFrame";
@@ -9,9 +9,9 @@ import styles from "./Cover.module.css";
 
 /**
  * Route "/" · design.md §7.1 Cover (Welcome/onboarding): full-bleed photo (no radius, §6
- * bottom gradient), logo + title + tagline, primary button + secondary link near the bottom.
+ * bottom gradient), title + tagline, primary button + secondary link near the bottom.
+ * The AGRIQO logo is part of the photo itself (in the sky), so no separate logo element here.
  * No header, no tab bar, so the §9a language switcher sits on the photo's top end corner.
- * The photo is a §8 placeholder until real photography exists.
  */
 export function Cover() {
   const { t } = useTranslation();
@@ -24,11 +24,6 @@ export function Cover() {
       />
       <div className={styles.content}>
         <div className={styles.brand}>
-          {/* AGRIQO lockup (§1) on its white backing, readable over the photo. Decorative
-              (alt=""): the heading below carries the name. */}
-          <span className={styles.logo}>
-            <img className={styles.logoImage} src={logo.full} alt="" />
-          </span>
           <h1 className={styles.title}>{t("app.name")}</h1>
           <p className={styles.tagline}>{t("cover.tagline")}</p>
         </div>

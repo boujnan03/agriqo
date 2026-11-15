@@ -15,7 +15,7 @@ describe("Cover page (design.md §7.1)", () => {
   // French copy asserted below: render in French (the app default is Arabic).
   inLanguage("fr");
 
-  it("renders the logo, app name, tagline and cover illustration", () => {
+  it("renders the app name, tagline and cover photo, with no separate logo", () => {
     const { container } = renderWithRouter(<Cover />);
     expect(
       screen.getByRole("heading", { level: 1, name: "FieldShift AI" }),
@@ -29,11 +29,12 @@ describe("Cover page (design.md §7.1)", () => {
     expect(
       screen.getByRole("img", { name: "Photo : champ de blé" }),
     ).toHaveAttribute("src", coverField);
-    // Full AGRIQO lockup replaces the old sprout icon (decorative: the h1 carries the name).
-    expect(container.querySelector(`img[src="${logoFull}"]`)).toHaveAttribute(
-      "alt",
-      "",
-    );
+    // The logo is baked into the photo: no separate logo image (or its white backing),
+    // so the photo is the only image and the heading is the brand block's first child.
+    expect(container.querySelector(`img[src="${logoFull}"]`)).toBeNull();
+    expect(container.querySelectorAll("img")).toHaveLength(1);
+    const heading = screen.getByRole("heading", { level: 1 });
+    expect(heading.parentElement?.firstElementChild).toBe(heading);
   });
 
   it("'Commencer' leads to the farm screen; 'Se connecter' is present", () => {
