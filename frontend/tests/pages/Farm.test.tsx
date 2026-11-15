@@ -4,7 +4,7 @@ import { describe, expect, expectTypeOf, it } from "vitest";
 import i18n, { LANGUAGES } from "../../src/i18n";
 import { farmDiagnostic } from "../../src/mocks/farmDiagnostic";
 import type { FarmDiagnostic } from "../../src/types/diagnostic";
-import { inLanguage, renderRoute, tabBarLabel } from "../utils";
+import { inLanguage, renderRoute, tabBarLabel, picked } from "../utils";
 
 /** The Data card <section> under the h2 named `name`. */
 const card = (name: string) =>
@@ -30,7 +30,7 @@ describe("Farm page (design.md §7.3)", () => {
   });
 
   it("with a picked parcel: the 4 Data cards, in order, and no photo banner", () => {
-    const { container } = renderRoute("/farm", { parcelPicked: true });
+    const { container } = renderRoute("/farm", picked);
     expect(
       screen.getByRole("heading", { level: 1, name: "Votre ferme" }),
     ).toBeInTheDocument();
@@ -43,7 +43,7 @@ describe("Farm page (design.md §7.3)", () => {
   });
 
   it("each ok card shows its values and its own source", () => {
-    renderRoute("/farm", { parcelPicked: true });
+    renderRoute("/farm", picked);
     // The default text matcher normalises the French non-breaking spaces before units.
     const norm = (r: Record<string, string | undefined>) =>
       Object.fromEntries(
@@ -79,7 +79,7 @@ describe("Farm page (design.md §7.3)", () => {
   });
 
   it("Relief (indisponible) shows the fallback message, its source, and no number", () => {
-    renderRoute("/farm", { parcelPicked: true });
+    renderRoute("/farm", picked);
     const relief = card("Relief");
     expect(relief).toHaveAttribute("data-status", "indisponible");
     expect(within(relief).getByText("Donnée indisponible")).toBeInTheDocument();
@@ -127,7 +127,7 @@ describe.each(LANGUAGES)("Farm page in %s", (lng) => {
   inLanguage(lng);
 
   it("renders every string translated, with Western digits", () => {
-    const { container } = renderRoute("/farm", { parcelPicked: true });
+    const { container } = renderRoute("/farm", picked);
     expect(document.documentElement).toHaveAttribute(
       "dir",
       lng === "ar" ? "rtl" : "ltr",

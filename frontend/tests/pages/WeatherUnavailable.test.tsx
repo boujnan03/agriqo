@@ -1,7 +1,7 @@
 import { screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import { inLanguage, renderRoute } from "../utils";
+import { inLanguage, renderRoute, picked } from "../utils";
 
 // The forecast API is down: the page must say so, not invent a forecast (design.md §6, §7.8).
 vi.mock("../../src/mocks/weather", () => ({
@@ -15,7 +15,7 @@ describe("Weather page when the forecast is unavailable", () => {
   inLanguage("fr");
 
   it("shows 'Donnée indisponible' with its source, and no day cards or numbers", () => {
-    const { container } = renderRoute("/weather", { parcelPicked: true });
+    const { container } = renderRoute("/weather", picked);
     const today = screen
       .getByRole("heading", { level: 2, name: "Aujourd'hui" })
       .closest("section") as HTMLElement;

@@ -109,7 +109,7 @@ describe("full mocked click-through", () => {
     await user.click(screen.getByRole("link", { name: "Commencer" }));
     await h1("Accueil");
     await user.click(
-      screen.getByRole("button", { name: "Choisir ma parcelle sur la carte" }),
+      screen.getByRole("button", { name: "Choisir le centre de la carte" }),
     );
     await user.click(
       screen.getByRole("link", { name: "Voir le diagnostic complet" }),

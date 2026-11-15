@@ -1,0 +1,32 @@
+/* design.md §7.2 Home: real map, ~4:3 (§8 "Home's map/picker banner"), photo-frame radius. */
+.picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-photo);
+  aspect-ratio: var(--aspect-farm);
+  border: var(--border-width-hairline) solid var(--border);
+}
+
+.map {
+  width: 100%;
+  height: 100%;
+}
+
+/* Map centre marker for the "pick the centre" button. Above Leaflet's tile/overlay panes
+   (200–400), below its controls (800), so zoom buttons and attribution stay clickable. */
+.crosshair {
+  position: absolute;
+  inset: 0;
+  z-index: 450;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-600);
+  pointer-events: none;
+}

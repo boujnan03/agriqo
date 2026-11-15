@@ -6,7 +6,7 @@ import { describe, expect, expectTypeOf, it } from "vitest";
 import i18n, { LANGUAGES, type Language } from "../../src/i18n";
 import { profileData } from "../../src/mocks/profile";
 import type { ProfileData } from "../../src/types/profile";
-import { inLanguage, renderRoute, tabBarLabel } from "../utils";
+import { inLanguage, renderRoute, tabBarLabel, picked } from "../utils";
 
 const languageRow = () => screen.getByRole("button", { name: /^Lang|^اللغة/ });
 
@@ -53,7 +53,7 @@ describe("Profile page (design.md §7.9)", () => {
 
   it("the count follows the parcel picked on Home, and the row opens its diagnostic", async () => {
     const user = userEvent.setup();
-    renderRoute("/profile", { parcelPicked: true });
+    renderRoute("/profile", picked);
     const row = screen.getByRole("link", { name: /Parcelles diagnostiquées/ });
     expect(row).toHaveAccessibleName("Parcelles diagnostiquées 1");
     await user.click(row);

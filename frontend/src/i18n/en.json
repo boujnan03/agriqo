@@ -107,13 +107,14 @@
   },
   "home": {
     "title": "Home",
-    "intro": "Tap the map to pick your plot.",
-    "pick": "Pick my plot on the map",
-    "mapAlt": "Map: satellite view of the plot",
+    "intro": "Tap the map where your plot is.",
     "selected": "Selected plot",
     "soilTexture": "Soil texture",
     "annualRain": "Annual rainfall",
-    "seeDiagnostic": "See the full diagnostic"
+    "seeDiagnostic": "See the full diagnostic",
+    "introPicked": "Tap elsewhere on the map to move the pin.",
+    "mapLabel": "Map to pick your plot",
+    "pickCenter": "Pick the centre of the map"
   },
   "weather": {
     "title": "Weather",
@@ -172,6 +173,8 @@
   "parcel": {
     "noneTitle": "No plot picked yet",
     "noneText": "First pick your plot on the Home map.",
-    "choose": "Pick my plot"
+    "choose": "Pick my plot",
+    "lat": "Lat.",
+    "lon": "Long."
   }
 }

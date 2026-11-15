@@ -1,0 +1,9 @@
+/* The picked parcel's coordinates: muted secondary text with a pin, like a place name. */
+.coords {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+  margin: 0;
+  color: var(--text-600);
+}
