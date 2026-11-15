@@ -103,7 +103,9 @@ frontend/                       React + TypeScript + Vite (+ Dockerfile, nginx.c
   src/theme/                    design tokens (tokens.ts → generated tokens.css)
   src/components/               shared components (Button, Card, Badge, TabBar, Header, …)
   src/router/  src/pages/       routes + one placeholder page per design.md §7 template
-  src/services/ src/mocks/      future backend calls / page fixture data (empty for now)
+  src/services/                 api.ts: placeholder backend client (GET /health), not used yet
+  src/mocks/                    page fixture data, one file per screen (farm, overview, map,
+                                profile, recommendations, cropDetails); illustrative, not NASA
   tests/                        Vitest + React Testing Library
 ```
 
