@@ -9,8 +9,9 @@
     "navLabel": "التنقل الرئيسي",
     "home": "الرئيسية",
     "insights": "التحليلات",
-    "map": "الخريطة",
-    "profile": "الملف الشخصي"
+    "profile": "الملف الشخصي",
+    "farm": "المزرعة",
+    "weather": "الطقس"
   },
   "common": {
     "photo": "صورة: {{name}}"
@@ -74,34 +75,6 @@
     "save": "احفظ هذه الخطة",
     "saved": "حُفظت الخطة لهذه الجلسة فقط (عرض تجريبي: لا يُحفظ أي شيء)."
   },
-  "map": {
-    "title": "الخريطة",
-    "layerSwitcher": "طبقة البيانات",
-    "placeholder": "خريطة: طبقة {{layer}}",
-    "layers": {
-      "vegetation": "الغطاء النباتي",
-      "soilMoisture": "رطوبة التربة",
-      "rainfall": "التساقطات"
-    },
-    "units": {
-      "vegetation": "NDVI",
-      "soilMoisture": "%",
-      "rainfall": "ملم"
-    },
-    "legends": {
-      "vegetation": "منخفض (أصفر) ← مرتفع (أخضر داكن)",
-      "soilMoisture": "جافة (0%) ← مشبعة (100%)",
-      "rainfall": "منخفضة ← مرتفعة"
-    },
-    "descriptions": {
-      "vegetation": "يُظهر حالة الغطاء النباتي في قطعتك الأرضية.",
-      "soilMoisture": "يشير إلى مستوى رطوبة التربة السطحية.",
-      "rainfall": "مجموع التساقطات الأخيرة في المنطقة."
-    },
-    "legend": "مفتاح الألوان",
-    "unit": "الوحدة",
-    "lastUpdated": "آخر تحديث: {{date}}"
-  },
   "profile": {
     "title": "الملف الشخصي",
     "memberSince": "عضو منذ {{year}}",
@@ -117,5 +90,11 @@
     },
     "unitsSoon": "ستتوفر وحدات أخرى قريبًا.",
     "signOut": "تسجيل الخروج"
+  },
+  "home": {
+    "title": "الرئيسية"
+  },
+  "weather": {
+    "title": "الطقس"
   }
 }

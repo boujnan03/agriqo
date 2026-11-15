@@ -40,12 +40,12 @@ describe("Cover page (design.md §7.1)", () => {
     expect(container.textContent).not.toContain("FieldShift");
   });
 
-  it("'Commencer' leads to the farm screen; 'Se connecter' is present", () => {
+  it("'Commencer' leads to the home screen; 'Se connecter' is present", () => {
     renderWithRouter(<Cover />);
     // A navigation action, so a real <a href> (design.md §9), styled as the primary button.
     expect(screen.getByRole("link", { name: "Commencer" })).toHaveAttribute(
       "href",
-      "/farm",
+      "/home",
     );
     expect(
       screen.getByRole("link", { name: "Se connecter" }),
