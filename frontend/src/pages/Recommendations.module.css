@@ -38,7 +38,7 @@
   border-radius: var(--radius-card);
 }
 
-/* Featured card: text left, square photo right. */
+/* Featured card: text at the start, square photo at the end (mirrors in RTL). */
 .featured {
   display: flex;
   align-items: center;

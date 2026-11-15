@@ -1,0 +1,14 @@
+/* design.md §9a switcher: §6 secondary text buttons in a row; active = §6 badge-pill look. */
+.switcher {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Two-class selector so it beats Button.module.css (.secondary / .onPhoto) regardless of order. */
+.switcher .active {
+  border-radius: var(--radius-pill);
+  background: var(--green-tint);
+  color: var(--green-900);
+  font-weight: var(--font-weight-bold);
+}

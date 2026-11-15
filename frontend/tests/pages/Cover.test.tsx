@@ -2,10 +2,17 @@ import { screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { Cover } from "../../src/pages/Cover";
-import { TAB_BAR_LABEL } from "../../src/router/tabs";
-import { renderRoute, renderWithRouter } from "../utils";
+import {
+  inLanguage,
+  renderRoute,
+  renderWithRouter,
+  tabBarLabel,
+} from "../utils";
 
 describe("Cover page (design.md §7.1)", () => {
+  // French copy asserted below: render in French (the app default is Arabic).
+  inLanguage("fr");
+
   it("renders the app name, tagline and photo placeholder", () => {
     renderWithRouter(<Cover />);
     expect(
@@ -40,7 +47,7 @@ describe("Cover page (design.md §7.1)", () => {
     ).toBeInTheDocument();
     expect(screen.queryByRole("banner")).not.toBeInTheDocument();
     expect(
-      screen.queryByRole("navigation", { name: TAB_BAR_LABEL }),
+      screen.queryByRole("navigation", { name: tabBarLabel() }),
     ).not.toBeInTheDocument();
   });
 });

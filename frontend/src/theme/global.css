@@ -19,6 +19,12 @@ body {
   background: var(--white);
 }
 
+/* design.md §9a: the Arabic type stack, only while Arabic is the active language (src/i18n sets
+   <html lang>). Every component reads --font-family-base, so this one swap covers them all. */
+:root:lang(ar) {
+  --font-family-base: var(--font-family-arabic);
+}
+
 #root {
   min-height: 100dvh;
 }

@@ -3,13 +3,15 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { recommendationsData } from "../../src/mocks/recommendations";
-import { TAB_BAR_LABEL } from "../../src/router/tabs";
 import type { RecommendationsData } from "../../src/types/recommendations";
-import { renderRoute } from "../utils";
+import { inLanguage, renderRoute, tabBarLabel } from "../utils";
 
 const { featured, otherOptions, rotationPlan } = recommendationsData;
 
 describe("Recommendations page (design.md §7.4)", () => {
+  // French copy asserted below: render in French (the app default is Arabic).
+  inLanguage("fr");
+
   it("the mock fixture matches the RecommendationsData type", () => {
     // Type-level check: enforced by `npm run typecheck`.
     expectTypeOf(recommendationsData).toEqualTypeOf<RecommendationsData>();
@@ -54,7 +56,7 @@ describe("Recommendations page (design.md §7.4)", () => {
       screen.getByRole("link", { name: "Retour à l'aperçu de la ferme" }),
     ).toHaveAttribute("href", "/overview");
     expect(
-      screen.queryByRole("navigation", { name: TAB_BAR_LABEL }),
+      screen.queryByRole("navigation", { name: tabBarLabel() }),
     ).not.toBeInTheDocument();
   });
 
@@ -74,6 +76,9 @@ describe("Recommendations page (design.md §7.4)", () => {
 });
 
 describe("Recommendations navigation", () => {
+  // French copy asserted below: render in French (the app default is Arabic).
+  inLanguage("fr");
+
   it("tapping an option card opens that crop's detail page", async () => {
     const user = userEvent.setup();
     renderRoute("/recommendations");

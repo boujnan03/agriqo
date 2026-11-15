@@ -2,11 +2,13 @@ import { screen, within } from "@testing-library/react";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { overviewData } from "../../src/mocks/overview";
-import { TAB_BAR_LABEL } from "../../src/router/tabs";
 import type { OverviewData } from "../../src/types/overview";
-import { renderRoute } from "../utils";
+import { inLanguage, renderRoute, tabBarLabel } from "../utils";
 
 describe("Overview page (design.md §7.3)", () => {
+  // French copy asserted below: render in French (the app default is Arabic).
+  inLanguage("fr");
+
   it("the mock fixture matches the OverviewData type", () => {
     // Type-level check: enforced by `npm run typecheck`.
     expectTypeOf(overviewData).toEqualTypeOf<OverviewData>();
@@ -58,10 +60,10 @@ describe("Overview page (design.md §7.3)", () => {
 
   it("is a tab-bar root with its tab active", () => {
     renderRoute("/overview");
-    const tabBar = screen.getByRole("navigation", { name: TAB_BAR_LABEL });
-    // Tab mapping (design.md §6): /overview is the "Insights" tab.
+    const tabBar = screen.getByRole("navigation", { name: tabBarLabel() });
+    // Tab mapping (design.md §6): /overview is the "Insights" tab ("Analyses" in French).
     expect(
-      within(tabBar).getByRole("link", { name: "Insights" }),
+      within(tabBar).getByRole("link", { name: "Analyses" }),
     ).toHaveAttribute("aria-current", "page");
   });
 });

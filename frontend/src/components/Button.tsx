@@ -1,7 +1,8 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { Link } from "react-router";
 
+import { useDirection } from "../i18n/useDirection";
 import styles from "./Button.module.css";
 import { Icon } from "./Icon";
 
@@ -16,7 +17,7 @@ export type ButtonVariant = "primary" | "secondary" | "outline";
 interface CommonProps {
   variant?: ButtonVariant;
   children: ReactNode;
-  /** Primary only: trailing arrow icon (§6 "optional trailing arrow icon"). */
+  /** Primary only: trailing arrow icon (§6), pointing forward in the reading direction (§9a). */
   withArrow?: boolean;
   /** Full width (§6 default) unless two buttons share a row. Ignored for `secondary`. */
   fullWidth?: boolean;
@@ -45,6 +46,7 @@ export function Button({
   to,
   ...buttonAttributes
 }: ButtonProps) {
+  const ForwardArrow = useDirection() === "rtl" ? ArrowLeft : ArrowRight;
   const classes = [
     styles.button,
     styles[variant],
@@ -58,7 +60,7 @@ export function Button({
   const content = (
     <>
       <span>{children}</span>
-      {variant === "primary" && withArrow ? <Icon icon={ArrowRight} /> : null}
+      {variant === "primary" && withArrow ? <Icon icon={ForwardArrow} /> : null}
     </>
   );
 

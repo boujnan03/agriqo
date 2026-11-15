@@ -1,0 +1,80 @@
+{
+  "app": {
+    "name": "FieldShift AI"
+  },
+  "language": {
+    "label": "Language",
+    "ar": "AR",
+    "fr": "FR",
+    "en": "EN"
+  },
+  "tabs": {
+    "navLabel": "Main navigation",
+    "home": "Home",
+    "insights": "Insights",
+    "map": "Map",
+    "profile": "Profile"
+  },
+  "common": {
+    "photo": "Photo: {{name}}"
+  },
+  "cover": {
+    "photo": "Photo: wheat field",
+    "tagline": "Smart crop rotation for a sustainable tomorrow.",
+    "start": "Get started",
+    "signIn": "Sign in"
+  },
+  "notFound": {
+    "message": "Page not found.",
+    "backHome": "Back to home"
+  },
+  "farm": {
+    "title": "Your farm",
+    "mapPlaceholder": "Map: satellite view of the plot",
+    "detailsTitle": "Farm details",
+    "soilType": "Soil type",
+    "waterAvailability": "Water availability",
+    "currentCrop": "Current crop",
+    "analyze": "Analyze my farm"
+  },
+  "overview": {
+    "title": "Farm overview",
+    "climateSummary": "Climate summary",
+    "avgTemp": "Average temperature",
+    "totalRainfall": "Total rainfall",
+    "tempValue": "{{value}} °C",
+    "rainValue": "{{value}} mm",
+    "chartTitle": "Temperature and rainfall",
+    "soilMoisture": "Soil moisture",
+    "healthIndex": "Health index",
+    "healthValue": "{{label}} · {{percent}}%",
+    "seeRecommendations": "See my recommendations"
+  },
+  "chart": {
+    "ariaLabel": "Temperature and rainfall by month. {{summary}}.",
+    "monthSummary": "{{month}}: {{temp}} °C, {{rainfall}} mm",
+    "separator": "; ",
+    "legendTemp": "Temperature (°C), line",
+    "legendRain": "Rainfall (mm), bars"
+  },
+  "recommendations": {
+    "title": "Recommendations",
+    "back": "Back to farm overview",
+    "bestCrop": "Best crop for you",
+    "otherOptions": "Other good options",
+    "rotationPlan": "Crop rotation plan",
+    "year": "Year {{year}}",
+    "learnMore": "Learn more"
+  },
+  "cropDetail": {
+    "title": "Details",
+    "back": "Back to recommendations",
+    "recommended": "Recommended",
+    "waterNeed": "Water need",
+    "bestSeason": "Best season",
+    "expectedYield": "Expected yield",
+    "why": "Why this choice?",
+    "save": "Save this plan",
+    "saved": "Plan saved for this session (demo: nothing is actually stored)."
+  }
+}

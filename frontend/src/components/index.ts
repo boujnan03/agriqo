@@ -10,6 +10,10 @@ export {
 } from "./FactList";
 export { Header, type HeaderAction, type HeaderProps } from "./Header";
 export { Icon, type IconProps, type IconSize } from "./Icon";
+export {
+  LanguageSwitcher,
+  type LanguageSwitcherProps,
+} from "./LanguageSwitcher";
 export { PhotoFrame, type PhotoFrameProps } from "./PhotoFrame";
 export { ProgressBar, type ProgressBarProps } from "./ProgressBar";
 export { Screen, type ScreenProps } from "./Screen";
